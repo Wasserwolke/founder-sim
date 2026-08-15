@@ -111,6 +111,7 @@ document.addEventListener("click", event => {
 
 async function bootstrap() {
   await loadLocale("de");
+  document.title = t("app.title", "Founder Sim");
   [resources, assets, catalog] = await Promise.all([
     ResourceRegistry.fromUrl("data/resources.json"),
     AssetRegistry.fromUrl("assets/manifest.json"),
@@ -133,5 +134,5 @@ async function bootstrap() {
 
 bootstrap().catch(error => {
   console.error(error);
-  showToast(`Startup error: ${error.message}`);
+  showToast(`${t("errors.startup_prefix", "Startup error")}: ${error.message}`);
 });
