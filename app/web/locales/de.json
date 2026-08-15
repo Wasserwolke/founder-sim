@@ -1,5 +1,6 @@
 {
   "meta": {"language": "Deutsch", "code": "de"},
+  "app": {"title": "Founder Sim - Bescheidene Anfaenge"},
   "hud": {
     "money": "Geld",
     "income": "Einnahmen",
@@ -35,6 +36,7 @@
     "client_placeholder": "Kundenfahrt folgt spaeter.",
     "hardware_placeholder": "Baumarkt folgt spaeter."
   },
+  "errors": {"startup_prefix": "Startfehler"},
   "scene": {
     "desk_missing": "HUMBLE BEGINNINGS\nDESK ROOM\nAsset fehlt noch",
     "storage_missing": "STARTER STORAGE ROOM\nAsset fehlt noch",
