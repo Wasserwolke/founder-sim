@@ -1,52 +1,49 @@
-# Asset Manifest v0.3 - Humble Beginnings
+# Asset Manifest v0.4 - Humble Beginnings
 
-Die Weboberflaeche erwartet diese Minimal-Assets.
+The machine-readable source of truth is `app/web/assets/manifest.json`.
+
+Every runtime image has a stable `asset_id`. Physical assets normally use:
+
+```text
+<asset_id>_world.png
+<asset_id>_spot.png
+<asset_id>_icon.png
+```
 
 ## Environments
-- desk_room_starter_night_world.png
-- desk_room_starter_night_spot.png
-- desk_room_starter_night_icon.png
-- storage_room_starter_world.png
-- storage_room_starter_spot.png
-- storage_room_starter_icon.png
-- city_map_starter_world.png
-- city_map_starter_spot.png
-- city_map_starter_icon.png
+- `desk_room_starter_night`
+- `storage_room_starter`
+- `city_map_starter`
 
 ## Desk Objects
-- coffee_starter_white_world.png / _spot.png / _icon.png
-- phone_basic_black_world.png / _spot.png / _icon.png
-- keys_starter_world.png / _spot.png / _icon.png
-- notebook_starter_dark_world.png / _spot.png / _icon.png
+- `coffee_starter_white`
+- `phone_basic_black`
+- `keys_starter`
+- `notebook_starter_dark`
 
 ## Equipment
-- cleaning_caddy_starter_world.png / _spot.png / _icon.png
-- vacuum_starter_basic_world.png / _spot.png / _icon.png
+- `cleaning_caddy_starter`
+- `vacuum_starter_basic`
 
 ## Vehicle
-- van_starter_white_world.png / _spot.png / _icon.png
+- `van_starter_white`
 
 ## Map Icons
-- map_home_icon.png
-- map_storage_icon.png
-- map_client_icon.png
-- map_hardware_store_icon.png
+- `map_home`
+- `map_storage`
+- `map_client`
+- `map_hardware_store`
 
 ## UI
-- ui_money_icon.png
-- ui_income_icon.png
-- ui_expenses_icon.png
-- ui_time_icon.png
-- ui_energy_icon.png
-- ui_focus_icon.png
-- ui_health_icon.png
-- ui_back_icon.png
-- ui_close_icon.png
+- `ui_money`
+- `ui_income`
+- `ui_expenses`
+- `ui_time`
+- `ui_energy`
+- `ui_focus`
+- `ui_health`
+- `ui_back`
+- `ui_close`
 
-## FX
-- fx_rain_01.png / 02 / 03
-- fx_coffee_steam_01.png / 02 / 03
-- fx_hotspot_glow.png
-- fx_tired_darkness.png
-
-Fehlende Environment-Bilder werden im Prototyp automatisch durch Platzhalter ersetzt.
+## Rule
+The asset ID is the contract. File paths are resolved by the AssetRegistry. Gameplay data such as price and effects live in the catalog, not in this asset document and never in the PNG.
