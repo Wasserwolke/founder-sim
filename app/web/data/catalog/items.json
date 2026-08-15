@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "items": {
+    "coffee_starter_white": {
+      "category": "desk_objects",
+      "asset_id": "coffee_starter_white",
+      "name_key": "items.coffee_starter_white.name",
+      "description_key": "items.coffee_starter_white.description",
+      "purchasable": true,
+      "price_cents": 499,
+      "currency": "EUR",
+      "effects": {"time_minutes": 12, "energy": 5, "focus": 7, "health": -1}
+    },
+    "phone_basic_black": {
+      "category": "desk_objects",
+      "asset_id": "phone_basic_black",
+      "name_key": "items.phone_basic_black.name",
+      "description_key": "items.phone_basic_black.description",
+      "purchasable": false,
+      "price_cents": null,
+      "currency": "EUR"
+    },
+    "keys_starter": {
+      "category": "desk_objects",
+      "asset_id": "keys_starter",
+      "name_key": "items.keys_starter.name",
+      "description_key": "items.keys_starter.description",
+      "purchasable": false,
+      "price_cents": null,
+      "currency": "EUR"
+    },
+    "notebook_starter_dark": {
+      "category": "desk_objects",
+      "asset_id": "notebook_starter_dark",
+      "name_key": "items.notebook_starter_dark.name",
+      "description_key": "items.notebook_starter_dark.description",
+      "purchasable": false,
+      "price_cents": null,
+      "currency": "EUR"
+    }
+  }
+}
