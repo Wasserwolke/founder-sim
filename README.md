@@ -14,8 +14,9 @@ Aktueller Stand: `v0.3 - Humble Beginnings UI Skeleton`
 - Map-Hotspots als Platzhalter
 - HUD fuer Geld, Einnahmen, Ausgaben, Zeit, Energie, Fokus, Gesundheit
 - fehlende finale Assets haben automatische Platzhalter
-- feste Asset-IDs und Dateipfade
+- feste Asset-IDs und Dateipfade ueber `app/web/assets/manifest.json`
 - Produktions-Sheet-Pipeline fuer WORLD / SPOT / ICON
+- automatisches Trimmen und Zentrieren von Assets innerhalb ihrer Pixelbox
 
 ## Start
 
@@ -28,40 +29,52 @@ Dann:
 
 ## Asset Workflow
 
-Finale Game-Assets:
-`app/web/assets/`
+Rohe Produktions-Sheets kommen nach:
 
-Rohe Produktions-Sheets:
-`asset_sources/incoming/`
+`asset_sources/sheets/<category>/`
 
-Sheet-Spezifikationen:
-`asset_sources/pack_specs/`
+Beispiel:
+
+`asset_sources/sheets/desk_objects/sheet_desk_objects_001_2048.png`
+
+Finale Game-Assets liegen unter:
+
+`app/web/assets/<category>/`
 
 Vollstaendige Anleitung:
-`docs/assets/ASSET_PIPELINE.md`
 
-Asset-Status:
+`docs/assets/UPLOAD_WORKFLOW.md`
+
+2048x2048 Referenzraster neu erzeugen:
+
 ```bash
-python3 scripts/asset_status.py
+python3 -m pip install -r requirements.txt
+python3 scripts/generate_asset_grid.py
 ```
 
-Produktions-Sheet schneiden:
+Produktions-Sheet importieren:
+
 ```bash
-python3 -m pip install -r requirements-tools.txt
-python3 scripts/slice_asset_sheet.py asset_sources/pack_specs/pack_desk_objects_01.json
+python3 scripts/import_asset_sheet.py \
+  --sheet asset_sources/sheets/desk_objects/sheet_desk_objects_001_2048.png \
+  --category desk_objects \
+  --ids coffee_starter_white,phone_basic_black,keys_starter,notebook_starter_dark
 ```
+
+Die Gegenstaende duerfen innerhalb ihrer jeweiligen Pixelbox versetzt liegen. Der Importer trimmt den belegten Bereich und zentriert ihn automatisch in der Runtime-Datei.
 
 ## Namensprinzip
 
-Jedes Asset besitzt eine stabile Asset-ID, z. B.:
+Jedes physische Asset besitzt eine stabile Asset-ID, z. B.:
+
 `coffee_starter_white`
 
-Daraus:
+Daraus entstehen:
 - `coffee_starter_white_world.png`
 - `coffee_starter_white_spot.png`
 - `coffee_starter_white_icon.png`
 
-Der Code referenziert diese festen IDs/Pfade ueber `app/web/assets/manifest.json`.
+Die Dateinamen gelten als Vertrag zwischen Asset-Produktion und Spielcode. Neue Features nennen deshalb ihre benoetigten Asset-Dateinamen explizit.
 
 ## Git-Workflow
 
