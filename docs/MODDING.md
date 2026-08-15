@@ -40,3 +40,6 @@ Mods may ship additional locale dictionaries and declare them in their `manifest
 
 ## Compatibility
 Mods declare `api_version`. The current public API is version 1. Incompatible mods are skipped rather than silently loaded.
+
+## Security model
+The current mod system is a trusted-code model. A JavaScript mod entry is imported and executed in the game page context. Only install mods you trust. A permission/sandbox model can be added later if public third-party distribution becomes a goal.
