@@ -1,0 +1,49 @@
+{
+  "meta": {"language": "Deutsch", "code": "de"},
+  "hud": {
+    "money": "Geld",
+    "income": "Einnahmen",
+    "expenses": "Ausgaben",
+    "time": "Zeit",
+    "energy": "Energie",
+    "focus": "Fokus",
+    "health": "Gesundheit"
+  },
+  "actions": {
+    "coffee": "Kaffee",
+    "coffee_hint": "kurze Pause",
+    "phone": "Telefon",
+    "phone_hint": "Nachrichten",
+    "keys": "Schluessel",
+    "keys_hint": "fahren",
+    "notebook": "Notizbuch",
+    "notebook_hint": "Ziele",
+    "supplies": "Supplies",
+    "supplies_hint": "Lager",
+    "back": "Zurueck"
+  },
+  "map": {
+    "home": "Zuhause",
+    "storage": "Lager",
+    "client": "Kunde",
+    "hardware_store": "Baumarkt"
+  },
+  "toast": {
+    "coffee": "Kaffee: +Fokus, etwas Zeit vergeht.",
+    "phone_placeholder": "Telefon-Modul folgt spaeter.",
+    "notebook_placeholder": "Notizbuch / Ziele folgen spaeter.",
+    "client_placeholder": "Kundenfahrt folgt spaeter.",
+    "hardware_placeholder": "Baumarkt folgt spaeter."
+  },
+  "scene": {
+    "desk_missing": "HUMBLE BEGINNINGS\nDESK ROOM\nAsset fehlt noch",
+    "storage_missing": "STARTER STORAGE ROOM\nAsset fehlt noch",
+    "map_missing": "CITY MAP\nAsset fehlt noch"
+  },
+  "items": {
+    "coffee_starter_white": {"name": "Einfache weisse Kaffeetasse", "description": "Eine guenstige Tasse fuer lange Gruenderabende."},
+    "phone_basic_black": {"name": "Einfaches Smartphone", "description": "Telefon, Nachrichten und spaeter Kundenkontakte."},
+    "keys_starter": {"name": "Autoschluessel", "description": "Oeffnet die Reise- und Kartenansicht."},
+    "notebook_starter_dark": {"name": "Dunkles Notizbuch", "description": "Ziele, Ideen und offene Aufgaben."}
+  }
+}
