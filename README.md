@@ -2,21 +2,24 @@
 
 Realistischer Browsergame-Unternehmensgruendungssimulator.
 
-Aktueller Stand: `v0.3 - Humble Beginnings UI Skeleton`
+Aktueller Stand: `v0.4 - Foundation: Assets + i18n + Mod API`
 
-## Was bereits funktioniert
+## Aktueller Prototyp
 - Desk View als Hauptszene
 - klickbare Hotspots
 - Kaffee veraendert Zeit/Energie/Fokus/Gesundheit
 - Wechsel Desk -> Map
 - Wechsel Desk -> Storage
-- Zurueck-Navigation
-- Map-Hotspots als Platzhalter
 - HUD fuer Geld, Einnahmen, Ausgaben, Zeit, Energie, Fokus, Gesundheit
-- fehlende finale Assets haben automatische Platzhalter
-- feste Asset-IDs und Dateipfade ueber `app/web/assets/manifest.json`
-- Produktions-Sheet-Pipeline fuer WORLD / SPOT / ICON
-- automatisches Trimmen und Zentrieren von Assets innerhalb ihrer Pixelbox
+- automatische Platzhalter fuer fehlende finale Assets
+
+## Architektur-Grundlagen
+- sichtbare Texte ueber `app/web/locales/de.json`
+- stabile Asset-IDs ueber `app/web/assets/manifest.json`
+- Itempreise und Gameplaywerte ueber `app/web/data/catalog/items.json`
+- Ressourcen-Definitionen ueber `app/web/data/resources.json`
+- oeffentliche Mod API v1 ueber `window.FounderSimModAPI`
+- Mods unter `app/web/mods/`
 
 ## Start
 
@@ -29,52 +32,70 @@ Dann:
 
 ## Asset Workflow
 
-Rohe Produktions-Sheets kommen nach:
+### Production Sheet
+Rohe Sheets liegen unter:
 
 `asset_sources/sheets/<category>/`
 
-Beispiel:
+Ein Sheet besteht immer aus zwei zusammengehoerigen Dateien:
 
-`asset_sources/sheets/desk_objects/sheet_desk_objects_001_2048.png`
+```text
+sheet_desk_objects_001_2048.png
+sheet_desk_objects_001_2048.json
+```
 
-Finale Game-Assets liegen unter:
+Die JSON-Datei sagt eindeutig, welches Asset in welcher Zeile liegt. Der Name wird nicht in das Bild geschrieben.
 
-`app/web/assets/<category>/`
-
-Vollstaendige Anleitung:
-
-`docs/assets/UPLOAD_WORKFLOW.md`
-
-2048x2048 Referenzraster neu erzeugen:
+Import:
 
 ```bash
 python3 -m pip install -r requirements.txt
-python3 scripts/generate_asset_grid.py
+python3 scripts/import_asset_sheet.py \
+  --sheet asset_sources/sheets/desk_objects/sheet_desk_objects_001_2048.png
 ```
 
-Produktions-Sheet importieren:
+Der Importer trimmt und zentriert das Artwork innerhalb jeder Pixelbox automatisch.
+
+### Einzelne PNG-Dateien
+Bereits getrennte WORLD/SPOT/ICON-Dateien duerfen direkt nach
+`app/web/assets/<category>/` hochgeladen werden, sofern ihre Dateinamen exakt dem Asset-Manifest entsprechen.
+
+### Asset Status
 
 ```bash
-python3 scripts/import_asset_sheet.py \
-  --sheet asset_sources/sheets/desk_objects/sheet_desk_objects_001_2048.png \
-  --category desk_objects \
-  --ids coffee_starter_white,phone_basic_black,keys_starter,notebook_starter_dark
+python3 scripts/asset_status.py
 ```
 
-Die Gegenstaende duerfen innerhalb ihrer jeweiligen Pixelbox versetzt liegen. Der Importer trimmt den belegten Bereich und zentriert ihn automatisch in der Runtime-Datei.
+## Feature-first Regel
+Neue kaufbare oder spielrelevante Dinge werden zuerst im Code definiert:
 
-## Namensprinzip
+```text
+Feature
+ -> stabile item_id / asset_id
+ -> Preis + Effekte im Catalog
+ -> Asset-Manifest
+ -> Sheet-Metadaten
+ -> Bildgenerierung
+ -> Import
+ -> Runtime
+```
 
-Jedes physische Asset besitzt eine stabile Asset-ID, z. B.:
+Der Preis liegt nie im Bild. Beispiel:
+`coffee_starter_white.price_cents` liegt in `app/web/data/catalog/items.json`.
 
-`coffee_starter_white`
+## Sprachen
+Deutsch ist die erste Sprache. Neue Sprachen werden als weitere JSON-Dateien unter `app/web/locales/` angelegt und behalten dieselben Keys.
 
-Daraus entstehen:
-- `coffee_starter_white_world.png`
-- `coffee_starter_white_spot.png`
-- `coffee_starter_white_icon.png`
+## Mods
+Siehe `docs/MODDING.md`.
+Mods koennen ueber die API Ressourcen veraendern, Items registrieren/patchen, Assets ersetzen und eigene Uebersetzungen laden.
 
-Die Dateinamen gelten als Vertrag zwischen Asset-Produktion und Spielcode. Neue Features nennen deshalb ihre benoetigten Asset-Dateinamen explizit.
+## Dokumentation
+- `ARCHITECTURE.md`
+- `DESIGN.md`
+- `docs/MODDING.md`
+- `docs/assets/UPLOAD_WORKFLOW.md`
+- `docs/assets/SHEET_METADATA.md`
 
 ## Git-Workflow
 
