@@ -1,107 +1,45 @@
 # Founder Sim
-
-Realistischer Browsergame-Unternehmensgruendungssimulator.
-
-Aktueller Stand: `v0.4 - Foundation: Assets + i18n + Mod API`
-
-## Aktueller Prototyp
-- Desk View als Hauptszene
-- klickbare Hotspots
-- Kaffee veraendert Zeit/Energie/Fokus/Gesundheit
-- Wechsel Desk -> Map
-- Wechsel Desk -> Storage
-- HUD fuer Geld, Einnahmen, Ausgaben, Zeit, Energie, Fokus, Gesundheit
-- automatische Platzhalter fuer fehlende finale Assets
-
-## Architektur-Grundlagen
-- sichtbare Texte ueber `app/web/locales/de.json`
-- stabile Asset-IDs ueber `app/web/assets/manifest.json`
-- Itempreise und Gameplaywerte ueber `app/web/data/catalog/items.json`
-- Ressourcen-Definitionen ueber `app/web/data/resources.json`
-- oeffentliche Mod API v1 ueber `window.FounderSimModAPI`
-- Mods unter `app/web/mods/`
+Aktueller Stand: **v0.5 - erster visueller Humble-Beginnings-Prototyp**.
 
 ## Start
-
 ```bash
 ./scripts/start.sh
 ```
+Dann `http://localhost:8080`.
 
-Dann:
-`http://localhost:8080`
+## Bereits testbar
+- Starter-Schreibtisch bei Nacht/Regen
+- Kaffee, Telefon, Schluessel, Notizbuch und Supplies als klickbare Hotspots
+- Kaffee verbraucht Zeit und veraendert Energie/Fokus/Gesundheit
+- Wechsel Desk -> Storage Room
+- Wechsel Desk -> City Map
+- Kartenmarker: Zuhause, Fahrzeug, Lager, Kunde, Baumarkt
+- erstes Fahrzeug-Asset im Runtime-Atlas
+- HUD fuer Geld, Einnahmen, Ausgaben, Zeit, Energie, Fokus und Gesundheit
+- Deutsch ueber `app/web/locales/de.json`
+- Mod API v1
+- datengetriebene Scene- und Asset-Konfiguration
 
-## Asset Workflow
-
-### Production Sheet
-Rohe Sheets liegen unter:
-
-`asset_sources/sheets/<category>/`
-
-Ein Sheet besteht immer aus zwei zusammengehoerigen Dateien:
-
-```text
-sheet_desk_objects_001_2048.png
-sheet_desk_objects_001_2048.json
-```
-
-Die JSON-Datei sagt eindeutig, welches Asset in welcher Zeile liegt. Der Name wird nicht in das Bild geschrieben.
-
-Import:
-
-```bash
-python3 -m pip install -r requirements.txt
-python3 scripts/import_asset_sheet.py \
-  --sheet asset_sources/sheets/desk_objects/sheet_desk_objects_001_2048.png
-```
-
-Der Importer trimmt und zentriert das Artwork innerhalb jeder Pixelbox automatisch.
-
-### Einzelne PNG-Dateien
-Bereits getrennte WORLD/SPOT/ICON-Dateien duerfen direkt nach
-`app/web/assets/<category>/` hochgeladen werden, sofern ihre Dateinamen exakt dem Asset-Manifest entsprechen.
-
-### Asset Status
-
-```bash
-python3 scripts/asset_status.py
-```
-
-## Feature-first Regel
-Neue kaufbare oder spielrelevante Dinge werden zuerst im Code definiert:
-
+## Projektprinzip
 ```text
 Feature
- -> stabile item_id / asset_id
- -> Preis + Effekte im Catalog
- -> Asset-Manifest
- -> Sheet-Metadaten
+ -> stabile IDs / Daten / Preis / Effekte
+ -> Uebersetzung
+ -> Asset-Anforderung
  -> Bildgenerierung
- -> Import
- -> Runtime
+ -> Runtime-Asset
+ -> Scene / Shop / Inventar
 ```
 
-Der Preis liegt nie im Bild. Beispiel:
-`coffee_starter_white.price_cents` liegt in `app/web/data/catalog/items.json`.
+## Assets
+Der Spielcode referenziert stabile Asset-IDs ueber `app/web/assets/manifest.json`.
 
-## Sprachen
-Deutsch ist die erste Sprache. Neue Sprachen werden als weitere JSON-Dateien unter `app/web/locales/` angelegt und behalten dieselben Keys.
+- Runtime-Assets: `app/web/assets/`
+- Produktions-Sheet-Metadaten: `asset_sources/sheets/<category>/`
+- Batch-Herkunft/Hashes: `asset_sources/incoming/batch_001/batch_001.json`
+- Importer: `scripts/import_asset_sheet.py`
 
-## Mods
-Siehe `docs/MODDING.md`.
-Mods koennen ueber die API Ressourcen veraendern, Items registrieren/patchen, Assets ersetzen und eigene Uebersetzungen laden.
+Fuer den Prototypen werden die kleinen Objekt-Icons aus einem Atlas geladen. Die originalen grossen Produktionsbilder bleiben ueber ihre Batch-Metadaten eindeutig nachvollziehbar und koennen spaeter erneut importiert/ersetzt werden.
 
-## Dokumentation
-- `ARCHITECTURE.md`
-- `DESIGN.md`
-- `docs/MODDING.md`
-- `docs/assets/UPLOAD_WORKFLOW.md`
-- `docs/assets/SHEET_METADATA.md`
-
-## Git-Workflow
-
-```bash
-./scripts/changes.sh
-git status
-git diff
-git log --oneline --decorate -10
-```
+## Architektur
+Siehe `ARCHITECTURE.md`, `DESIGN.md`, `docs/PROJECT_STRUCTURE.md`, `docs/MODDING.md` und `docs/assets/BATCH_001.md`.

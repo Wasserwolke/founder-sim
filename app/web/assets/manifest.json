@@ -1,33 +1,24 @@
 {
-  "version": "0.4.0",
-  "stage": "humble-beginnings",
-  "assets": {
-    "desk_room_starter_night": {"category": "environments", "files": {"world": "assets/environments/desk_room_starter_night_world.png", "spot": "assets/environments/desk_room_starter_night_spot.png", "icon": "assets/environments/desk_room_starter_night_icon.png"}},
-    "storage_room_starter": {"category": "environments", "files": {"world": "assets/environments/storage_room_starter_world.png", "spot": "assets/environments/storage_room_starter_spot.png", "icon": "assets/environments/storage_room_starter_icon.png"}},
-    "city_map_starter": {"category": "environments", "files": {"world": "assets/environments/city_map_starter_world.png", "spot": "assets/environments/city_map_starter_spot.png", "icon": "assets/environments/city_map_starter_icon.png"}},
-
-    "coffee_starter_white": {"category": "desk_objects", "files": {"world": "assets/desk_objects/coffee_starter_white_world.png", "spot": "assets/desk_objects/coffee_starter_white_spot.png", "icon": "assets/desk_objects/coffee_starter_white_icon.png"}},
-    "phone_basic_black": {"category": "desk_objects", "files": {"world": "assets/desk_objects/phone_basic_black_world.png", "spot": "assets/desk_objects/phone_basic_black_spot.png", "icon": "assets/desk_objects/phone_basic_black_icon.png"}},
-    "keys_starter": {"category": "desk_objects", "files": {"world": "assets/desk_objects/keys_starter_world.png", "spot": "assets/desk_objects/keys_starter_spot.png", "icon": "assets/desk_objects/keys_starter_icon.png"}},
-    "notebook_starter_dark": {"category": "desk_objects", "files": {"world": "assets/desk_objects/notebook_starter_dark_world.png", "spot": "assets/desk_objects/notebook_starter_dark_spot.png", "icon": "assets/desk_objects/notebook_starter_dark_icon.png"}},
-
-    "cleaning_caddy_starter": {"category": "equipment", "files": {"world": "assets/equipment/cleaning_caddy_starter_world.png", "spot": "assets/equipment/cleaning_caddy_starter_spot.png", "icon": "assets/equipment/cleaning_caddy_starter_icon.png"}},
-    "vacuum_starter_basic": {"category": "equipment", "files": {"world": "assets/equipment/vacuum_starter_basic_world.png", "spot": "assets/equipment/vacuum_starter_basic_spot.png", "icon": "assets/equipment/vacuum_starter_basic_icon.png"}},
-    "van_starter_white": {"category": "vehicles", "files": {"world": "assets/vehicles/van_starter_white_world.png", "spot": "assets/vehicles/van_starter_white_spot.png", "icon": "assets/vehicles/van_starter_white_icon.png"}},
-
-    "map_home": {"category": "map", "files": {"icon": "assets/map/map_home_icon.png"}},
-    "map_storage": {"category": "map", "files": {"icon": "assets/map/map_storage_icon.png"}},
-    "map_client": {"category": "map", "files": {"icon": "assets/map/map_client_icon.png"}},
-    "map_hardware_store": {"category": "map", "files": {"icon": "assets/map/map_hardware_store_icon.png"}},
-
-    "ui_money": {"category": "ui", "files": {"icon": "assets/ui/ui_money_icon.png"}},
-    "ui_income": {"category": "ui", "files": {"icon": "assets/ui/ui_income_icon.png"}},
-    "ui_expenses": {"category": "ui", "files": {"icon": "assets/ui/ui_expenses_icon.png"}},
-    "ui_time": {"category": "ui", "files": {"icon": "assets/ui/ui_time_icon.png"}},
-    "ui_energy": {"category": "ui", "files": {"icon": "assets/ui/ui_energy_icon.png"}},
-    "ui_focus": {"category": "ui", "files": {"icon": "assets/ui/ui_focus_icon.png"}},
-    "ui_health": {"category": "ui", "files": {"icon": "assets/ui/ui_health_icon.png"}},
-    "ui_back": {"category": "ui", "files": {"icon": "assets/ui/ui_back_icon.png"}},
-    "ui_close": {"category": "ui", "files": {"icon": "assets/ui/ui_close_icon.png"}}
-  }
+  "version":"0.5.0",
+  "environments":{
+    "desk_room_starter_night":{"world":"assets/environments/desk_room_starter_night_world.webp"},
+    "storage_room_starter":{"world":"assets/environments/storage_room_starter_world.webp"},
+    "city_map_starter":{"world":"assets/environments/city_map_starter_world.webp"}
+  },
+  "prototype_icons":{
+    "coffee_starter_white":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,0,256,256],"atlas_size":[1024,1024]},
+    "phone_basic_black":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[256,0,256,256],"atlas_size":[1024,1024]},
+    "keys_starter":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[512,0,256,256],"atlas_size":[1024,1024]},
+    "notebook_starter_dark":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[768,0,256,256],"atlas_size":[1024,1024]},
+    "cleaning_caddy_starter":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,256,256,256],"atlas_size":[1024,1024]},
+    "vacuum_starter_basic":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[256,256,256,256],"atlas_size":[1024,1024]},
+    "bucket_blue_basic":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[512,256,256,256],"atlas_size":[1024,1024]},
+    "mop_basic_01":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[768,256,256,256],"atlas_size":[1024,1024]},
+    "van_starter_white":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,512,256,256],"atlas_size":[1024,1024]},
+    "map_home":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[256,512,256,256],"atlas_size":[1024,1024]},
+    "map_storage":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[512,512,256,256],"atlas_size":[1024,1024]},
+    "map_client":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[768,512,256,256],"atlas_size":[1024,1024]},
+    "map_hardware_store":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,768,256,256],"atlas_size":[1024,1024]}
+  },
+  "runtime_notes":{"environment_format":"webp","icon_atlas":"prototype_atlas_001.png","source_batch":"batch_001"}
 }
