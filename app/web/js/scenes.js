@@ -1,5 +1,5 @@
-export const scenes={
-  desk:{asset:"assets/environments/desk_room_starter_night_world.png",placeholder:"HUMBLE BEGINNINGS\nDESK ROOM\nAsset fehlt noch"},
-  storage:{asset:"assets/environments/storage_room_starter_world.png",placeholder:"STARTER STORAGE ROOM\nAsset fehlt noch"},
-  map:{asset:"assets/environments/city_map_starter_world.png",placeholder:"CITY MAP\nAsset fehlt noch"}
+export const scenes = {
+  desk: {assetId: "desk_room_starter_night", placeholderKey: "scene.desk_missing"},
+  storage: {assetId: "storage_room_starter", placeholderKey: "scene.storage_missing"},
+  map: {assetId: "city_map_starter", placeholderKey: "scene.map_missing"}
 };
