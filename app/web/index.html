@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Founder Sim - Humble Beginnings</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="game">
+  <header id="hud">
+    <div class="hud-block"><span class="label">GELD</span><strong id="money">620 EUR</strong></div>
+    <div class="hud-block"><span class="label">EINNAHMEN</span><strong id="income">0 EUR</strong></div>
+    <div class="hud-block"><span class="label">AUSGABEN</span><strong id="expenses">0 EUR</strong></div>
+    <div class="hud-block"><span class="label">ZEIT</span><strong id="clock">19:30</strong><small id="date">15.08.2026</small></div>
+    <div class="meter"><span>ENERGIE</span><i><b id="energyBar"></b></i><em id="energy">63</em></div>
+    <div class="meter"><span>FOKUS</span><i><b id="focusBar"></b></i><em id="focus">52</em></div>
+    <div class="meter"><span>GESUNDHEIT</span><i><b id="healthBar"></b></i><em id="health">86</em></div>
+  </header>
+  <main id="scene" class="scene desk-scene">
+    <div id="environment" class="environment"></div>
+    <div id="rain" class="rain-layer"></div>
+    <div id="darkness" class="darkness-layer"></div>
+    <section id="deskHotspots" class="hotspots">
+      <button class="hotspot coffee" data-action="coffee"><span>Kaffee</span><small>kurze Pause</small></button>
+      <button class="hotspot phone" data-action="phone"><span>Telefon</span><small>Nachrichten</small></button>
+      <button class="hotspot keys" data-action="map"><span>Schluessel</span><small>fahren</small></button>
+      <button class="hotspot notebook" data-action="notebook"><span>Notizbuch</span><small>Ziele</small></button>
+      <button class="hotspot supplies" data-action="storage"><span>Supplies</span><small>Lager</small></button>
+    </section>
+    <section id="mapHotspots" class="hotspots hidden">
+      <button class="map-point home" data-action="desk">Home</button>
+      <button class="map-point storage" data-action="storage">Lager</button>
+      <button class="map-point client" data-action="client">Kunde</button>
+      <button class="map-point hardware" data-action="hardware">Baumarkt</button>
+    </section>
+    <button id="backButton" class="back hidden" data-action="desk">Zurueck</button>
+    <div id="toast" class="toast hidden"></div>
+  </main>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
