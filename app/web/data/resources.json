@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "resources": {
+    "money": {"default": 620, "min": -1000000, "max": 1000000000, "unit": "EUR", "modifiable": true},
+    "income": {"default": 0, "min": 0, "max": 1000000000, "unit": "EUR", "modifiable": true},
+    "expenses": {"default": 0, "min": 0, "max": 1000000000, "unit": "EUR", "modifiable": true},
+    "energy": {"default": 63, "min": 0, "max": 100, "unit": "points", "modifiable": true},
+    "focus": {"default": 52, "min": 0, "max": 100, "unit": "points", "modifiable": true},
+    "health": {"default": 86, "min": 0, "max": 100, "unit": "points", "modifiable": true}
+  }
+}
