@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.13
+- misslungenen V3-Atmosphaeren-Workspace wieder vollstaendig aus der Godot-Runtime entfernt; der Referenzraum ist wieder leer
+- die vier nur fuer den V3-Test kopierten Desk-/Monitor-/Keyboard-/Chair-WORLD-Dateien und `prototype_workspace.tscn` wieder entfernt
+- sichtbare weisse Sun-Beam-Shader-Linien und prozedurale Fake-Stadtlichter entfernt
+- Fensterlicht neu auf echten `PointLight2D`-Quellen aufgebaut: weicher Window Bounce plus eigene Sonnenprojektion
+- Sonnenprojektion wird zur Laufzeit als weiche zweigeteilte Light2D-Textur erzeugt und aus der Fensterposition auf Wand/Boden projiziert; kein dekoratives Strahlen-PNG im Runtime-Code
+- `DynamicOccluders` neben `DynamicLights` als Hook fuer spaetere freigegebene Objekt-Schatten hinzugefuegt
+- Developer Atmosphere Controller auf leeren-Raum-Tuning reduziert: Zeit, Wetter, Dev-Room-Fill, Sunlight, Window Bounce und 24h-Zyklus
+- drei visuelle North-Star-Bilder unter `docs/reference/` dauerhaft als reine Designreferenzen abgelegt; sie werden nicht vom Spiel geladen
+- verbindliche Asset-Regel dokumentiert: keine sichtbaren Runtime-Objektassets ohne vorherige explizite Freigabe des konkreten Assets
+- Roadmap und Lighting-Dokumentation auf Atmosphere-first / Clean V4 umgestellt
+- Projektversion auf 0.13.0 erhoeht
+
 ## v0.12
 - Atmosphere/Lighting auf einen Hybrid aus echten Godot-2D-Lichtern und art-directed Fensterprojektionen umgebaut
 - `CanvasModulate`, `DirectionalLight2D` und ein fensternahes `PointLight2D` als echte Lichtgrundlage eingefuehrt
