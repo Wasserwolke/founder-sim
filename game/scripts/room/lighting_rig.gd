@@ -74,6 +74,7 @@ var _emitters: Dictionary = {}
 
 func _ready() -> void:
     mouse_filter = Control.MOUSE_FILTER_IGNORE
+    _resolve_layer_refs()
     set_process(true)
     if Engine.is_editor_hint():
         _refresh_editor_preview(true)
@@ -167,6 +168,7 @@ func set_emitter_enabled(emitter_id: StringName, enabled: bool) -> void:
 
 
 func get_dynamic_light_root() -> Node2D:
+    _resolve_layer_refs()
     return dynamic_lights
 
 
@@ -334,41 +336,69 @@ func _blend_states(from_state: Dictionary, to_state: Dictionary, weight: float) 
 
 
 func _apply_visual_state(state: Dictionary) -> void:
-    if ambient_shade == null or warmth == null:
+    _resolve_layer_refs()
+    if not is_instance_valid(ambient_shade) or not is_instance_valid(warmth):
         return
 
     ambient_shade.color = state.get("ambient_color", Color.TRANSPARENT)
     warmth.color = state.get("warmth_color", Color.TRANSPARENT)
 
-    var exterior_material := exterior_response.material as ShaderMaterial
+    var exterior_material := _shader_material(exterior_response)
     if exterior_material != null:
         exterior_material.set_shader_parameter("tint", state.get("exterior_tint", Color.WHITE))
         exterior_material.set_shader_parameter("darkness", float(state.get("exterior_darkness", 0.0)))
 
-    var window_material := window_wash.material as ShaderMaterial
+    var window_material := _shader_material(window_wash)
     if window_material != null:
         window_material.set_shader_parameter("tint", state.get("window_color", Color.WHITE))
         window_material.set_shader_parameter("strength", float(state.get("window_strength", 0.0)))
 
-    var sun_material := sun_beams.material as ShaderMaterial
+    var sun_material := _shader_material(sun_beams)
     if sun_material != null:
         sun_material.set_shader_parameter("tint", state.get("sun_color", Color.WHITE))
         sun_material.set_shader_parameter("strength", float(state.get("sun_ray_strength", 0.0)))
         sun_material.set_shader_parameter("shift", float(state.get("sun_shift", 0.0)))
         sun_material.set_shader_parameter("slope", float(state.get("sun_slope", 0.0)))
 
-    var city_material := city_lights.material as ShaderMaterial
+    var city_material := _shader_material(city_lights)
     if city_material != null:
         city_material.set_shader_parameter("strength", float(state.get("city_light_strength", 0.0)))
 
-    var room_material := room_light_wash.material as ShaderMaterial
+    var room_material := _shader_material(room_light_wash)
     if room_material != null:
         room_material.set_shader_parameter("tint", state.get("room_light_color", Color.WHITE))
         room_material.set_shader_parameter("strength", float(state.get("room_light_strength", 0.0)))
 
-    var vignette_material := vignette.material as ShaderMaterial
+    var vignette_material := _shader_material(vignette)
     if vignette_material != null:
         vignette_material.set_shader_parameter("strength", float(state.get("vignette_strength", 0.0)))
+
+
+func _resolve_layer_refs() -> void:
+    if not is_instance_valid(ambient_shade):
+        ambient_shade = get_node_or_null(NodePath("%AmbientShade")) as ColorRect
+    if not is_instance_valid(exterior_response):
+        exterior_response = get_node_or_null(NodePath("%ExteriorResponse")) as ColorRect
+    if not is_instance_valid(warmth):
+        warmth = get_node_or_null(NodePath("%Warmth")) as ColorRect
+    if not is_instance_valid(window_wash):
+        window_wash = get_node_or_null(NodePath("%WindowWash")) as ColorRect
+    if not is_instance_valid(sun_beams):
+        sun_beams = get_node_or_null(NodePath("%SunBeams")) as ColorRect
+    if not is_instance_valid(city_lights):
+        city_lights = get_node_or_null(NodePath("%CityLights")) as ColorRect
+    if not is_instance_valid(room_light_wash):
+        room_light_wash = get_node_or_null(NodePath("%RoomLightWash")) as ColorRect
+    if not is_instance_valid(vignette):
+        vignette = get_node_or_null(NodePath("%Vignette")) as ColorRect
+    if not is_instance_valid(dynamic_lights):
+        dynamic_lights = get_node_or_null(NodePath("%DynamicLights")) as Node2D
+
+
+func _shader_material(layer: CanvasItem) -> ShaderMaterial:
+    if not is_instance_valid(layer):
+        return null
+    return layer.material as ShaderMaterial
 
 
 func _bell(hour: float, center: float, width: float) -> float:
