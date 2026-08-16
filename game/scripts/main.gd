@@ -24,7 +24,7 @@ func _load_room_shell() -> void:
         if texture != null:
             background.texture = texture
             hotspots.mouse_filter = Control.MOUSE_FILTER_PASS
-            _show_toast("Godot-Shell geladen. Der neutrale Raum ist jetzt die Basis fuer modulare Objekte.")
+            _show_toast("GitHub -> Godot Sync erfolgreich. Diese sichtbare Nachricht kam gerade aus meinem Commit.")
             return
 
     hotspots.mouse_filter = Control.MOUSE_FILTER_IGNORE
