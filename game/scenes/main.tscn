@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://game/scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://game/scripts/room/room_shell.gd" id="3_room"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://game/scenes/ui/time_card.tscn" id="6_time"]
 [ext_resource type="PackedScene" path="res://game/scenes/room/lighting_rig.tscn" id="7_lighting"]
 [ext_resource type="PackedScene" path="res://game/scenes/dev/atmosphere_controller.tscn" id="8_dev"]
+[ext_resource type="PackedScene" path="res://game/scenes/room/prototype_workspace.tscn" id="9_workspace"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_hotspot"]
 bg_color = Color(0.17, 0.46, 0.78, 0.12)
@@ -99,6 +100,8 @@ stretch_mode = 0
 [node name="LightingRig" parent="RoomShell" instance=ExtResource("7_lighting")]
 unique_name_in_owner = true
 layout_mode = 1
+
+[node name="PrototypeWorkspace" parent="RoomShell" instance=ExtResource("9_workspace")]
 
 [node name="Hotspots" type="Control" parent="RoomShell"]
 unique_name_in_owner = true
@@ -262,10 +265,12 @@ theme_override_styles/panel = SubResource("StyleBox_toast")
 [node name="Toast" type="Label" parent="HUD/ToastPanel"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.98, 1)
+theme_override_font_sizes/font_size = 15
+text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
-text = "Founder Sim"
 
 [node name="DeveloperAtmosphereController" parent="HUD" instance=ExtResource("8_dev")]
 lighting_rig_path = NodePath("../../RoomShell/LightingRig")

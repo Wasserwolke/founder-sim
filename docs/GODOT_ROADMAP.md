@@ -2,31 +2,30 @@
 
 ## North star
 
-Founder Sim wird ein modularer, datengetriebener Unternehmens- und Lebenssimulator. Der Spieler erlebt die Firma aus physischen Szenen heraus: Wohnung, Arbeitsplatz, Lager, Shop, Kundenorte, Stadtkarte und spaetere Bueros. Jede dieser Ansichten wird technisch als dieselbe Grundidee behandelt: eine Szene mit Environment, Atmosphere/Lighting, interaktiven Objekten, Kamera und optionalem HUD.
-
-Dadurch entsteht ein wiederverwendbares Grundgeruest: Wenn ein Raum sauber funktioniert, koennen weitere Raeume und selbst eine Stadtkarte dieselben Vertraege fuer Licht, Interaktion, Kamera, Daten und Mods verwenden.
+Founder Sim wird ein modularer, datengetriebener Unternehmens- und Lebenssimulator. Wohnung, Arbeitsplatz, Lager, Shop, Kundenorte, Stadtkarte und spaetere Bueros folgen demselben Szenenvertrag: Environment, Atmosphaere/Lighting, Objekte, Interaktion, Kamera und HUD. Wenn der Referenzraum sauber funktioniert, wird dieses Geruest auf weitere Raeume und Kartenansichten vervielfaeltigt.
 
 ## Projektphasen
 
 ### Phase 1 — Godot-Fundament
-- stabile Szenenstruktur und GameState
+- Szenenstruktur und GameState
 - skalierbares HUD
 - Git/GitHub direkt aus Godot
-- CI startet und prueft die echte Godot-Runtime
+- echte Godot-Runtime in CI
 
-Status: grundsaetzlich funktionsfaehig.
+Status: funktionsfaehig.
 
 ### Phase 2 — Atmosphere + Lighting
-- wiederverwendbares `RoomLightingRig`
-- Tageszeit, Golden Hour, Nacht, Bewoelkung/Regen-Stimmung
-- kuenstliches Raumlicht
-- weiche animierte Uebergaenge
-- Developer Atmosphere Controller fuer Live-Tuning
-- gerichtete, wandernde Sonnenbahnen mit Wand-/Bodenlicht
-- reagierender Fensterbereich und erste Stadtlichter
-- Vorbereitung fuer Light2D-Emitter und LightOccluder2D an spaeteren Items
+- Tageszeit, Golden Hour, Nacht, Bewoelkung/Regen
+- Developer Atmosphere Controller
+- `CanvasModulate` fuer globale Belichtung
+- `DirectionalLight2D` fuer Sonnenrichtung
+- `PointLight2D` fuer Fenster- und lokale Objektlichter
+- fenstergebundene, kontrastreiche Sun-Beam-Projektion
+- City-Lights-Prototyp
+- `LightOccluder2D`-Vertrag fuer Schatten
+- Referenz-Workspace mit Monitor-Glow und Tischlampe
 
-Status: V2 ab v0.11. Aktuell wird dieser Referenzraum atmosphaerisch kalibriert. Danach folgt die echte Trennung von Interior und Exterior/City-View.
+Status: **V3 ab v0.12**. Fokus bleibt Atmosphaere, bis der Referenzraum tagsueber und nachts ueberzeugend wirkt. Danach wird Interior und Exterior/City-View getrennt.
 
 ### Phase 3 — Modulare Raumobjekte
 - `PlaceableObject` / `InteractableObject` als gemeinsame Basis
@@ -34,21 +33,21 @@ Status: V2 ab v0.11. Aktuell wird dieser Referenzraum atmosphaerisch kalibriert.
 - Objekte im Godot-Editor sichtbar verschiebbar
 - stabile namespaced IDs wie `foundersim:starter_desk`
 - getrennte Daten, Visuals und Logik
-- Lighting-Vertrag pro Objekt: Licht empfangen, Schatten werfen, selbst leuchten
+- Lichtvertrag: Licht empfangen, Schatten werfen, selbst leuchten
 
 ### Phase 4 — Kamera und physische Bedienung
 - Overview -> Desk Focus als echte Godot-Kamerafahrt
 - linker Monitor = operativer Bereich
 - rechter Monitor = Management/Finanzen
-- physische Gegenstaende fuehren in Systeme, statt frei schwebender Menue-Hotspots
+- physische Gegenstaende fuehren in Systeme
 
-### Phase 5 — Erster kompletter Gameplay-Vertical-Slice
+### Phase 5 — Erster Gameplay-Vertical-Slice
 - Gruendung / Anmeldung
-- erste Anschaffungen
+- Anschaffungen
 - Kundengewinnung
 - Angebot / Auftrag / Ausfuehrung
 - Rechnung / Zahlung / Bewertung
-- Zeit, Liquiditaet, Energie, Fokus und Gesundheit erzeugen echte Trade-offs
+- Zeit, Liquiditaet, Energie, Fokus, Gesundheit
 
 ### Phase 6 — Tiefe Simulation
 - Routine und Lernkurve
@@ -61,58 +60,56 @@ Status: V2 ab v0.11. Aktuell wird dieser Referenzraum atmosphaerisch kalibriert.
 - Content Packs mit Namespace
 - registrierbare Items, Jobs, Events, Branchen, Raeume und Assets
 - Signale/Events statt harter Abhaengigkeiten
-- Datenformate dokumentieren und validieren
-- Mods duerfen Inhalte hinzufuegen, ohne Core-Dateien zu ersetzen
+- dokumentierte, validierte Datenformate
+- Mods koennen Inhalte hinzufuegen, ohne Core-Dateien zu ersetzen
 
 ### Phase 8 — Breite und Polish
 - weitere Branchen und Raeume
 - groessere Bueros und Lager
 - Fahrzeuge, Stadtorte, Wetter, Audio, Animationen
-- Savegames, Balancing, Accessibility und Release-Pipeline
+- Savegames, Balancing, Accessibility, Release-Pipeline
 
 ## Gemeinsamer Szenenvertrag
 
-Jede groessere spielbare Ansicht soll langfristig dieselben Schichten besitzen:
-
 ```text
 WorldView / Room
-├─ Environment
+├─ Environment / Interior
+├─ Exterior / Window View
 ├─ PlaceableObjects
+│  ├─ Visual
+│  ├─ optional LightOccluder2D
+│  └─ optional RoomLightEmitter2D
 ├─ Atmosphere / LightingRig
 ├─ InteractionLayer
 ├─ CameraRig
 └─ HUD / Context UI
 ```
 
-Eine Stadtkarte ist damit kein Sonderfall. Sie ist eine andere `WorldView`, deren Environment eine Karte ist und deren interaktive Objekte Gebaeude, Marker und Wege sind.
+Eine Stadtkarte ist derselbe Vertrag mit anderem Environment: Gebaeude, Marker und Wege ersetzen Moebel.
 
 ## Referenzraum-Strategie
 
-Der aktuelle Start-Raum ist unser Referenzraum. Neue Raumtechnik wird zuerst hier bis zu einem belastbaren Standard gebracht:
-
-1. Environment und Skalierung.
-2. Lighting/Atmosphere und Exterior-Reaktion.
-3. Placeable Objects mit Licht-/Schattenvertrag.
+1. Atmosphaere und Licht bis zum glaubwuerdigen Tag-/Nachtbild bringen.
+2. Interior und Exterior sauber trennen.
+3. Placeable Objects mit Licht-/Schattenvertrag aufbauen.
 4. Kamera und Interaktion.
 5. HUD/Context UI.
 6. Daten-/Mod-Schnittstellen.
 
-Erst wenn dieser Vertrag sauber funktioniert, wird er auf Lager, Shop, Kundenorte und Map-Ansichten vervielfaeltigt. Dadurch vermeiden wir Sonderloesungen pro Raum.
+Erst danach wird das Muster auf Lager, Shop, Kundenorte und Map-Ansichten vervielfaeltigt.
 
 ## Asset-Workflow
 
-Neue Assets werden nicht zuerst gemalt und danach irgendwie eingebaut. Der Workflow bleibt feature-first:
-
-1. Spielbedarf und Funktion definieren.
-2. Stabile `object_id`, `item_id` und `asset_id` festlegen.
-3. Daten, Interaktion und benoetigte Zustaende definieren.
+1. Spielbedarf/Funktion definieren.
+2. `object_id`, `item_id`, `asset_id` festlegen.
+3. Zustaende und Interaktion definieren.
 4. Asset Ticket erstellen.
-5. Visual neutral beleuchtet generieren/zeichnen.
-6. WORLD-Asset importieren und als Godot-Szene platzieren.
-7. Lichtvertrag ergaenzen: Empfaengt Licht? Wirft Schatten? Leuchtet selbst?
-8. Optional ICON / Shop Preview / weitere Zustaende erstellen.
-9. CI und Runtime pruefen.
-10. Im Godot-Editor feinpositionieren und committen.
+5. WORLD-Visual moeglichst neutral beleuchtet erstellen.
+6. Godot-Szene anlegen und visuell platzieren.
+7. Lichtvertrag angeben: `receives_light`, `casts_shadow`, `emissive`.
+8. Occluder/Emitter bei Bedarf direkt in die Objekt-Szene legen.
+9. ICON / Preview / weitere Zustaende ergaenzen.
+10. CI pruefen, in Godot feinpositionieren, committen.
 
 ### Asset Ticket — Standard
 
@@ -123,10 +120,10 @@ Typ: WORLD / ICON / PREVIEW
 Zweck: ...
 Perspektive: passend zur Zielszene
 Hintergrund: transparent
-Beleuchtung: neutral, moeglichst ohne fest eingebranntes Richtungslicht
+Beleuchtung: neutral
 Zustaende: ...
 Interaktion: ...
-Lighting: receives_light / casts_shadow / emissive
+Lighting: receives_light / casts_shadow / emissive / emitter_category
 Godot-Zielordner: ...
 Godot-Szene: ...
 Bild-Prompt: ...
@@ -138,10 +135,10 @@ Bild-Prompt: ...
 Aenderung durch ChatGPT
 → Commit auf GitHub/main
 → in Godot: Fetch + Pull
-→ Szene/Script aktualisiert sich
-→ lokal visuell pruefen / ggf. verschieben
+→ bei unveraenderten lokalen Dateien: Reload from Disk
+→ Szene visuell pruefen / verschieben
 → Stage + Commit + Push direkt in Godot
 → ChatGPT arbeitet auf dem neuen main weiter
 ```
 
-Vor Pull sollten lokale Aenderungen committed oder bewusst verworfen werden. Bei einer Godot-Meldung `changed on disk` gilt: Wenn die Datei lokal nicht bewusst bearbeitet wurde, `Reload from Disk`; sonst zuerst die lokale Aenderung sichern/committen. Groessere riskante Umbauten koennen spaeter auf Feature-Branches wandern; aktuell bleibt der schnelle gemeinsame `main`-Workflow fuer kleine, getestete Iterationen bestehen.
+Vor Pull lokale bewusste Aenderungen sichern. Automatisch erzeugte `.uid`-/Import-Metadaten erst beurteilen, bevor sie verworfen oder committed werden.
