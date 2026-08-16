@@ -1,1 +1,110 @@
-:root{--panel:#0c1119e8;--line:#39465a;--text:#f0f4fa;--muted:#96a2b5;--accent:#8db9ff}*{box-sizing:border-box}html,body{margin:0;height:100%;background:#070a0f;color:var(--text);font-family:ui-monospace,Consolas,monospace}body{overflow:hidden}#game{height:100vh;display:grid;grid-template-rows:72px 1fr}#hud{display:flex;gap:7px;padding:7px 10px;background:#090d14;border-bottom:1px solid #2c3747;z-index:30;overflow-x:auto}.hud-stat,.meter{min-width:120px;padding:6px 9px;background:#121925;border:1px solid #2c3747;border-radius:7px}.hud-stat span,.meter span{font-size:10px;color:var(--muted);text-transform:uppercase}.hud-stat strong{display:block;font-size:17px}.hud-stat small{color:var(--muted)}.meter{flex:1;max-width:180px}.meter i{display:block;height:6px;background:#293344;border-radius:99px;overflow:hidden;margin:5px 0}.meter b{display:block;height:100%;background:var(--accent)}.meter em{font-style:normal;font-size:11px}#scene{position:relative;overflow:hidden;background:#0d121b}#environment{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;image-rendering:auto}#rainFx{position:absolute;inset:0;pointer-events:none;opacity:.12;background:repeating-linear-gradient(105deg,transparent 0 23px,#9dc6ff33 24px 25px,transparent 26px 43px);animation:rain .9s linear infinite}@keyframes rain{from{transform:translateY(-25px)}to{transform:translateY(25px)}}#darknessFx{position:absolute;inset:0;background:#02050b;opacity:0;pointer-events:none;transition:.3s}#hotspotLayer{position:absolute;inset:0}.hotspot{position:absolute;transform:translate(-50%,-50%);border:0;background:transparent;padding:0;cursor:pointer;filter:drop-shadow(0 4px 5px #0008)}.hotspot>img,.atlas-clip{display:block;width:100%;height:auto;image-rendering:pixelated;transition:transform .15s,filter .15s}.atlas-clip{position:relative;overflow:hidden}.atlas-clip img{position:absolute;height:auto;max-width:none;image-rendering:pixelated}.hotspot:hover>img,.hotspot:hover .atlas-clip{transform:scale(1.08);filter:drop-shadow(0 0 7px #9ec4ff)}.hotspot .tip{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);white-space:nowrap;background:#0a0f18e8;border:1px solid #50627c;border-radius:6px;padding:5px 7px;opacity:0;pointer-events:none;font-size:11px}.hotspot:hover .tip{opacity:1}#backButton{position:absolute;left:16px;bottom:16px;z-index:20;padding:8px 11px;background:#0b111bee;color:white;border:1px solid #4c5e78;border-radius:7px;cursor:pointer}#toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:40;padding:8px 12px;background:#080c12ed;border:1px solid #3c495d;border-radius:7px;opacity:0;transition:.15s;pointer-events:none}#toast.show{opacity:1}@media(max-width:800px){#game{grid-template-rows:64px 1fr}.hud-stat,.meter{min-width:105px}}
+:root {
+  --panel: #121925;
+  --line: #39465a;
+  --text: #f0f4fa;
+  --muted: #96a2b5;
+  --accent: #8db9ff;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; background: #070a0f; color: var(--text); font-family: ui-monospace, Consolas, monospace; }
+body { overflow: hidden; }
+[hidden] { display: none !important; }
+
+#game {
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+/* The HUD scrolls on narrow screens instead of allowing labels and values to overlap. */
+#hud {
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(112px, 0.9fr)) repeat(3, minmax(132px, 1fr));
+  gap: 7px;
+  padding: 7px 10px;
+  overflow-x: auto;
+  background: #090d14;
+  border-bottom: 1px solid #2c3747;
+}
+
+.hud-stat, .meter {
+  min-width: 0;
+  padding: 7px 9px;
+  background: var(--panel);
+  border: 1px solid #2c3747;
+  border-radius: 7px;
+}
+
+.hud-stat span, .meter span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.hud-stat strong { display: block; margin-top: 2px; font-size: 16px; line-height: 1.2; white-space: nowrap; }
+.hud-stat small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; }
+.meter i { display: block; height: 6px; margin: 5px 0; overflow: hidden; background: #293344; border-radius: 999px; }
+.meter b { display: block; width: 0; height: 100%; background: var(--accent); transition: width 0.2s ease; }
+.meter em { font-size: 11px; font-style: normal; }
+
+/* Every visual scene layer uses this same coordinate system. */
+#scene { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #0d121b; isolation: isolate; }
+#environment { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: center; user-select: none; }
+#rainFx { position: absolute; inset: -30px 0; z-index: 4; pointer-events: none; opacity: 0.14; background: repeating-linear-gradient(105deg, transparent 0 23px, #9dc6ff33 24px 25px, transparent 26px 43px); animation: rain 0.9s linear infinite; }
+#darknessFx { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: #02050b; opacity: 0; transition: opacity 0.3s ease; }
+#hotspotLayer { position: absolute; inset: 0; z-index: 10; }
+
+@keyframes rain {
+  from { transform: translateY(-25px); }
+  to { transform: translateY(25px); }
+}
+
+.hotspot {
+  position: absolute;
+  min-width: 36px;
+  max-width: 96px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 5px #0008);
+}
+
+.hotspot > img, .atlas-clip { display: block; width: 100%; height: auto; image-rendering: pixelated; transition: transform 0.15s ease, filter 0.15s ease; }
+.atlas-clip { position: relative; overflow: hidden; }
+.atlas-clip img { position: absolute; max-width: none; height: auto; image-rendering: pixelated; }
+.hotspot:hover > img, .hotspot:focus-visible > img, .hotspot:hover .atlas-clip, .hotspot:focus-visible .atlas-clip { transform: scale(1.08); filter: drop-shadow(0 0 7px #9ec4ff); }
+.hotspot:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+
+.hotspot .tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  padding: 5px 7px;
+  white-space: nowrap;
+  color: var(--text);
+  background: #0a0f18ed;
+  border: 1px solid #50627c;
+  border-radius: 6px;
+  font-size: 11px;
+  opacity: 0;
+  pointer-events: none;
+}
+.hotspot:hover .tip, .hotspot:focus-visible .tip { opacity: 1; }
+
+#backButton { position: absolute; left: 16px; bottom: 16px; z-index: 20; padding: 8px 11px; color: white; background: #0b111bee; border: 1px solid #4c5e78; border-radius: 7px; cursor: pointer; }
+#toast { position: absolute; left: 50%; bottom: 18px; z-index: 40; max-width: min(620px, calc(100% - 32px)); padding: 8px 12px; color: var(--text); background: #080c12ed; border: 1px solid #3c495d; border-radius: 7px; opacity: 0; pointer-events: none; transform: translateX(-50%); transition: opacity 0.15s ease; }
+#toast.show { opacity: 1; }
+
+@media (max-width: 980px) {
+  #hud { grid-template-columns: repeat(7, minmax(118px, 1fr)); }
+  .hotspot { min-width: 32px; }
+}

@@ -1,24 +1,34 @@
 {
-  "version":"0.5.0",
-  "environments":{
-    "desk_room_starter_night":{"world":"assets/environments/desk_room_starter_night_world.webp"},
-    "storage_room_starter":{"world":"assets/environments/storage_room_starter_world.webp"},
-    "city_map_starter":{"world":"assets/environments/city_map_starter_world.webp"}
+  "version": "0.5.1",
+  "environments": {
+    "desk_room_starter_night": {
+      "world": "assets/environments/desk_room_starter_night_world.png"
+    },
+    "storage_room_starter": {
+      "world": "assets/environments/storage_room_starter_night_world.png"
+    },
+    "city_map_starter": {
+      "world": "assets/map/city_map_starter_world.png"
+    }
   },
-  "prototype_icons":{
-    "coffee_starter_white":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,0,256,256],"atlas_size":[1024,1024]},
-    "phone_basic_black":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[256,0,256,256],"atlas_size":[1024,1024]},
-    "keys_starter":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[512,0,256,256],"atlas_size":[1024,1024]},
-    "notebook_starter_dark":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[768,0,256,256],"atlas_size":[1024,1024]},
-    "cleaning_caddy_starter":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,256,256,256],"atlas_size":[1024,1024]},
-    "vacuum_starter_basic":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[256,256,256,256],"atlas_size":[1024,1024]},
-    "bucket_blue_basic":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[512,256,256,256],"atlas_size":[1024,1024]},
-    "mop_basic_01":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[768,256,256,256],"atlas_size":[1024,1024]},
-    "van_starter_white":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,512,256,256],"atlas_size":[1024,1024]},
-    "map_home":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[256,512,256,256],"atlas_size":[1024,1024]},
-    "map_storage":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[512,512,256,256],"atlas_size":[1024,1024]},
-    "map_client":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[768,512,256,256],"atlas_size":[1024,1024]},
-    "map_hardware_store":{"atlas":"assets/atlases/prototype_atlas_001.png","crop":[0,768,256,256],"atlas_size":[1024,1024]}
+  "prototype_icons": {
+    "coffee_starter_white": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [0, 0, 256, 256], "atlas_size": [1024, 1024]},
+    "phone_basic_black": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [256, 0, 256, 256], "atlas_size": [1024, 1024]},
+    "keys_starter": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [512, 0, 256, 256], "atlas_size": [1024, 1024]},
+    "notebook_starter_dark": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [768, 0, 256, 256], "atlas_size": [1024, 1024]},
+    "cleaning_caddy_starter": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [0, 256, 256, 256], "atlas_size": [1024, 1024]},
+    "vacuum_starter_basic": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [256, 256, 256, 256], "atlas_size": [1024, 1024]},
+    "bucket_blue_basic": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [512, 256, 256, 256], "atlas_size": [1024, 1024]},
+    "mop_basic_01": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [768, 256, 256, 256], "atlas_size": [1024, 1024]},
+    "van_starter_white": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [0, 512, 256, 256], "atlas_size": [1024, 1024]},
+    "map_home": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [256, 512, 256, 256], "atlas_size": [1024, 1024]},
+    "map_storage": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [512, 512, 256, 256], "atlas_size": [1024, 1024]},
+    "map_client": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [768, 512, 256, 256], "atlas_size": [1024, 1024]},
+    "map_hardware_store": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [0, 768, 256, 256], "atlas_size": [1024, 1024]}
   },
-  "runtime_notes":{"environment_format":"webp","icon_atlas":"prototype_atlas_001.png","source_batch":"batch_001"}
+  "runtime_notes": {
+    "environment_format": "png",
+    "icon_atlas": "prototype_atlas_001.png",
+    "source_batch": "legacy-cleanup-2026-08-16"
+  }
 }

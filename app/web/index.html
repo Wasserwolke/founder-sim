@@ -8,36 +8,52 @@
 </head>
 <body>
 <div id="game">
-  <header id="hud">
-    <div class="hud-block"><span class="label" data-i18n="hud.money">Geld</span><strong id="money">620 EUR</strong></div>
-    <div class="hud-block"><span class="label" data-i18n="hud.income">Einnahmen</span><strong id="income">0 EUR</strong></div>
-    <div class="hud-block"><span class="label" data-i18n="hud.expenses">Ausgaben</span><strong id="expenses">0 EUR</strong></div>
-    <div class="hud-block"><span class="label" data-i18n="hud.time">Zeit</span><strong id="clock">19:30</strong><small id="date">15.08.2026</small></div>
-    <div class="meter"><span data-i18n="hud.energy">Energie</span><i><b id="energyBar"></b></i><em id="energy">63</em></div>
-    <div class="meter"><span data-i18n="hud.focus">Fokus</span><i><b id="focusBar"></b></i><em id="focus">52</em></div>
-    <div class="meter"><span data-i18n="hud.health">Gesundheit</span><i><b id="healthBar"></b></i><em id="health">86</em></div>
+  <header id="hud" aria-label="Status">
+    <div class="hud-stat">
+      <span class="label" data-i18n="hud.money">Geld</span>
+      <strong id="money">620 EUR</strong>
+    </div>
+    <div class="hud-stat">
+      <span class="label" data-i18n="hud.income">Einnahmen</span>
+      <strong id="income">0 EUR</strong>
+    </div>
+    <div class="hud-stat">
+      <span class="label" data-i18n="hud.expenses">Ausgaben</span>
+      <strong id="expenses">0 EUR</strong>
+    </div>
+    <div class="hud-stat">
+      <span class="label" data-i18n="hud.time">Zeit</span>
+      <strong id="clock">19:30</strong>
+      <small id="date">15.08.2026</small>
+    </div>
+    <div class="meter">
+      <span data-i18n="hud.energy">Energie</span>
+      <i><b id="energyBar"></b></i>
+      <em id="energy">63</em>
+    </div>
+    <div class="meter">
+      <span data-i18n="hud.focus">Fokus</span>
+      <i><b id="focusBar"></b></i>
+      <em id="focus">52</em>
+    </div>
+    <div class="meter">
+      <span data-i18n="hud.health">Gesundheit</span>
+      <i><b id="healthBar"></b></i>
+      <em id="health">86</em>
+    </div>
   </header>
-  <main id="scene" class="scene desk-scene">
-    <div id="environment" class="environment"></div>
-    <div id="rain" class="rain-layer"></div>
-    <div id="darkness" class="darkness-layer"></div>
-    <section id="deskHotspots" class="hotspots">
-      <button class="hotspot coffee" data-action="coffee"><span data-i18n="actions.coffee">Kaffee</span><small data-i18n="actions.coffee_hint">kurze Pause</small></button>
-      <button class="hotspot phone" data-action="phone"><span data-i18n="actions.phone">Telefon</span><small data-i18n="actions.phone_hint">Nachrichten</small></button>
-      <button class="hotspot keys" data-action="map"><span data-i18n="actions.keys">Schluessel</span><small data-i18n="actions.keys_hint">fahren</small></button>
-      <button class="hotspot notebook" data-action="notebook"><span data-i18n="actions.notebook">Notizbuch</span><small data-i18n="actions.notebook_hint">Ziele</small></button>
-      <button class="hotspot supplies" data-action="storage"><span data-i18n="actions.supplies">Supplies</span><small data-i18n="actions.supplies_hint">Lager</small></button>
-    </section>
-    <section id="mapHotspots" class="hotspots hidden">
-      <button class="map-point home" data-action="desk" data-i18n="map.home">Zuhause</button>
-      <button class="map-point storage" data-action="storage" data-i18n="map.storage">Lager</button>
-      <button class="map-point client" data-action="client" data-i18n="map.client">Kunde</button>
-      <button class="map-point hardware" data-action="hardware" data-i18n="map.hardware_store">Baumarkt</button>
-    </section>
-    <button id="backButton" class="back hidden" data-action="desk" data-i18n="actions.back">Zurueck</button>
-    <div id="toast" class="toast hidden"></div>
+
+  <main id="scene" class="scene" data-scene="desk">
+    <img id="environment" class="environment" alt="" draggable="false">
+    <div id="rainFx" class="rain-fx" aria-hidden="true"></div>
+    <div id="darknessFx" class="darkness-fx" aria-hidden="true"></div>
+    <section id="hotspotLayer" class="hotspot-layer" aria-label="Interaktive Objekte"></section>
+
+    <button id="backButton" class="back" type="button" data-action="desk" data-i18n="actions.back" hidden>Zurueck</button>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 </div>
+
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

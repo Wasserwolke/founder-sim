@@ -60,6 +60,32 @@ jobs:
             node --check "$file"
           done < <(find app/web/js app/web/mods -type f -name '*.js' -print0)
 
+      - name: Validate web DOM contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          html="app/web/index.html"
+          for id in scene environment hotspotLayer backButton toast rainFx darknessFx; do
+            grep -q "id=\"$id\"" "$html" || {
+              echo "::error::Required DOM node #$id is missing from $html"
+              exit 1
+            }
+          done
+          grep -q '<img id="environment"' "$html" || {
+            echo "::error::#environment must be an img element"
+            exit 1
+          }
+          grep -q 'class="hud-stat"' "$html" || {
+            echo "::error::HUD markup does not match the current stylesheet contract"
+            exit 1
+          }
+          for legacy_id in deskHotspots mapHotspots; do
+            if grep -q "id=\"$legacy_id\"" "$html"; then
+              echo "::error::Legacy DOM node #$legacy_id must not be present"
+              exit 1
+            fi
+          done
+
       - name: Validate asset and catalog links
         run: python scripts/asset_status.py
 
@@ -74,6 +100,7 @@ jobs:
           curl --fail --silent --show-error http://127.0.0.1:8080/ >/dev/null
           curl --fail --silent --show-error http://127.0.0.1:8080/assets/manifest.json >/dev/null
           curl --fail --silent --show-error http://127.0.0.1:8080/locales/de.json >/dev/null
+          curl --fail --silent --show-error http://127.0.0.1:8080/data/scenes.json >/dev/null
 
   deploy:
     name: Deploy GitHub Pages
