@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.12
+- Atmosphere/Lighting auf einen Hybrid aus echten Godot-2D-Lichtern und art-directed Fensterprojektionen umgebaut
+- `CanvasModulate`, `DirectionalLight2D` und ein fensternahes `PointLight2D` als echte Lichtgrundlage eingefuehrt
+- Sonnenstrahlen neu gestaltet: wenige schmale, kontrastreiche Kerne, die erst unterhalb des Fensters in den Raum treten und mit der Tageszeit wandern
+- staerkeren Wand-/Boden-Hotspot an dieselbe Sonnenrichtung gekoppelt; Clear/Cloudy/Rain beeinflusst das direkte Sonnenlicht
+- ersten Atmosphaeren-Workspace mit vorhandenen Desk-, Dual-Monitor-, Keyboard- und Chair-WORLD-Assets in den Referenzraum gesetzt
+- provisorische Tischlampe mit echtem warmem `PointLight2D` sowie zwei kuehle Monitor-Glow-Emitter hinzugefuegt
+- `RoomLightEmitter2D` als generischen, automatisch registrierenden Lichtvertrag fuer spaetere Assets und Mods eingefuehrt
+- ersten `LightOccluder2D` am Arbeitsplatz angelegt und Objektvertrag fuer receives-light / casts-shadow / emissive dokumentiert
+- Developer Atmosphere Controller um Tischlampen- und Monitorlicht-Regler erweitert; Sun-Beams lassen sich fuer das Tuning bis 300% fahren
+- Roadmap auf Atmosphere-first aktualisiert; echte Trennung von Interior und Exterior/City-View bleibt der naechste grosse Atmosphaeren-Meilenstein
+- Godot-CI verschaerft: Scene-/Script-/Runtime-Fehler in den Godot-Logs lassen den Build jetzt scheitern, auch wenn Godot selbst Exitcode 0 liefert
+- Projektversion auf 0.12.0 erhoeht
+
 ## v0.11
 - LightingRig v2 um selektive Aussen-/Fensterabdunklung erweitert, damit Nacht und Wetter nicht nur als globaler Raumfilter wirken
 - mehrere gerichtete Sonnenbahnen plus Wand- und Bodenlicht hinzugefuegt; Position und Neigung wandern mit der Tageszeit
