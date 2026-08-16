@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.10
+- primitives `Darkness`-Overlay durch ein wiederverwendbares `RoomLightingRig` ersetzt
+- LightingRig als eigene Godot-Szene mit Ambient-, Golden-Hour-, Fensterlicht-, Raumlicht- und Vignette-Layern aufgebaut
+- Lichtwechsel werden weich animiert statt hart umgeschaltet
+- Tageslicht reagiert auf simulierte Uhrzeit; erste Clear/Cloudy/Rain-Stimmungen vorbereitet
+- `DynamicLights`-Root und `register_emitter()` als Hook fuer spaetere itemgebundene `Light2D`-Emitter eingefuehrt
+- Developer Atmosphere Controller mit Live-Slidern fuer Zeit, Wetter, Raumlicht, Lichtstaerke und animierten 24h-Zyklus hinzugefuegt
+- F10 blendet den Atmosphere Controller im Debug-Build ein/aus
+- `RoomLightingRig` als `@tool` ausgelegt, damit Lichtwerte auch direkt im Godot-Inspector vorab betrachtet werden koennen
+- Asset-/Lighting-Vertrag fuer neutrale WORLD-Assets, LightOccluder2D-Schatten und emissive Items dokumentiert
+- Godot-Roadmap und gemeinsamer Szenenvertrag fuer Raeume, Shops, Lager und Map-Ansichten dokumentiert
+- Projektversion auf 0.10.0 erhoeht
+
 ## v0.9
 - aktive Entwicklung von der Browser-Runtime auf Godot 4 umgestellt
 - `project.godot` im Repository-Root eingefuehrt, damit ein Clone direkt als Godot-Projekt geoeffnet werden kann

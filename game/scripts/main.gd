@@ -3,10 +3,10 @@ extends Control
 const ROOM_SHELL_PATH := "res://game/assets/environments/room_shell_neutral.png"
 
 @onready var background: TextureRect = %Background
-@onready var darkness: ColorRect = %Darkness
 @onready var toast: Label = %Toast
 @onready var room_shell = %RoomShell
 @onready var hotspots: Control = %Hotspots
+@onready var lighting_rig: RoomLightingRig = %LightingRig
 
 var toast_tween: Tween
 
@@ -15,7 +15,7 @@ func _ready() -> void:
     room_shell.action_requested.connect(_on_room_action_requested)
     GameState.time_changed.connect(_on_time_changed)
     _load_room_shell()
-    _update_lighting()
+    lighting_rig.follow_game_time(GameState.minutes, false)
 
 
 func _load_room_shell() -> void:
@@ -24,7 +24,7 @@ func _load_room_shell() -> void:
         if texture != null:
             background.texture = texture
             hotspots.mouse_filter = Control.MOUSE_FILTER_PASS
-            _show_toast("GitHub -> Godot Sync erfolgreich. Diese sichtbare Nachricht kam gerade aus meinem Commit.")
+            _show_toast("LightingRig v1 aktiv. Druecke F10 fuer den Developer Atmosphere Controller.")
             return
 
     hotspots.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -32,22 +32,8 @@ func _load_room_shell() -> void:
     _show_toast("Raum-Shell fehlt. Lege die PNG-Datei unter game/assets/environments/room_shell_neutral.png ab.")
 
 
-func _on_time_changed(_minutes: int) -> void:
-    _update_lighting()
-
-
-func _update_lighting() -> void:
-    var hour := float(GameState.minutes) / 60.0
-    var darkness_amount := 0.0
-
-    if hour >= 20.0:
-        darkness_amount = remap(hour, 20.0, 24.0, 0.10, 0.38)
-    elif hour < 6.0:
-        darkness_amount = remap(hour, 0.0, 6.0, 0.38, 0.16)
-    elif hour < 8.0:
-        darkness_amount = remap(hour, 6.0, 8.0, 0.16, 0.0)
-
-    darkness.color = Color(0.025, 0.05, 0.09, clampf(darkness_amount, 0.0, 0.42))
+func _on_time_changed(minutes: int) -> void:
+    lighting_rig.follow_game_time(minutes, true)
 
 
 func _on_room_action_requested(action_id: StringName, display_name: String) -> void:

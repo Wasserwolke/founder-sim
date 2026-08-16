@@ -1,0 +1,170 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/scripts/dev/atmosphere_controller.gd" id="1_dev"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.018, 0.027, 0.043, 0.965)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.39, 0.58, 0.95)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 8
+
+[node name="DeveloperAtmosphereController" type="PanelContainer"]
+offset_left = 1110.0
+offset_top = 108.0
+offset_right = 1654.0
+offset_bottom = 586.0
+z_index = 50
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+script = ExtResource("1_dev")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "DEVELOPER ATMOSPHERE"
+
+[node name="CloseButton" type="Button" parent="Margin/Content/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 32)
+layout_mode = 2
+text = "×"
+
+[node name="Hint" type="Label" parent="Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.74, 0.86, 1)
+text = "F10 toggles this panel · drag values live"
+
+[node name="TimeRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TimeLabel" type="Label" parent="Margin/Content/TimeRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Time of day"
+
+[node name="TimeSlider" type="HSlider" parent="Margin/Content/TimeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(270, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 24.0
+step = 0.05
+value = 19.5
+
+[node name="TimeValue" type="Label" parent="Margin/Content/TimeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(58, 0)
+layout_mode = 2
+horizontal_alignment = 2
+text = "19:30"
+
+[node name="WeatherRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WeatherLabel" type="Label" parent="Margin/Content/WeatherRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Weather"
+
+[node name="WeatherSelect" type="OptionButton" parent="Margin/Content/WeatherRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RoomLightRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RoomLightLabel" type="Label" parent="Margin/Content/RoomLightRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Room light"
+
+[node name="RoomLightToggle" type="CheckButton" parent="Margin/Content/RoomLightRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "On"
+
+[node name="RoomLightStrength" type="HSlider" parent="Margin/Content/RoomLightRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.5
+step = 0.01
+value = 0.72
+editable = false
+
+[node name="RoomLightStrengthValue" type="Label" parent="Margin/Content/RoomLightRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+horizontal_alignment = 2
+text = "72%"
+
+[node name="CycleRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AnimateDayToggle" type="CheckButton" parent="Margin/Content/CycleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "Animate 24h cycle"
+
+[node name="CycleSeconds" type="HSlider" parent="Margin/Content/CycleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 8.0
+max_value = 90.0
+step = 1.0
+value = 24.0
+
+[node name="CycleSecondsValue" type="Label" parent="Margin/Content/CycleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 0)
+layout_mode = 2
+horizontal_alignment = 2
+text = "24s / day"
+
+[node name="Separator" type="HSeparator" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="FollowGameButton" type="Button" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reset · follow simulated game time"
+
+[node name="Footer" type="Label" parent="Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.62, 0.73, 1)
+theme_override_font_sizes/font_size = 12
+text = "V1 layers: ambient · window · golden hour · room light · vignette\nFuture objects may cast shadows or register their own Light2D emitter."
+autowrap_mode = 2

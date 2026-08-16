@@ -1,0 +1,101 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://game/scripts/room/lighting_rig.gd" id="1_lighting"]
+
+[sub_resource type="Shader" id="Shader_window"]
+code = "shader_type canvas_item;\nrender_mode blend_add;\n\nuniform vec4 tint : source_color = vec4(0.74, 0.86, 1.0, 1.0);\nuniform float strength : hint_range(0.0, 2.0) = 0.0;\n\nvoid fragment() {\n    vec2 uv = UV;\n    vec2 center = vec2(0.495, 0.30);\n    vec2 half_size = vec2(0.205, 0.245);\n    vec2 q = abs(uv - center) / half_size;\n    float window_mask = 1.0 - smoothstep(0.82, 1.18, max(q.x, q.y));\n\n    float floor_zone = smoothstep(0.45, 0.67, uv.y) * (1.0 - smoothstep(0.91, 0.99, uv.y));\n    float spread = 1.0 - smoothstep(0.12, 0.72, abs(uv.x - center.x));\n    float beam = floor_zone * spread;\n\n    float intensity = (window_mask * 0.34 + beam * 0.20) * strength;\n    COLOR = vec4(tint.rgb * intensity, intensity);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_window"]
+resource_local_to_scene = true
+shader = SubResource("Shader_window")
+shader_parameter/tint = Color(0.74, 0.86, 1, 1)
+shader_parameter/strength = 0.0
+
+[sub_resource type="Shader" id="Shader_room"]
+code = "shader_type canvas_item;\nrender_mode blend_add;\n\nuniform vec4 tint : source_color = vec4(1.0, 0.66, 0.36, 1.0);\nuniform float strength : hint_range(0.0, 2.0) = 0.0;\n\nvoid fragment() {\n    vec2 uv = UV;\n    vec2 center = vec2(0.50, 0.34);\n    vec2 scale = vec2(0.92, 0.72);\n    float distance_to_light = length((uv - center) / scale);\n    float glow = 1.0 - smoothstep(0.08, 0.95, distance_to_light);\n    float lower_falloff = 1.0 - smoothstep(0.72, 1.02, uv.y);\n    float intensity = glow * lower_falloff * strength * 0.30;\n    COLOR = vec4(tint.rgb * intensity, intensity);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_room"]
+resource_local_to_scene = true
+shader = SubResource("Shader_room")
+shader_parameter/tint = Color(1, 0.66, 0.36, 1)
+shader_parameter/strength = 0.0
+
+[sub_resource type="Shader" id="Shader_vignette"]
+code = "shader_type canvas_item;\n\nuniform float strength : hint_range(0.0, 0.6) = 0.10;\n\nvoid fragment() {\n    vec2 p = UV * 2.0 - 1.0;\n    p.x *= 0.82;\n    float edge = smoothstep(0.48, 1.18, length(p));\n    COLOR = vec4(0.008, 0.014, 0.024, edge * strength);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+resource_local_to_scene = true
+shader = SubResource("Shader_vignette")
+shader_parameter/strength = 0.1
+
+[node name="LightingRig" type="Control"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_lighting")
+
+[node name="AmbientShade" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.035, 0.075, 0.14, 0.15)
+
+[node name="Warmth" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.94, 0.39, 0.16, 0.0)
+
+[node name="WindowWash" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_window")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="RoomLightWash" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_room")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Vignette" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_vignette")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="DynamicLights" type="Node2D" parent="."]
+unique_name_in_owner = true
