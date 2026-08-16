@@ -20,7 +20,7 @@ shadow_size = 8
 offset_left = 1110.0
 offset_top = 108.0
 offset_right = 1654.0
-offset_bottom = 586.0
+offset_bottom = 684.0
 z_index = 50
 mouse_filter = 0
 theme_override_styles/panel = SubResource("StyleBox_panel")
@@ -127,6 +127,56 @@ layout_mode = 2
 horizontal_alignment = 2
 text = "72%"
 
+[node name="SunRayRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SunRayLabel" type="Label" parent="Margin/Content/SunRayRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Sun rays"
+
+[node name="SunRayStrength" type="HSlider" parent="Margin/Content/SunRayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(270, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="SunRayStrengthValue" type="Label" parent="Margin/Content/SunRayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(58, 0)
+layout_mode = 2
+horizontal_alignment = 2
+text = "100%"
+
+[node name="CityLightRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CityLightLabel" type="Label" parent="Margin/Content/CityLightRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "City lights"
+
+[node name="CityLightStrength" type="HSlider" parent="Margin/Content/CityLightRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(270, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="CityLightStrengthValue" type="Label" parent="Margin/Content/CityLightRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(58, 0)
+layout_mode = 2
+horizontal_alignment = 2
+text = "100%"
+
 [node name="CycleRow" type="HBoxContainer" parent="Margin/Content"]
 layout_mode = 2
 theme_override_constants/separation = 8
@@ -166,5 +216,5 @@ text = "Reset · follow simulated game time"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.62, 0.73, 1)
 theme_override_font_sizes/font_size = 12
-text = "V1 layers: ambient · window · golden hour · room light · vignette\nFuture objects may cast shadows or register their own Light2D emitter."
+text = "V2: ambient · exterior · moving sun rays · city lights · room light\nFuture objects may cast shadows or register their own Light2D emitter."
 autowrap_mode = 2

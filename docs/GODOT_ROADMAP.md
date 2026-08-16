@@ -14,7 +14,7 @@ Dadurch entsteht ein wiederverwendbares Grundgeruest: Wenn ein Raum sauber funkt
 - Git/GitHub direkt aus Godot
 - CI startet und prueft die echte Godot-Runtime
 
-Status: aktiv und grundsaetzlich funktionsfaehig.
+Status: grundsaetzlich funktionsfaehig.
 
 ### Phase 2 — Atmosphere + Lighting
 - wiederverwendbares `RoomLightingRig`
@@ -22,9 +22,11 @@ Status: aktiv und grundsaetzlich funktionsfaehig.
 - kuenstliches Raumlicht
 - weiche animierte Uebergaenge
 - Developer Atmosphere Controller fuer Live-Tuning
+- gerichtete, wandernde Sonnenbahnen mit Wand-/Bodenlicht
+- reagierender Fensterbereich und erste Stadtlichter
 - Vorbereitung fuer Light2D-Emitter und LightOccluder2D an spaeteren Items
 
-Status: V1 ab v0.10.
+Status: V2 ab v0.11. Aktuell wird dieser Referenzraum atmosphaerisch kalibriert. Danach folgt die echte Trennung von Interior und Exterior/City-View.
 
 ### Phase 3 — Modulare Raumobjekte
 - `PlaceableObject` / `InteractableObject` als gemeinsame Basis
@@ -32,6 +34,7 @@ Status: V1 ab v0.10.
 - Objekte im Godot-Editor sichtbar verschiebbar
 - stabile namespaced IDs wie `foundersim:starter_desk`
 - getrennte Daten, Visuals und Logik
+- Lighting-Vertrag pro Objekt: Licht empfangen, Schatten werfen, selbst leuchten
 
 ### Phase 4 — Kamera und physische Bedienung
 - Overview -> Desk Focus als echte Godot-Kamerafahrt
@@ -83,6 +86,19 @@ WorldView / Room
 
 Eine Stadtkarte ist damit kein Sonderfall. Sie ist eine andere `WorldView`, deren Environment eine Karte ist und deren interaktive Objekte Gebaeude, Marker und Wege sind.
 
+## Referenzraum-Strategie
+
+Der aktuelle Start-Raum ist unser Referenzraum. Neue Raumtechnik wird zuerst hier bis zu einem belastbaren Standard gebracht:
+
+1. Environment und Skalierung.
+2. Lighting/Atmosphere und Exterior-Reaktion.
+3. Placeable Objects mit Licht-/Schattenvertrag.
+4. Kamera und Interaktion.
+5. HUD/Context UI.
+6. Daten-/Mod-Schnittstellen.
+
+Erst wenn dieser Vertrag sauber funktioniert, wird er auf Lager, Shop, Kundenorte und Map-Ansichten vervielfaeltigt. Dadurch vermeiden wir Sonderloesungen pro Raum.
+
 ## Asset-Workflow
 
 Neue Assets werden nicht zuerst gemalt und danach irgendwie eingebaut. Der Workflow bleibt feature-first:
@@ -128,4 +144,4 @@ Aenderung durch ChatGPT
 → ChatGPT arbeitet auf dem neuen main weiter
 ```
 
-Vor Pull sollten lokale Aenderungen committed oder bewusst verworfen werden. Groessere riskante Umbauten koennen spaeter auf Feature-Branches wandern; aktuell bleibt der schnelle gemeinsame `main`-Workflow fuer kleine, getestete Iterationen bestehen.
+Vor Pull sollten lokale Aenderungen committed oder bewusst verworfen werden. Bei einer Godot-Meldung `changed on disk` gilt: Wenn die Datei lokal nicht bewusst bearbeitet wurde, `Reload from Disk`; sonst zuerst die lokale Aenderung sichern/committen. Groessere riskante Umbauten koennen spaeter auf Feature-Branches wandern; aktuell bleibt der schnelle gemeinsame `main`-Workflow fuer kleine, getestete Iterationen bestehen.

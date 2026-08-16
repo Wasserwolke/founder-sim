@@ -1,14 +1,42 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://game/scripts/room/lighting_rig.gd" id="1_lighting"]
 
+[sub_resource type="Shader" id="Shader_exterior"]
+code = "shader_type canvas_item;\n\nuniform vec4 tint : source_color = vec4(0.035, 0.075, 0.14, 1.0);\nuniform float darkness : hint_range(0.0, 1.0) = 0.0;\n\nfloat window_mask(vec2 uv) {\n    vec2 min_p = vec2(0.293, 0.052);\n    vec2 max_p = vec2(0.682, 0.495);\n    vec2 local = (uv - min_p) / (max_p - min_p);\n    float inside = step(0.0, local.x) * step(local.x, 1.0) * step(0.0, local.y) * step(local.y, 1.0);\n    float feather_x = smoothstep(0.0, 0.035, local.x) * (1.0 - smoothstep(0.965, 1.0, local.x));\n    float feather_y = smoothstep(0.0, 0.025, local.y) * (1.0 - smoothstep(0.975, 1.0, local.y));\n    return inside * feather_x * feather_y;\n}\n\nvoid fragment() {\n    float mask = window_mask(UV);\n    COLOR = vec4(tint.rgb, darkness * mask);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_exterior"]
+resource_local_to_scene = true
+shader = SubResource("Shader_exterior")
+shader_parameter/tint = Color(0.035, 0.075, 0.14, 1)
+shader_parameter/darkness = 0.0
+
 [sub_resource type="Shader" id="Shader_window"]
-code = "shader_type canvas_item;\nrender_mode blend_add;\n\nuniform vec4 tint : source_color = vec4(0.74, 0.86, 1.0, 1.0);\nuniform float strength : hint_range(0.0, 2.0) = 0.0;\n\nvoid fragment() {\n    vec2 uv = UV;\n    vec2 center = vec2(0.495, 0.30);\n    vec2 half_size = vec2(0.205, 0.245);\n    vec2 q = abs(uv - center) / half_size;\n    float window_mask = 1.0 - smoothstep(0.82, 1.18, max(q.x, q.y));\n\n    float floor_zone = smoothstep(0.45, 0.67, uv.y) * (1.0 - smoothstep(0.91, 0.99, uv.y));\n    float spread = 1.0 - smoothstep(0.12, 0.72, abs(uv.x - center.x));\n    float beam = floor_zone * spread;\n\n    float intensity = (window_mask * 0.34 + beam * 0.20) * strength;\n    COLOR = vec4(tint.rgb * intensity, intensity);\n}\n"
+code = "shader_type canvas_item;\nrender_mode blend_add;\n\nuniform vec4 tint : source_color = vec4(0.74, 0.86, 1.0, 1.0);\nuniform float strength : hint_range(0.0, 2.0) = 0.0;\n\nvoid fragment() {\n    vec2 uv = UV;\n    vec2 center = vec2(0.487, 0.275);\n    vec2 half_size = vec2(0.195, 0.218);\n    vec2 q = abs(uv - center) / half_size;\n    float window_mask = 1.0 - smoothstep(0.84, 1.08, max(q.x, q.y));\n\n    vec2 halo_scale = vec2(0.34, 0.35);\n    float halo_distance = length((uv - center) / halo_scale);\n    float halo = (1.0 - smoothstep(0.62, 1.08, halo_distance)) * (1.0 - window_mask);\n\n    float intensity = (window_mask * 0.22 + halo * 0.055) * strength;\n    COLOR = vec4(tint.rgb * intensity, intensity);\n}\n"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_window"]
 resource_local_to_scene = true
 shader = SubResource("Shader_window")
 shader_parameter/tint = Color(0.74, 0.86, 1, 1)
+shader_parameter/strength = 0.0
+
+[sub_resource type="Shader" id="Shader_sun"]
+code = "shader_type canvas_item;\nrender_mode blend_add;\n\nuniform vec4 tint : source_color = vec4(1.0, 0.72, 0.40, 1.0);\nuniform float strength : hint_range(0.0, 2.0) = 0.0;\nuniform float shift : hint_range(-0.5, 0.5) = 0.0;\nuniform float slope : hint_range(-1.0, 1.0) = 0.35;\n\nfloat soft_band(float x, float center, float width, float softness) {\n    return 1.0 - smoothstep(width, width + softness, abs(x - center));\n}\n\nvoid fragment() {\n    vec2 uv = UV;\n    float axis = 0.49 + shift + (uv.y - 0.34) * slope;\n\n    float ray_a = soft_band(uv.x, axis - 0.17, 0.035, 0.045) * 0.58;\n    float ray_b = soft_band(uv.x, axis - 0.035, 0.055, 0.055) * 0.82;\n    float ray_c = soft_band(uv.x, axis + 0.16, 0.042, 0.050) * 0.48;\n    float rays = ray_a + ray_b + ray_c;\n\n    float below_window = smoothstep(0.37, 0.49, uv.y);\n    float lower_fade = 1.0 - smoothstep(0.92, 0.995, uv.y);\n    float side_fade = smoothstep(0.08, 0.24, uv.x) * (1.0 - smoothstep(0.78, 0.96, uv.x));\n    float ray_gate = below_window * lower_fade * side_fade;\n\n    float wall_gate = smoothstep(0.36, 0.43, uv.y) * (1.0 - smoothstep(0.64, 0.72, uv.y));\n    float wall_patch = soft_band(uv.x, axis - 0.02, 0.18, 0.11) * wall_gate;\n\n    float floor_gate = smoothstep(0.62, 0.70, uv.y) * (1.0 - smoothstep(0.955, 1.0, uv.y));\n    float floor_axis = 0.50 + shift * 1.22 + (uv.y - 0.63) * slope * 0.58;\n    float floor_patch = soft_band(uv.x, floor_axis, 0.19, 0.12) * floor_gate;\n\n    float intensity = (rays * ray_gate * 0.23 + wall_patch * 0.14 + floor_patch * 0.34) * strength;\n    COLOR = vec4(tint.rgb * intensity, intensity);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sun"]
+resource_local_to_scene = true
+shader = SubResource("Shader_sun")
+shader_parameter/tint = Color(1, 0.72, 0.4, 1)
+shader_parameter/strength = 0.0
+shader_parameter/shift = 0.0
+shader_parameter/slope = 0.35
+
+[sub_resource type="Shader" id="Shader_city"]
+code = "shader_type canvas_item;\nrender_mode blend_add;\n\nuniform float strength : hint_range(0.0, 2.0) = 0.0;\n\nfloat hash21(vec2 p) {\n    p = fract(p * vec2(123.34, 456.21));\n    p += dot(p, p + 45.32);\n    return fract(p.x * p.y);\n}\n\nvoid fragment() {\n    vec2 uv = UV;\n    vec2 min_p = vec2(0.302, 0.105);\n    vec2 max_p = vec2(0.674, 0.486);\n    vec2 local = (uv - min_p) / (max_p - min_p);\n    float inside = step(0.0, local.x) * step(local.x, 1.0) * step(0.0, local.y) * step(local.y, 1.0);\n\n    vec2 grid = vec2(30.0, 18.0);\n    vec2 cell = floor(local * grid);\n    vec2 tile = fract(local * grid);\n    float skyline = 0.26 + hash21(vec2(cell.x, 7.0)) * 0.34;\n    float building = step(skyline, local.y);\n    float pane_x = smoothstep(0.22, 0.31, tile.x) * (1.0 - smoothstep(0.69, 0.78, tile.x));\n    float pane_y = smoothstep(0.20, 0.30, tile.y) * (1.0 - smoothstep(0.70, 0.80, tile.y));\n    float active = step(0.72, hash21(cell + vec2(19.0, 3.0)));\n    float warm_pick = hash21(cell + vec2(2.0, 41.0));\n    vec3 cool = vec3(0.55, 0.72, 1.0);\n    vec3 warm = vec3(1.0, 0.68, 0.28);\n    vec3 color = mix(cool, warm, smoothstep(0.28, 0.72, warm_pick));\n    float breathe = 0.90 + 0.10 * sin(TIME * 0.35 + hash21(cell) * 6.28318);\n    float intensity = inside * building * pane_x * pane_y * active * breathe * strength * 0.34;\n    COLOR = vec4(color * intensity, intensity);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_city"]
+resource_local_to_scene = true
+shader = SubResource("Shader_city")
 shader_parameter/strength = 0.0
 
 [sub_resource type="Shader" id="Shader_room"]
@@ -50,6 +78,18 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.035, 0.075, 0.14, 0.15)
 
+[node name="ExteriorResponse" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_exterior")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
 [node name="Warmth" type="ColorRect" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
@@ -64,6 +104,30 @@ color = Color(0.94, 0.39, 0.16, 0.0)
 [node name="WindowWash" type="ColorRect" parent="."]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_window")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="SunBeams" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_sun")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="CityLights" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_city")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -9,6 +9,10 @@ class_name DeveloperAtmosphereController
 @onready var room_light_toggle: CheckButton = %RoomLightToggle
 @onready var room_light_strength_slider: HSlider = %RoomLightStrength
 @onready var room_light_strength_value: Label = %RoomLightStrengthValue
+@onready var sun_ray_strength_slider: HSlider = %SunRayStrength
+@onready var sun_ray_strength_value: Label = %SunRayStrengthValue
+@onready var city_light_strength_slider: HSlider = %CityLightStrength
+@onready var city_light_strength_value: Label = %CityLightStrengthValue
 @onready var animate_day_toggle: CheckButton = %AnimateDayToggle
 @onready var cycle_seconds_slider: HSlider = %CycleSeconds
 @onready var cycle_seconds_value: Label = %CycleSecondsValue
@@ -41,6 +45,8 @@ func _ready() -> void:
     weather_select.item_selected.connect(_on_weather_selected)
     room_light_toggle.toggled.connect(_on_room_light_toggled)
     room_light_strength_slider.value_changed.connect(_on_room_light_strength_changed)
+    sun_ray_strength_slider.value_changed.connect(_on_sun_ray_strength_changed)
+    city_light_strength_slider.value_changed.connect(_on_city_light_strength_changed)
     animate_day_toggle.toggled.connect(_on_animate_day_toggled)
     cycle_seconds_slider.value_changed.connect(_on_cycle_seconds_changed)
     follow_game_button.pressed.connect(_on_follow_game_pressed)
@@ -101,6 +107,20 @@ func _on_room_light_strength_changed(value: float) -> void:
     _apply_debug_state(true)
 
 
+func _on_sun_ray_strength_changed(value: float) -> void:
+    sun_ray_strength_value.text = "%.0f%%" % (value * 100.0)
+    if _syncing_ui:
+        return
+    _apply_debug_state(true)
+
+
+func _on_city_light_strength_changed(value: float) -> void:
+    city_light_strength_value.text = "%.0f%%" % (value * 100.0)
+    if _syncing_ui:
+        return
+    _apply_debug_state(true)
+
+
 func _on_animate_day_toggled(enabled: bool) -> void:
     if enabled and lighting_rig != null:
         _apply_debug_state(false)
@@ -120,6 +140,10 @@ func _apply_debug_state(animated: bool) -> void:
     if lighting_rig == null:
         return
     var weather_id := weather_select.get_selected_id()
+    lighting_rig.set_debug_detail_multipliers(
+        float(sun_ray_strength_slider.value),
+        float(city_light_strength_slider.value)
+    )
     lighting_rig.set_debug_state(
         float(time_slider.value),
         weather_id,
@@ -139,10 +163,14 @@ func _sync_from_rig() -> void:
     room_light_toggle.button_pressed = lighting_rig.room_light_is_on()
     room_light_strength_slider.value = lighting_rig.room_light_strength()
     room_light_strength_slider.editable = room_light_toggle.button_pressed
+    sun_ray_strength_slider.value = lighting_rig.sun_ray_multiplier()
+    city_light_strength_slider.value = lighting_rig.city_light_multiplier()
     _syncing_ui = false
 
     _update_time_label(float(time_slider.value))
     room_light_strength_value.text = "%.0f%%" % (float(room_light_strength_slider.value) * 100.0)
+    sun_ray_strength_value.text = "%.0f%%" % (float(sun_ray_strength_slider.value) * 100.0)
+    city_light_strength_value.text = "%.0f%%" % (float(city_light_strength_slider.value) * 100.0)
     cycle_seconds_value.text = "%.0fs / day" % float(cycle_seconds_slider.value)
 
 

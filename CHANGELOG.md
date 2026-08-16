@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.11
+- LightingRig v2 um selektive Aussen-/Fensterabdunklung erweitert, damit Nacht und Wetter nicht nur als globaler Raumfilter wirken
+- mehrere gerichtete Sonnenbahnen plus Wand- und Bodenlicht hinzugefuegt; Position und Neigung wandern mit der Tageszeit
+- direkte Sonnenstrahlen reagieren auf Clear/Cloudy/Rain und werden bei Golden Hour deutlich sichtbarer
+- erste prozedurale Stadtlichter im Fensterbereich hinzugefuegt, die mit der Daemmerung einblenden
+- Developer Atmosphere Controller um Live-Regler fuer Sonnenstrahlen und Stadtlichter erweitert
+- Editor-Preview des LightingRig um dieselben Detail-Multiplikatoren erweitert
+- Lighting-Dokumentation auf V2 aktualisiert und Trennung von Interior/Exterior als naechsten Atmosphere-Meilenstein festgehalten
+- Godot-Roadmap um Referenzraum-Strategie und expliziten Lighting-Vertrag fuer spaetere Placeable Objects erweitert
+- Projektversion auf 0.11.0 erhoeht
+
 ## v0.10
 - primitives `Darkness`-Overlay durch ein wiederverwendbares `RoomLightingRig` ersetzt
 - LightingRig als eigene Godot-Szene mit Ambient-, Golden-Hour-, Fensterlicht-, Raumlicht- und Vignette-Layern aufgebaut
