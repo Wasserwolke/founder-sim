@@ -17,17 +17,21 @@ export class AssetRegistry {
       ?? null;
   }
 
-  /** Resolve a stable asset ID into a standalone file path or atlas crop descriptor. */
+  /**
+   * Resolve a stable asset ID. Standalone files always win; the prototype atlas
+   * is an automatic fallback until a final WORLD asset is added to the manifest.
+   */
   resolve(id, variant = "world") {
-    if (variant === "icon" && this.data.prototype_icons?.[id]) {
-      return this.data.prototype_icons[id];
-    }
+    if (!id) return null;
 
     const entry = this.data.assets?.[id] ?? this.data.environments?.[id];
-    if (!entry) return null;
-    if (typeof entry === "string") return entry;
-    if (entry.files) return entry.files[variant] ?? null;
-    return entry[variant] ?? null;
+    if (entry) {
+      if (typeof entry === "string") return entry;
+      if (entry.files?.[variant]) return entry.files[variant];
+      if (entry[variant]) return entry[variant];
+    }
+
+    return this.data.prototype_icons?.[id] ?? null;
   }
 
   /** Patch an existing mapping without changing its stable asset ID. */

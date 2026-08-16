@@ -16,8 +16,6 @@ function reportModuleLoadError(error) {
 }
 
 async function startRuntime() {
-  // Load the complete runtime module graph with the same build token as app.js.
-  // This prevents a freshly deployed HTML shell from mixing with cached older modules.
   const [
     i18nModule,
     stateModule,
@@ -67,6 +65,7 @@ async function startRuntime() {
 
   const dom = {
     scene: requiredElement("scene"),
+    cameraStage: requiredElement("cameraStage"),
     environment: requiredElement("environment"),
     objectLayer: requiredElement("objectLayer"),
     startupStatus: requiredElement("startupStatus"),
@@ -112,13 +111,29 @@ async function startRuntime() {
     dom.startupStatus.textContent = `${t("errors.startup_prefix", "Startfehler")}: ${message}`;
   }
 
-  /** Render the active scene and notify mods after the visual state is ready. */
-  function renderScene() {
+  /** Return the active scene definition and normalize an invalid camera to its default. */
+  function activeScene() {
     const scene = sceneData.scenes[state.scene];
     if (!scene) throw new Error(`Unknown scene: ${state.scene}`);
-    renderer.render(state.scene, scene);
+    const defaultCamera = scene.initial_camera || "overview";
+    if (!scene.cameras?.[state.camera]) state.camera = defaultCamera;
+    return scene;
+  }
+
+  /** Render the active environment and camera state. */
+  function renderScene() {
+    const scene = activeScene();
+    renderer.render(state.scene, scene, state.camera);
     renderHUD();
-    modAPI?.events.emit("scene:changed", {scene: state.scene});
+    modAPI?.events.emit("scene:changed", {scene: state.scene, camera: state.camera});
+  }
+
+  /** Enter another environment and always start at that environment's declared camera. */
+  function enterScene(sceneId) {
+    const scene = sceneData.scenes[sceneId];
+    if (!scene) throw new Error(`Unknown scene: ${sceneId}`);
+    state.scene = sceneId;
+    state.camera = scene.initial_camera || "overview";
   }
 
   /** Apply a catalog item's configured resource and time effects. */
@@ -136,18 +151,20 @@ async function startRuntime() {
     }
   }
 
-  /** Show the catalog description for inspectable physical objects. */
-  function inspectObject(objectId) {
-    const item = catalog.get(objectId);
+  /** Show the catalog description associated with a reusable object type. */
+  function inspectObject(typeId) {
+    const definition = objects.get(typeId);
+    const catalogId = definition?.catalog_id;
+    const item = catalogId ? catalog.get(catalogId) : null;
     if (!item?.description_key) {
-      showToast(objectId || t("toast.inspect_placeholder", "Objekt"));
+      showToast(typeId || t("toast.inspect_placeholder", "Objekt"));
       return;
     }
-    showToast(t(item.description_key, objectId));
+    showToast(t(item.description_key, typeId));
   }
 
-  /** Route prototype interactions without adding object-specific UI handlers for every new asset. */
-  function action(name, objectId = null) {
+  /** Route prototype interactions without adding UI handlers for every individual instance. */
+  function action(name, typeId = null, instanceId = null) {
     switch (name) {
       case "coffee":
         useItem("coffee_starter_white");
@@ -159,17 +176,26 @@ async function startRuntime() {
       case "notebook":
         showToast(t("toast.notebook_placeholder"));
         break;
+      case "computer":
+        showToast(t("toast.computer_placeholder"));
+        break;
       case "inspect":
-        inspectObject(objectId);
+        inspectObject(typeId);
+        break;
+      case "camera:desk":
+        state.camera = "desk";
+        break;
+      case "camera:overview":
+        state.camera = "overview";
         break;
       case "map":
-        state.scene = "map";
+        enterScene("map");
         break;
       case "storage":
-        state.scene = "storage";
+        enterScene("storage");
         break;
-      case "desk":
-        state.scene = "desk";
+      case "office":
+        enterScene("office");
         break;
       case "vehicle":
         showToast(t("toast.vehicle"));
@@ -184,16 +210,23 @@ async function startRuntime() {
         return;
     }
 
-    modAPI?.events.emit("action", {name, objectId, scene: state.scene});
+    modAPI?.events.emit("action", {
+      name,
+      objectId: typeId,
+      instanceId,
+      scene: state.scene,
+      camera: state.camera
+    });
     renderScene();
   }
 
   document.addEventListener("click", event => {
     const target = event.target.closest("[data-action]");
-    if (target) action(target.dataset.action, target.dataset.objectId || null);
+    if (target) {
+      action(target.dataset.action, target.dataset.objectId || null, target.dataset.instanceId || null);
+    }
   });
 
-  // Runtime readiness is tied to a successfully decoded environment image, not merely loaded JSON.
   dom.environment.addEventListener("load", () => {
     document.documentElement.dataset.runtime = "ready";
     dom.startupStatus.hidden = true;
@@ -204,7 +237,7 @@ async function startRuntime() {
     reportRuntimeError(new Error(`Environment-Bild konnte nicht geladen werden: ${dom.environment.src}`));
   });
 
-  /** Load registries, mods and translations before constructing the first scene. */
+  /** Load registries, mods and translations before constructing the first environment. */
   async function bootstrap() {
     await loadLocale("de", BUILD_VERSION);
     applyTranslations();

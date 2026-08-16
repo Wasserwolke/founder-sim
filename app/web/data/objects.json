@@ -1,115 +1,167 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "default_namespace": "foundersim",
   "objects": {
-    "coffee_starter_white": {
+    "foundersim:coffee_starter_white": {
       "kind": "desk_object",
       "asset_id": "coffee_starter_white",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "coffee_starter_white",
       "label_key": "actions.coffee",
       "hint_key": "actions.coffee_hint",
       "default_action": "coffee",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/common/coffee_starter_white_world.png"
     },
-    "phone_basic_black": {
+    "foundersim:phone_basic_black": {
       "kind": "desk_object",
       "asset_id": "phone_basic_black",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "phone_basic_black",
       "label_key": "actions.phone",
       "hint_key": "actions.phone_hint",
       "default_action": "phone",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/common/phone_basic_black_world.png"
     },
-    "keys_starter": {
+    "foundersim:keys_starter": {
       "kind": "desk_object",
       "asset_id": "keys_starter",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "keys_starter",
       "label_key": "actions.keys",
       "hint_key": "actions.keys_hint",
       "default_action": "map",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/common/keys_starter_world.png"
     },
-    "notebook_starter_dark": {
+    "foundersim:notebook_starter_dark": {
       "kind": "desk_object",
       "asset_id": "notebook_starter_dark",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "notebook_starter_dark",
       "label_key": "actions.notebook",
       "hint_key": "actions.notebook_hint",
       "default_action": "notebook",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/common/notebook_starter_dark_world.png"
     },
-    "cleaning_caddy_starter": {
+    "foundersim:workstation_focus": {
+      "kind": "interaction_zone",
+      "placeholder": true,
+      "label_key": "actions.workstation",
+      "hint_key": "actions.workstation_hint",
+      "default_action": "camera:desk",
+      "highlight": "box_outline"
+    },
+    "foundersim:monitor_left_starter": {
+      "kind": "interaction_zone",
+      "placeholder": true,
+      "expected_asset_path": "assets/objects/office/monitor_left_starter_world.png",
+      "label_key": "actions.monitor_left",
+      "hint_key": "actions.monitor_hint",
+      "default_action": "computer",
+      "highlight": "box_outline"
+    },
+    "foundersim:monitor_right_starter": {
+      "kind": "interaction_zone",
+      "placeholder": true,
+      "expected_asset_path": "assets/objects/office/monitor_right_starter_world.png",
+      "label_key": "actions.monitor_right",
+      "hint_key": "actions.monitor_hint",
+      "default_action": "computer",
+      "highlight": "box_outline"
+    },
+    "foundersim:storage_access": {
+      "kind": "interaction_zone",
+      "placeholder": true,
+      "label_key": "actions.storage_access",
+      "hint_key": "actions.storage_access_hint",
+      "default_action": "storage",
+      "highlight": "box_outline"
+    },
+    "foundersim:cleaning_caddy_starter": {
       "kind": "equipment",
       "asset_id": "cleaning_caddy_starter",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "cleaning_caddy_starter",
       "label_key": "storage.caddy",
       "hint_key": "storage.inspect",
       "default_action": "inspect",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/equipment/cleaning_caddy_starter_world.png"
     },
-    "vacuum_starter_basic": {
+    "foundersim:vacuum_starter_basic": {
       "kind": "equipment",
       "asset_id": "vacuum_starter_basic",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "vacuum_starter_basic",
       "label_key": "storage.vacuum",
       "hint_key": "storage.inspect",
       "default_action": "inspect",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/equipment/vacuum_starter_basic_world.png"
     },
-    "bucket_blue_basic": {
+    "foundersim:bucket_blue_basic": {
       "kind": "equipment",
       "asset_id": "bucket_blue_basic",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "bucket_blue_basic",
       "label_key": "storage.bucket",
       "hint_key": "storage.inspect",
       "default_action": "inspect",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/equipment/bucket_blue_basic_world.png"
     },
-    "mop_basic_01": {
+    "foundersim:mop_basic_01": {
       "kind": "equipment",
       "asset_id": "mop_basic_01",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "mop_basic_01",
       "label_key": "storage.mop",
       "hint_key": "storage.inspect",
       "default_action": "inspect",
-      "highlight": "pixel_outline"
+      "highlight": "pixel_outline",
+      "expected_asset_path": "assets/objects/equipment/mop_basic_01_world.png"
     },
-    "map_home": {
+    "foundersim:map_home": {
       "kind": "map_marker",
       "asset_id": "map_home",
-      "variant": "icon",
+      "variant": "world",
       "label_key": "map.home",
-      "default_action": "desk",
+      "default_action": "office",
       "highlight": "pixel_outline"
     },
-    "van_starter_white": {
+    "foundersim:van_starter_white": {
       "kind": "vehicle",
       "asset_id": "van_starter_white",
-      "variant": "icon",
+      "variant": "world",
+      "catalog_id": "van_starter_white",
       "label_key": "map.vehicle",
       "hint_key": "map.vehicle_hint",
       "default_action": "vehicle",
       "highlight": "pixel_outline"
     },
-    "map_storage": {
+    "foundersim:map_storage": {
       "kind": "map_marker",
       "asset_id": "map_storage",
-      "variant": "icon",
+      "variant": "world",
       "label_key": "map.storage",
       "default_action": "storage",
       "highlight": "pixel_outline"
     },
-    "map_client": {
+    "foundersim:map_client": {
       "kind": "map_marker",
       "asset_id": "map_client",
-      "variant": "icon",
+      "variant": "world",
       "label_key": "map.client",
       "default_action": "client",
       "highlight": "pixel_outline"
     },
-    "map_hardware_store": {
+    "foundersim:map_hardware_store": {
       "kind": "map_marker",
       "asset_id": "map_hardware_store",
-      "variant": "icon",
+      "variant": "world",
       "label_key": "map.hardware_store",
       "default_action": "hardware",
       "highlight": "pixel_outline"

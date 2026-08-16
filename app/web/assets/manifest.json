@@ -1,15 +1,15 @@
 {
-  "version": "0.6.1",
+  "version": "0.7.0",
   "environments": {
-    "desk_room_starter_night": {
-      "world": "assets/environments/desk_room_starter/desk_room_starter_night_base.png"
-    },
-    "storage_room_starter": {
-      "world": "assets/environments/storage_room_starter/storage_room_starter_base.png"
-    },
-    "city_map_starter": {
-      "world": "assets/map/city_map_starter/city_map_starter_base.png"
-    }
+    "desk_room_starter_night": {"world": "assets/environments/desk_room_starter/desk_room_starter_night_base.png"},
+    "storage_room_starter": {"world": "assets/environments/storage_room_starter/storage_room_starter_base.png"},
+    "city_map_starter": {"world": "assets/map/city_map_starter/city_map_starter_base.png"}
+  },
+  "assets": {
+    "chair_starter_01": {"files": {"world": "assets/furniture/chair_starter_01_world.png", "spot": "assets/furniture/chair_starter_01_spot.png", "icon": "assets/furniture/chair_starter_01_icon.png"}},
+    "desk_starter_01": {"files": {"world": "assets/furniture/desk_starter_01_world.png", "spot": "assets/furniture/desk_starter_01_spot.png", "icon": "assets/furniture/desk_starter_01_icon.png"}},
+    "keyboard_starter_01": {"files": {"world": "assets/furniture/keyboard_starter_01_world.png", "spot": "assets/furniture/keyboard_starter_01_spot.png"}},
+    "monitor_starter_dual": {"files": {"world": "assets/furniture/monitor_starter_dual_world.png", "spot": "assets/furniture/monitor_starter_dual_spot.png", "icon": "assets/furniture/monitor_starter_dual_icon.png"}}
   },
   "prototype_icons": {
     "coffee_starter_white": {"atlas": "assets/atlases/prototype_atlas_001.png", "crop": [0, 0, 256, 256], "atlas_size": [1024, 1024]},
@@ -30,6 +30,7 @@
     "environment_format": "png",
     "icon_atlas": "prototype_atlas_001.png",
     "composition_mode": "environment-plus-object-overlays",
-    "object_visual_stage": "prototype-atlas-until-standalone-world-assets"
+    "camera_model": "single-environment-with-animated-camera-presets",
+    "object_visual_stage": "standalone-world-asset-preferred-prototype-atlas-fallback"
   }
 }

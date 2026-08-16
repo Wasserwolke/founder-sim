@@ -1,5 +1,6 @@
 export const state = {
-  scene: "desk",
+  scene: "office",
+  camera: "overview",
   minutes: 19 * 60 + 30
 };
 

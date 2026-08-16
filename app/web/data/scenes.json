@@ -1,41 +1,45 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "scenes": {
-    "desk": {
+    "office": {
       "environment_asset": "desk_room_starter_night",
-      "objects": [
-        {"object_id": "coffee_starter_white", "x": 65, "y": 57, "w": 4.8},
-        {"object_id": "phone_basic_black", "x": 74, "y": 66, "w": 4.4},
-        {"object_id": "keys_starter", "x": 69.5, "y": 71, "w": 4.8},
-        {"object_id": "notebook_starter_dark", "x": 23, "y": 67, "w": 5.5},
-        {
-          "object_id": "cleaning_caddy_starter",
-          "action": "storage",
-          "label_key": "actions.supplies",
-          "hint_key": "actions.supplies_hint",
-          "x": 89,
-          "y": 65,
-          "w": 5.5
-        }
+      "initial_camera": "overview",
+      "cameras": {
+        "overview": {"scale": 1.0, "x": 0, "y": 0, "duration_ms": 650},
+        "desk": {"scale": 1.62, "x": 0, "y": 7, "duration_ms": 650}
+      },
+      "instances": [
+        {"instance_id": "foundersim:office.workstation_focus", "type_id": "foundersim:workstation_focus", "x": 50, "y": 43, "w": 35, "h": 25, "cameras": ["overview"]},
+        {"instance_id": "foundersim:office.storage_access", "type_id": "foundersim:storage_access", "x": 8.2, "y": 34, "w": 13, "h": 47, "cameras": ["overview"]},
+        {"instance_id": "foundersim:office.coffee.01", "type_id": "foundersim:coffee_starter_white", "x": 65, "y": 55, "w": 4.5, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.phone.01", "type_id": "foundersim:phone_basic_black", "x": 73, "y": 55.5, "w": 4.3, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.keys.01", "type_id": "foundersim:keys_starter", "x": 77.5, "y": 58.5, "w": 4.4, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.notebook.01", "type_id": "foundersim:notebook_starter_dark", "x": 31, "y": 56.5, "w": 5.2, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.monitor_left.01", "type_id": "foundersim:monitor_left_starter", "x": 43.3, "y": 40.5, "w": 14.5, "h": 15, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.monitor_right.01", "type_id": "foundersim:monitor_right_starter", "x": 57.8, "y": 40.5, "w": 14.5, "h": 15, "cameras": ["desk"]}
       ]
     },
     "storage": {
       "environment_asset": "storage_room_starter",
-      "objects": [
-        {"object_id": "vacuum_starter_basic", "x": 33, "y": 72, "w": 5.5},
-        {"object_id": "cleaning_caddy_starter", "x": 59, "y": 45, "w": 5.5},
-        {"object_id": "bucket_blue_basic", "x": 70, "y": 68, "w": 4.8},
-        {"object_id": "mop_basic_01", "x": 80, "y": 58, "w": 4.2}
+      "initial_camera": "overview",
+      "cameras": {"overview": {"scale": 1.0, "x": 0, "y": 0, "duration_ms": 450}},
+      "instances": [
+        {"instance_id": "foundersim:storage.vacuum.01", "type_id": "foundersim:vacuum_starter_basic", "x": 33, "y": 72, "w": 5.5},
+        {"instance_id": "foundersim:storage.caddy.01", "type_id": "foundersim:cleaning_caddy_starter", "x": 59, "y": 45, "w": 5.5},
+        {"instance_id": "foundersim:storage.bucket.01", "type_id": "foundersim:bucket_blue_basic", "x": 70, "y": 68, "w": 4.8},
+        {"instance_id": "foundersim:storage.mop.01", "type_id": "foundersim:mop_basic_01", "x": 80, "y": 58, "w": 4.2}
       ]
     },
     "map": {
       "environment_asset": "city_map_starter",
-      "objects": [
-        {"object_id": "map_home", "x": 22, "y": 26, "w": 5},
-        {"object_id": "van_starter_white", "x": 28, "y": 32, "w": 5},
-        {"object_id": "map_storage", "x": 66, "y": 72, "w": 5},
-        {"object_id": "map_client", "x": 57, "y": 31, "w": 5},
-        {"object_id": "map_hardware_store", "x": 48, "y": 70, "w": 5}
+      "initial_camera": "overview",
+      "cameras": {"overview": {"scale": 1.0, "x": 0, "y": 0, "duration_ms": 450}},
+      "instances": [
+        {"instance_id": "foundersim:map.home.01", "type_id": "foundersim:map_home", "x": 22, "y": 26, "w": 5},
+        {"instance_id": "foundersim:map.van.01", "type_id": "foundersim:van_starter_white", "x": 28, "y": 32, "w": 5},
+        {"instance_id": "foundersim:map.storage.01", "type_id": "foundersim:map_storage", "x": 66, "y": 72, "w": 5},
+        {"instance_id": "foundersim:map.client.01", "type_id": "foundersim:map_client", "x": 57, "y": 31, "w": 5},
+        {"instance_id": "foundersim:map.hardware.01", "type_id": "foundersim:map_hardware_store", "x": 48, "y": 70, "w": 5}
       ]
     }
   }

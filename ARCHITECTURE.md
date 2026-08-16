@@ -1,4 +1,4 @@
-# Founder Sim - Architektur v0.6
+# Founder Sim - Architektur v0.7
 
 ## Grundmodell
 Founder Sim trennt vier Sphaeren:
@@ -7,7 +7,7 @@ Founder Sim trennt vier Sphaeren:
 3. Unternehmen
 4. Aussenwelt
 
-Der sichtbare Prototyp startet bewusst kleiner: `Desk -> Storage -> Map`. Die Architektur bleibt bereits auf die spaeteren Unternehmenssysteme vorbereitet.
+Der sichtbare Prototyp startet bewusst kleiner: Buero -> Lager -> Karte. Innerhalb eines Environments werden Perspektiven als Kamerazustaende abgebildet, nicht als separate Hintergrundbilder.
 
 ## Technische Schichten
 ```text
@@ -26,18 +26,17 @@ scripts           wenige allgemeine Entwicklungs-/Assetwerkzeuge
 ```
 
 ## Datengetriebene Runtime
-Der Browser-Prototyp verwendet:
 ```text
 objects.json
-  -> wiederverwendbare Objektdefinition: Asset, Label, Default-Aktion, Hover-Stil
+  -> wiederverwendbare Objekttypen
 scenes.json
-  -> environment_asset + Platzierung von Objektinstanzen
+  -> Environment + Kamera-Presets + konkrete Objektinstanzen
 ObjectRegistry
-  -> stabile object_id -> Objektdefinition / Mod-Schnittstelle
+  -> stabile namespaced type_id -> Objektdefinition
 SceneRenderer
-  -> Environment + objektgebundene Interaktion + Tooltip + Highlight
+  -> Environment + Kameratransform + Instanz-Overlay + Tooltip + Highlight
 AssetRegistry
-  -> stabile asset_id -> Runtime-Datei / Atlas-Crop
+  -> stabile asset_id -> WORLD/SPOT/ICON oder Atlas-Fallback
 ResourceRegistry
   -> Werte + Grenzen + Mod-Zugriff
 CatalogRegistry
@@ -46,65 +45,83 @@ locales/de.json
   -> alle sichtbaren Texte
 ```
 
-## Objekt-Overlay-Modell
-Interaktive Gegenstaende sind keine frei schwebenden Hotspots mehr. Eine Objektinstanz besteht aus:
+## Environment und Kamera
+`overview` und `desk` sind Kamerazustaende desselben Buero-Environments.
+
 ```text
-object_id
-+ x/y/w in Prozent des Originalbildes
-+ optionale Scene-Overrides (z. B. andere Aktion)
+office
+  environment_asset: desk_room_starter_night
+  cameras:
+    overview -> scale 1.0
+    desk     -> animierter Zoom auf denselben Raum
 ```
 
-Die Objektdefinition liegt nur einmal in `objects.json`. `SceneRenderer` richtet `objectLayer` exakt am sichtbaren Environment-Bild aus. Dadurch bleiben Positionen bei anderem Browserformat, Aufloesung oder Letterboxing stabil.
+`cameraStage` enthaelt Hintergrund und Objektinstanzen gemeinsam. Der komplette Stage wird transformiert. Deshalb bleiben visuelle Objekte, Klickflaechen und Tooltips am selben Bildpunkt und koennen beim Zoomen nicht gegeneinander verrutschen.
 
-Die ersten echten Objekt-Overlays sind:
-- Kaffeetasse
-- Telefon
-- Autoschluessel
-- Notizbuch
-- Reinigungskiste
-- Staubsauger
-- Putzeimer
-- Wischmopp
+## Objekttyp und Objektinstanz
+Ein Objekttyp beschreibt, was ein Gegenstand ist:
+```text
+type_id: foundersim:coffee_starter_white
+asset_id: coffee_starter_white
+catalog_id: coffee_starter_white
+default_action: coffee
+```
 
-Bis transparente WORLD-PNGs vorliegen, werden diese Objektinstanzen aus dem vorhandenen Prototype-Atlas gerendert. Der Austausch gegen spaetere WORLD-Assets benoetigt keine Aenderung an den Scene-Platzierungen.
+Eine Instanz beschreibt nur, wo dieses Objekt gerade existiert:
+```text
+instance_id: foundersim:office.coffee.01
+type_id: foundersim:coffee_starter_white
+x/y/w
+camera visibility
+```
+
+Derselbe Typ kann beliebig viele Instanzen besitzen. Eine Kaffeetasse muss deshalb nicht fuer Buero und Lager dupliziert werden.
+
+## ID-Regel fuer Mods
+Oeffentliche Objekttyp-IDs sind Strings mit Namespace:
+```text
+foundersim:coffee_starter_white
+my_cleaning_mod:industrial_vacuum_x2
+another_pack:coffee_mug_0042
+```
+
+Es gibt keine kuenstliche numerische Obergrenze fuer Objekt-IDs. Praktische Grenzen entstehen nur aus Browser-Speicher und Performance.
+
+Unqualifizierte alte Core-IDs werden von `ObjectRegistry` automatisch als `foundersim:<id>` aufgeloest, sofern die entsprechende Core-ID existiert. Dadurch ist keine spaetere Massenumbenennung alter Spielstaende oder Mods erforderlich.
+
+## Asset-Fallback
+Standalone WORLD-Dateien haben Vorrang. Solange sie fehlen, darf `AssetRegistry` automatisch den bestehenden Prototype-Atlas verwenden.
+
+```text
+finales WORLD vorhanden
+  -> standalone PNG
+sonst
+  -> Prototype-Atlas
+```
+
+Dadurch koennen Platzhalter und Atlas-Grafiken heute funktionieren, waehrend spaetere finale PNGs ohne Aenderung an Scene-Koordinaten oder Objektlogik eingesteckt werden.
 
 ## Hover und Interaktion
-Ein Objekt besitzt Visual und Interaktion gemeinsam. Hover/Keyboard-Fokus hebt die nichttransparenten Pixel des Objektvisuals hervor und zeigt einen Tooltip mit Objektname und Aktion. Der Klick wird ueber `data-object-id` + `data-action` an die zentrale Action-Routing-Logik weitergegeben.
+Interaktion gehoert zur Objektinstanz. Physische Assets erhalten Pixel-Outline; fehlende oder absichtlich noch nicht produzierte Visuals erhalten einen sichtbaren funktionalen Placeholder mit Tooltip. Es existieren keine frei schwebenden separaten Hotspots.
 
 ## Mod API
-`window.FounderSimModAPI` ist die oeffentliche Schnittstelle. API v1 stellt Ressourcen, Assets, Catalog, **Objects**, Uebersetzungen und Events bereit. Mods koennen damit neue Objektdefinitionen registrieren oder vorhandene patchen, ohne Scene-Rendering-Code zu veraendern.
-
-## Sprachen
-Spieler-sichtbare Texte werden mit Translation Keys referenziert. Deutsch liegt in `app/web/locales/de.json`. Weitere Sprachen erhalten dieselbe Key-Struktur. Mods koennen eigene Locale-Dictionaries zur Laufzeit ergaenzen.
+`window.FounderSimModAPI` stellt Ressourcen, Assets, Catalog, Objects, Uebersetzungen und Events bereit. Neue Mod-Objekte muessen namespaced IDs verwenden.
 
 ## Asset-Grundsatz
-Asset-Produktion und Gameplay-Daten sind getrennt.
+Asset-Produktion und Gameplay-Daten bleiben getrennt:
 ```text
 Feature
- -> item_id / asset_id / object_id
+ -> catalog_id / asset_id / type_id
  -> Catalog: Preis + Effekte
- -> Object: Visual + Interaktion
- -> Scene: konkrete Platzierung
+ -> Object: Verhalten + Visual-Referenz
+ -> Scene: Instanz + Position + Kamera-Sichtbarkeit
  -> Translation Keys
  -> Asset-Anforderung
  -> Bildgenerierung
- -> Import/Atlas oder WORLD/SPOT/ICON
  -> Runtime
 ```
 
-WORLD, SPOT und ICON desselben Gegenstands behalten denselben stabilen Asset-ID-Stamm. Der Name eines Items wird nicht ins Produktionsbild eingebrannt. Ein JSON-Sidecar definiert die Zeilenzuordnung eindeutig.
-
-Der erste reale Asset-Batch wurde nicht in 2048x2048, sondern 1254x1254 generiert. Sidecars speichern deshalb die tatsaechlichen Spalten-/Zeilengrenzen. Der Importer ist tolerant gegen solche Abweichungen und zentriert isolierte Assets automatisch.
+WORLD, SPOT und ICON desselben Gegenstands behalten denselben stabilen Asset-ID-Stamm.
 
 ## Erweiterungsprinzip
-Fachmodule besitzen ihre Fachlogik. Langfristig kommunizieren sie ueber Commands/Events und registrierte Schnittstellen statt beliebige fremde Daten direkt zu veraendern. Rechts- und Steuerwerte gehoeren in versionierte Rule Packs, nicht in UI-Code.
-
-## Spaeterer Shared Kernel
-Geplant sind:
-- Simulationsuhr und Kalender
-- Scheduler fuer Termine/Fristen
-- Event Bus
-- reproduzierbarer Zufall (RNG Seed)
-- Ressourcenprimitive
-- Ledger/Buchungsprimitive
-- Save/Load und Schema-Migrationen
+Fachmodule besitzen ihre Fachlogik. Langfristig kommunizieren sie ueber Commands/Events und registrierte Schnittstellen. Rechts- und Steuerwerte gehoeren in versionierte Rule Packs, nicht in UI-Code.

@@ -1,71 +1,42 @@
 <!doctype html>
-<html lang="de" data-build="0.6.1" data-runtime="loading">
+<html lang="de" data-build="0.7.0" data-runtime="loading">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Founder Sim - Humble Beginnings</title>
-  <link rel="stylesheet" href="css/app.css?v=0.6.1">
+  <link rel="stylesheet" href="css/app.css?v=0.7.0">
 </head>
 <body>
 <div id="game">
   <header id="hud" aria-label="Status">
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.money">Geld</span>
-      <strong id="money">620 EUR</strong>
-    </div>
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.income">Einnahmen</span>
-      <strong id="income">0 EUR</strong>
-    </div>
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.expenses">Ausgaben</span>
-      <strong id="expenses">0 EUR</strong>
-    </div>
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.time">Zeit</span>
-      <strong id="clock">19:30</strong>
-      <small id="date">15.08.2026</small>
-    </div>
-    <div class="meter">
-      <span data-i18n="hud.energy">Energie</span>
-      <i><b id="energyBar"></b></i>
-      <em id="energy">63</em>
-    </div>
-    <div class="meter">
-      <span data-i18n="hud.focus">Fokus</span>
-      <i><b id="focusBar"></b></i>
-      <em id="focus">52</em>
-    </div>
-    <div class="meter">
-      <span data-i18n="hud.health">Gesundheit</span>
-      <i><b id="healthBar"></b></i>
-      <em id="health">86</em>
-    </div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.money">Geld</span><strong id="money">620 EUR</strong></div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.income">Einnahmen</span><strong id="income">0 EUR</strong></div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.expenses">Ausgaben</span><strong id="expenses">0 EUR</strong></div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.time">Zeit</span><strong id="clock">19:30</strong><small id="date">15.08.2026</small></div>
+    <div class="meter"><span data-i18n="hud.energy">Energie</span><i><b id="energyBar"></b></i><em id="energy">63</em></div>
+    <div class="meter"><span data-i18n="hud.focus">Fokus</span><i><b id="focusBar"></b></i><em id="focus">52</em></div>
+    <div class="meter"><span data-i18n="hud.health">Gesundheit</span><i><b id="healthBar"></b></i><em id="health">86</em></div>
   </header>
 
-  <main id="scene" class="scene" data-scene="desk" data-environment-ready="loading">
-    <!-- Image and object layer deliberately share one source-image coordinate system. -->
-    <img id="environment" class="environment" alt="" draggable="false">
+  <main id="scene" class="scene" data-scene="office" data-camera="overview" data-environment-ready="loading">
+    <!-- Background and object instances share one camera stage and therefore one transform. -->
+    <div id="cameraStage" class="camera-stage">
+      <img id="environment" class="environment" alt="" draggable="false">
+      <section id="objectLayer" class="object-layer" aria-label="Interaktive Objekte"></section>
+    </div>
+
     <div id="rainFx" class="rain-fx" aria-hidden="true" hidden></div>
     <div id="darknessFx" class="darkness-fx" aria-hidden="true"></div>
-    <section id="objectLayer" class="object-layer" aria-label="Interaktive Objekte"></section>
-
     <div id="startupStatus" class="startup-status" role="status" aria-live="polite" data-i18n="status.loading">Spielwelt wird geladen ...</div>
-    <button id="backButton" class="back" type="button" data-action="desk" data-i18n="actions.back" hidden>Zurueck</button>
+    <button id="backButton" class="back" type="button" data-action="office" data-i18n="actions.back" hidden>Zurueck</button>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 </div>
 
-<!--
-  The entry module is loaded with the single build token from <html>.
-  If a browser still holds an older app.js, changing data-build forces a new URL
-  and prevents HTML/JavaScript versions from drifting apart after a Pages deploy.
--->
 <script type="module">
   const root = document.documentElement;
   const status = document.getElementById("startupStatus");
   const build = encodeURIComponent(root.dataset.build || "dev");
-
   import(`./js/app.js?v=${build}`).catch(error => {
     console.error(error);
     root.dataset.runtime = "error";

@@ -20,7 +20,6 @@ body { overflow: hidden; }
   grid-template-rows: auto minmax(0, 1fr);
 }
 
-/* HUD and scene are independent coordinate systems. */
 #hud {
   z-index: 30;
   display: grid;
@@ -54,14 +53,52 @@ body { overflow: hidden; }
 .meter b { display: block; width: 0; height: 100%; background: var(--accent); transition: width 0.2s ease; }
 .meter em { font-size: 11px; font-style: normal; }
 
-/* The background uses contain; SceneRenderer sizes objectLayer to the exact visible image rectangle. */
-#scene { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #080c12; isolation: isolate; }
-#environment { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; user-select: none; }
+#scene {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #080c12;
+  isolation: isolate;
+}
+
+/* One shared camera transform prevents visuals and interaction zones from drifting apart. */
+.camera-stage {
+  --camera-scale: 1;
+  --camera-x: 0%;
+  --camera-y: 0%;
+  --camera-duration: 550ms;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-origin: center center;
+  transform: translate3d(var(--camera-x), var(--camera-y), 0) scale(var(--camera-scale));
+  transition: transform var(--camera-duration) cubic-bezier(.22,.8,.24,1);
+  will-change: transform;
+}
+
+#environment {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  user-select: none;
+}
+
+#objectLayer {
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 #rainFx { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 #darknessFx { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: #02050b; opacity: 0; transition: opacity 0.3s ease; }
-#objectLayer { position: absolute; z-index: 10; visibility: hidden; pointer-events: none; }
 
-/* A visible bootstrap status prevents silent black screens when the module graph or image load fails. */
 .startup-status {
   position: absolute;
   left: 50%;
@@ -80,7 +117,6 @@ body { overflow: hidden; }
 }
 .startup-status--error { border-color: #b76565; background: #1b0d12f2; }
 
-/* Scene objects carry both their visual and their interaction. There are no free-floating hotspot boxes anymore. */
 .scene-object {
   position: absolute;
   display: block;
@@ -101,14 +137,42 @@ body { overflow: hidden; }
 }
 
 .object-visual {
-  transition: transform 0.13s ease, filter 0.13s ease;
+  transition: transform 0.13s ease, filter 0.13s ease, background 0.13s ease, border-color 0.13s ease;
   filter: drop-shadow(0 4px 5px #0009);
 }
 
 .atlas-clip { position: relative; overflow: hidden; }
 .atlas-clip img { position: absolute; max-width: none; image-rendering: pixelated; }
 
-/* Multiple one-pixel drop-shadows create an outline around non-transparent object pixels. */
+/* Functional placeholders make coordinates inspectable before final transparent artwork exists. */
+.object-visual--placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 34px;
+  padding: 4px;
+  color: #e7f0ff;
+  background: #1422387a;
+  border: 1px dashed #8db9ffcc;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px #07101ddd;
+  filter: none;
+}
+
+.placeholder-label {
+  max-width: 100%;
+  padding: 3px 5px;
+  overflow: hidden;
+  color: #eef6ff;
+  background: #07101dcf;
+  border-radius: 4px;
+  font-size: clamp(8px, 0.75vw, 11px);
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .scene-object:hover .object-visual,
 .scene-object:focus-visible .object-visual {
   transform: scale(1.06);
@@ -120,7 +184,14 @@ body { overflow: hidden; }
     drop-shadow(0 0 7px var(--accent));
 }
 
+.scene-object:hover .object-visual--placeholder,
+.scene-object:focus-visible .object-visual--placeholder {
+  background: #1d3556b8;
+  border-color: #eaf3ff;
+}
+
 .scene-object:focus-visible { outline: none; }
+
 .object-tooltip {
   position: absolute;
   left: 50%;
@@ -147,8 +218,35 @@ body { overflow: hidden; }
   transform: translate(-50%, 0);
 }
 
-#backButton { position: absolute; left: 16px; bottom: 16px; z-index: 30; padding: 8px 11px; color: white; background: #0b111bee; border: 1px solid #4c5e78; border-radius: 7px; cursor: pointer; }
-#toast { position: absolute; left: 50%; bottom: 18px; z-index: 40; max-width: min(620px, calc(100% - 32px)); padding: 8px 12px; color: var(--text); background: #080c12ed; border: 1px solid #3c495d; border-radius: 7px; opacity: 0; pointer-events: none; transform: translateX(-50%); transition: opacity 0.15s ease; }
+#backButton {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 30;
+  padding: 8px 11px;
+  color: white;
+  background: #0b111bee;
+  border: 1px solid #4c5e78;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+#toast {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 40;
+  max-width: min(620px, calc(100% - 32px));
+  padding: 8px 12px;
+  color: var(--text);
+  background: #080c12ed;
+  border: 1px solid #3c495d;
+  border-radius: 7px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 0.15s ease;
+}
 #toast.show { opacity: 1; }
 
 @media (max-width: 980px) {

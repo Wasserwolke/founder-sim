@@ -65,22 +65,22 @@ jobs:
         run: |
           set -euo pipefail
           html="app/web/index.html"
-          for id in scene environment objectLayer startupStatus backButton toast rainFx darknessFx; do
+          for id in scene cameraStage environment objectLayer startupStatus backButton toast rainFx darknessFx; do
             grep -q "id=\"$id\"" "$html" || {
               echo "::error::Required DOM node #$id is missing from $html"
               exit 1
             }
           done
           grep -q '<img id="environment"' "$html" || {
-            echo "::error::#environment must be an img element so object coordinates can follow its rendered rectangle"
+            echo "::error::#environment must be an img element"
             exit 1
           }
           grep -q 'data-build=' "$html" || {
-            echo "::error::index.html must expose a build token for cache-safe module loading"
+            echo "::error::index.html must expose a build token"
             exit 1
           }
           grep -q 'class="hud-stat"' "$html" || {
-            echo "::error::HUD markup does not match the current stylesheet contract"
+            echo "::error::HUD markup does not match the stylesheet contract"
             exit 1
           }
           for legacy_id in deskHotspots mapHotspots hotspotLayer; do
@@ -113,47 +113,23 @@ jobs:
             /assets/map/city_map_starter/city_map_starter_base.png \
             /assets/atlases/prototype_atlas_001.png; do
             curl --fail --silent --show-error "http://127.0.0.1:8080$path" >/tmp/founder-sim-smoke.bin
-            test -s /tmp/founder-sim-smoke.bin || {
-              echo "::error::Smoke-test response is empty: $path"
-              exit 1
-            }
+            test -s /tmp/founder-sim-smoke.bin || exit 1
           done
 
           browser="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
-          if [ -z "$browser" ]; then
-            echo "::error::No Chromium/Chrome browser found on runner for runtime smoke test"
-            exit 1
-          fi
+          test -n "$browser" || { echo "::error::No Chromium/Chrome browser found"; exit 1; }
 
-          "$browser" \
-            --headless \
-            --no-sandbox \
-            --disable-gpu \
-            --window-size=1600,1000 \
-            --virtual-time-budget=5000 \
-            --dump-dom \
-            http://127.0.0.1:8080/ \
-            >/tmp/founder-sim-dom.html \
-            2>/tmp/founder-sim-browser.log || {
+          "$browser" --headless --no-sandbox --disable-gpu --window-size=1600,1000 --virtual-time-budget=5000 --dump-dom \
+            http://127.0.0.1:8080/ >/tmp/founder-sim-dom.html 2>/tmp/founder-sim-browser.log || {
               cat /tmp/founder-sim-browser.log
               exit 1
             }
 
-          grep -q 'data-runtime="ready"' /tmp/founder-sim-dom.html || {
-            echo "::error::Browser runtime did not reach ready state"
-            cat /tmp/founder-sim-dom.html
-            exit 1
-          }
-          grep -q 'data-environment-ready="true"' /tmp/founder-sim-dom.html || {
-            echo "::error::Desk environment image was not decoded by the browser"
-            cat /tmp/founder-sim-dom.html
-            exit 1
-          }
-          grep -q 'data-object-id="coffee_starter_white"' /tmp/founder-sim-dom.html || {
-            echo "::error::Object overlay runtime did not render the desk objects"
-            cat /tmp/founder-sim-dom.html
-            exit 1
-          }
+          grep -q 'data-runtime="ready"' /tmp/founder-sim-dom.html || { echo "::error::Browser runtime did not reach ready state"; exit 1; }
+          grep -q 'data-environment-ready="true"' /tmp/founder-sim-dom.html || { echo "::error::Office environment was not decoded"; exit 1; }
+          grep -q 'data-scene="office"' /tmp/founder-sim-dom.html || { echo "::error::Initial environment is not office"; exit 1; }
+          grep -q 'data-camera="overview"' /tmp/founder-sim-dom.html || { echo "::error::Initial camera is not overview"; exit 1; }
+          grep -q 'data-object-id="foundersim:workstation_focus"' /tmp/founder-sim-dom.html || { echo "::error::Camera-focus placeholder missing"; exit 1; }
 
   deploy:
     name: Deploy GitHub Pages
@@ -166,15 +142,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
       - name: Upload Founder Sim site
         uses: actions/upload-pages-artifact@v4
         with:
           path: app/web
-
       - name: Deploy Founder Sim
         id: deployment
         uses: actions/deploy-pages@v4
