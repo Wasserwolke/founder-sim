@@ -1,16 +1,20 @@
-import {loadLocale,t,applyTranslations,registerTranslations} from "./i18n.js";
+import {loadLocale, t, applyTranslations, registerTranslations} from "./i18n.js";
+import {state, passTime, timeString} from "./state.js";
 import {ResourceRegistry} from "./core/resource-registry.js";
 import {AssetRegistry} from "./core/asset-registry.js";
 import {CatalogRegistry} from "./core/catalog-registry.js";
+import {ObjectRegistry} from "./core/object-registry.js";
+import {SceneRenderer} from "./ui/scene-renderer.js";
 import {createModAPI} from "./modding/mod-api.js";
 import {loadMods} from "./modding/mod-loader.js";
 
-const state = {scene: "desk", minutes: 19 * 60 + 30};
 let resources;
 let assets;
 let catalog;
+let objects;
 let sceneData;
 let modAPI;
+let renderer;
 
 /** Return a required DOM node and fail early when markup and renderer drift apart. */
 function requiredElement(id) {
@@ -22,24 +26,12 @@ function requiredElement(id) {
 const dom = {
   scene: requiredElement("scene"),
   environment: requiredElement("environment"),
-  hotspotLayer: requiredElement("hotspotLayer"),
+  objectLayer: requiredElement("objectLayer"),
   backButton: requiredElement("backButton"),
   toast: requiredElement("toast"),
   rainFx: requiredElement("rainFx"),
   darknessFx: requiredElement("darknessFx")
 };
-
-/** Format the simulated clock as HH:MM. */
-function timeString() {
-  const hours = Math.floor(state.minutes / 60) % 24;
-  const minutes = state.minutes % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-}
-
-/** Advance simulated time while keeping it inside one 24-hour day. */
-function passTime(minutes) {
-  state.minutes = (state.minutes + minutes) % (24 * 60);
-}
 
 /** Render all resource values that are permanently visible in the top HUD. */
 function renderHUD() {
@@ -56,7 +48,7 @@ function renderHUD() {
 
   const lateNight = Math.max(0, (state.minutes - 21 * 60) / 240);
   const tiredness = (100 - resources.get("energy")) / 100;
-  dom.darknessFx.style.opacity = String(Math.min(0.32, lateNight * 0.12 + tiredness * 0.08));
+  renderer?.setDarkness(Math.min(0.32, lateNight * 0.12 + tiredness * 0.08));
 }
 
 /** Show a short non-blocking status message at the bottom of the scene. */
@@ -67,77 +59,11 @@ function showToast(text) {
   showToast.timer = setTimeout(() => dom.toast.classList.remove("show"), 1900);
 }
 
-/** Add either a normal image or a cropped atlas image to a hotspot button. */
-function addAssetVisual(host, reference) {
-  if (!reference) return;
-
-  if (typeof reference === "string") {
-    const image = document.createElement("img");
-    image.src = new URL(reference, document.baseURI).href;
-    image.alt = "";
-    host.appendChild(image);
-    return;
-  }
-
-  if (reference.atlas && reference.crop && reference.atlas_size) {
-    const [x, y, width, height] = reference.crop;
-    const [atlasWidth, atlasHeight] = reference.atlas_size;
-    const clip = document.createElement("span");
-    const image = document.createElement("img");
-
-    clip.className = "atlas-clip";
-    clip.style.aspectRatio = `${width}/${height}`;
-    image.src = new URL(reference.atlas, document.baseURI).href;
-    image.alt = "";
-    image.style.width = `${atlasWidth / width * 100}%`;
-    image.style.height = `${atlasHeight / height * 100}%`;
-    image.style.left = `${-x / width * 100}%`;
-    image.style.top = `${-y / height * 100}%`;
-
-    clip.appendChild(image);
-    host.appendChild(clip);
-  }
-}
-
-/** Build one interactive scene hotspot from the declarative scene configuration. */
-function createHotspot(hotspot) {
-  const button = document.createElement("button");
-  const label = t(hotspot.label_key, hotspot.id);
-
-  button.type = "button";
-  button.className = "hotspot";
-  button.dataset.action = hotspot.action;
-  button.style.left = `${hotspot.x}%`;
-  button.style.top = `${hotspot.y}%`;
-  button.style.width = `${hotspot.w}%`;
-  button.setAttribute("aria-label", label);
-
-  addAssetVisual(button, assets.resolve(hotspot.asset_id, hotspot.variant || "icon"));
-
-  const tip = document.createElement("span");
-  tip.className = "tip";
-  tip.textContent = [label, hotspot.hint_key ? t(hotspot.hint_key, "") : ""].filter(Boolean).join(" - ");
-  button.appendChild(tip);
-  return button;
-}
-
-/** Render one scene using one stable base image; composited visual layers come later. */
+/** Render the active scene and notify mods after the visual state is ready. */
 function renderScene() {
   const scene = sceneData.scenes[state.scene];
   if (!scene) throw new Error(`Unknown scene: ${state.scene}`);
-
-  const environment = assets.resolve(scene.environment_asset, "world");
-  if (!environment) throw new Error(`Missing environment asset: ${scene.environment_asset}`);
-
-  const environmentUrl = new URL(environment, document.baseURI).href;
-  dom.scene.dataset.scene = state.scene;
-  dom.environment.style.backgroundImage = `url("${environmentUrl}")`;
-  dom.hotspotLayer.replaceChildren(...(scene.hotspots || []).map(createHotspot));
-  dom.backButton.hidden = state.scene === "desk";
-
-  // The old procedural rain was only a placeholder and obscured the first visual milestone.
-  dom.rainFx.hidden = true;
-
+  renderer.render(state.scene, scene);
   renderHUD();
   modAPI?.events.emit("scene:changed", {scene: state.scene});
 }
@@ -157,50 +83,83 @@ function useItem(id) {
   }
 }
 
-/** Route prototype actions and rerender only the resulting scene state. */
-function action(name) {
+/** Show the catalog description for inspectable physical objects. */
+function inspectObject(objectId) {
+  const item = catalog.get(objectId);
+  if (!item?.description_key) {
+    showToast(objectId || t("toast.inspect_placeholder", "Objekt"));
+    return;
+  }
+  showToast(t(item.description_key, objectId));
+}
+
+/** Route prototype interactions without adding object-specific UI handlers for every new asset. */
+function action(name, objectId = null) {
   switch (name) {
-    case "coffee": useItem("coffee_starter_white"); showToast(t("toast.coffee")); break;
-    case "phone": showToast(t("toast.phone_placeholder")); break;
-    case "notebook": showToast(t("toast.notebook_placeholder")); break;
-    case "map": state.scene = "map"; break;
-    case "storage": state.scene = "storage"; break;
-    case "desk": state.scene = "desk"; break;
-    case "vehicle": showToast(t("toast.vehicle")); break;
-    case "client": showToast(t("toast.client_placeholder")); break;
-    case "hardware": showToast(t("toast.hardware_placeholder")); break;
-    case "inspect_vacuum": showToast(t("toast.vacuum")); break;
-    case "inspect_caddy": showToast(t("toast.caddy")); break;
-    default: return;
+    case "coffee":
+      useItem("coffee_starter_white");
+      showToast(t("toast.coffee"));
+      break;
+    case "phone":
+      showToast(t("toast.phone_placeholder"));
+      break;
+    case "notebook":
+      showToast(t("toast.notebook_placeholder"));
+      break;
+    case "inspect":
+      inspectObject(objectId);
+      break;
+    case "map":
+      state.scene = "map";
+      break;
+    case "storage":
+      state.scene = "storage";
+      break;
+    case "desk":
+      state.scene = "desk";
+      break;
+    case "vehicle":
+      showToast(t("toast.vehicle"));
+      break;
+    case "client":
+      showToast(t("toast.client_placeholder"));
+      break;
+    case "hardware":
+      showToast(t("toast.hardware_placeholder"));
+      break;
+    default:
+      return;
   }
 
-  modAPI?.events.emit("action", {name, scene: state.scene});
+  modAPI?.events.emit("action", {name, objectId, scene: state.scene});
   renderScene();
 }
 
 document.addEventListener("click", event => {
   const target = event.target.closest("[data-action]");
-  if (target) action(target.dataset.action);
+  if (target) action(target.dataset.action, target.dataset.objectId || null);
 });
 
-/** Load data registries, mods and translations before the first scene is rendered. */
+/** Load registries, mods and translations before constructing the first scene. */
 async function bootstrap() {
   await loadLocale("de");
   applyTranslations();
   document.title = t("app.title", "Founder Sim");
 
-  [resources, assets, catalog, sceneData] = await Promise.all([
+  [resources, assets, catalog, objects, sceneData] = await Promise.all([
     ResourceRegistry.fromUrl("data/resources.json"),
     AssetRegistry.fromUrl("assets/manifest.json"),
     CatalogRegistry.fromUrl("data/catalog/items.json"),
+    ObjectRegistry.fromUrl("data/objects.json"),
     fetch("data/scenes.json").then(response => response.json())
   ]);
 
-  modAPI = createModAPI({resources, assets, catalog, i18n: {t, registerTranslations, applyTranslations}});
+  modAPI = createModAPI({resources, assets, catalog, objects, i18n: {t, registerTranslations, applyTranslations}});
   window.FounderSimModAPI = modAPI;
   await loadMods(modAPI, registerTranslations);
   applyTranslations();
 
+  renderer = new SceneRenderer({dom, assets, objects, translate: t});
   resources.subscribe(renderHUD);
   renderScene();
 }

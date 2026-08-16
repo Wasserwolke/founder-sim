@@ -65,28 +65,28 @@ jobs:
         run: |
           set -euo pipefail
           html="app/web/index.html"
-          for id in scene environment hotspotLayer backButton toast rainFx darknessFx; do
+          for id in scene environment objectLayer backButton toast rainFx darknessFx; do
             grep -q "id=\"$id\"" "$html" || {
               echo "::error::Required DOM node #$id is missing from $html"
               exit 1
             }
           done
-          grep -q '<div id="environment"' "$html" || {
-            echo "::error::#environment must be the scene background container"
+          grep -q '<img id="environment"' "$html" || {
+            echo "::error::#environment must be an img element so object coordinates can follow its rendered rectangle"
             exit 1
           }
           grep -q 'class="hud-stat"' "$html" || {
             echo "::error::HUD markup does not match the current stylesheet contract"
             exit 1
           }
-          for legacy_id in deskHotspots mapHotspots; do
+          for legacy_id in deskHotspots mapHotspots hotspotLayer; do
             if grep -q "id=\"$legacy_id\"" "$html"; then
               echo "::error::Legacy DOM node #$legacy_id must not be present"
               exit 1
             fi
           done
 
-      - name: Validate asset and catalog links
+      - name: Validate runtime graph and assets
         run: python scripts/asset_status.py
 
       - name: Smoke test web app and visible base assets
@@ -98,24 +98,21 @@ jobs:
           trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
           sleep 2
 
-          curl --fail --silent --show-error http://127.0.0.1:8080/ >/dev/null
-          curl --fail --silent --show-error http://127.0.0.1:8080/assets/manifest.json >/dev/null
-          curl --fail --silent --show-error http://127.0.0.1:8080/locales/de.json >/dev/null
-          curl --fail --silent --show-error http://127.0.0.1:8080/data/scenes.json >/dev/null
-
-          for asset in \
-            assets/environments/desk_room_starter/desk_room_starter_night_base.png \
-            assets/environments/storage_room_starter/storage_room_starter_base.png \
-            assets/map/city_map_starter/city_map_starter_base.png \
-            assets/atlases/prototype_atlas_001.png; do
-            out="/tmp/$(basename "$asset")"
-            curl --fail --silent --show-error "http://127.0.0.1:8080/$asset" -o "$out"
-            bytes=$(wc -c < "$out")
-            if [ "$bytes" -lt 50000 ]; then
-              echo "::error::Runtime asset looks empty or truncated: $asset ($bytes bytes)"
+          for path in \
+            / \
+            /assets/manifest.json \
+            /locales/de.json \
+            /data/objects.json \
+            /data/scenes.json \
+            /assets/environments/desk_room_starter/desk_room_starter_night_base.png \
+            /assets/environments/storage_room_starter/storage_room_starter_base.png \
+            /assets/map/city_map_starter/city_map_starter_base.png \
+            /assets/atlases/prototype_atlas_001.png; do
+            curl --fail --silent --show-error "http://127.0.0.1:8080$path" >/tmp/founder-sim-smoke.bin
+            test -s /tmp/founder-sim-smoke.bin || {
+              echo "::error::Smoke-test response is empty: $path"
               exit 1
-            fi
-            echo "Runtime asset OK: $asset ($bytes bytes)"
+            }
           done
 
   deploy:

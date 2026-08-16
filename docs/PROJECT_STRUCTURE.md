@@ -3,29 +3,20 @@
 ```text
 founder-sim/
 ├── app/
-│   ├── core/                         Shared-Kernel-Vertrag
-│   ├── modules/
-│   │   ├── person/
-│   │   ├── founder/
-│   │   ├── company/
-│   │   ├── crm/
-│   │   ├── orders/
-│   │   ├── procurement/
-│   │   ├── logistics/
-│   │   ├── finance/
-│   │   ├── invoices/
-│   │   ├── bureaucracy/
-│   │   └── hr/
+│   ├── core/                         spaeterer Shared Kernel
+│   ├── modules/                      fachlich auffindbare Unternehmensmodule
 │   ├── rules/                        Rechts-/Branchen-Rulepacks
 │   └── web/
 │       ├── index.html
 │       ├── css/
 │       ├── js/
-│       │   ├── core/                 Resource/Asset/Catalog Registries
+│       │   ├── core/                 Resource/Asset/Catalog/Object Registries
+│       │   ├── ui/                   SceneRenderer und spaetere UI-Komponenten
 │       │   └── modding/
 │       ├── data/
 │       │   ├── resources.json
-│       │   ├── scenes.json
+│       │   ├── objects.json          wiederverwendbare Objektdefinitionen
+│       │   ├── scenes.json           Environment + Objektplatzierungen
 │       │   └── catalog/items.json
 │       ├── locales/                  alle sichtbaren Texte
 │       ├── mods/                     installierte Mods
@@ -42,15 +33,21 @@ founder-sim/
 │           ├── ui/
 │           └── fx/
 ├── asset_sources/
-│   ├── incoming/                     Herkunft/Batch-Metadaten
+│   ├── incoming/                     temporaere Rohimporte
 │   └── sheets/                       JSON-Sidecars pro Produktions-Sheet
 ├── data/migrations/                  spaetere Savegame/DB-Migrationen
-├── docs/assets/
-└── scripts/
+├── docs/
+└── scripts/                          wenige allgemeine Werkzeuge
 ```
 
 ## Abhaengigkeitsrichtung
-`UI -> Registries/API -> Daten/Module`, niemals `UI -> hart codierte Spielwerte`.
+```text
+Scene JSON -> ObjectRegistry -> AssetRegistry
+                       \-> Action Router
+UI/Renderer -> Registries/API -> Daten/Module
+```
+
+Die Scene kennt nur `object_id` und Platzierung. Die wiederverwendbare Bedeutung eines Objekts liegt in `objects.json`. Dadurch wird keine Interaktionslogik pro Szene dupliziert.
 
 ## Erweiterungsregel
-Neue Features werden zuerst als Daten/Code/ID definiert. Erst danach werden die benoetigten Assets generiert. Mods duerfen Ressourcen, Catalog-Eintraege, Assets und Uebersetzungen ueber die oeffentliche API erweitern.
+Neue Features werden zuerst als stabile IDs/Daten/Code definiert. Erst danach werden benoetigte Assets generiert. Mods duerfen Ressourcen, Catalog-Eintraege, Objects, Assets und Uebersetzungen ueber die oeffentliche API erweitern.

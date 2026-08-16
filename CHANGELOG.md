@@ -1,12 +1,23 @@
 # Changelog
 
+## v0.6
+- frei schwebende Hotspots durch datengetriebene Objektinstanzen ersetzt
+- `objects.json` + `ObjectRegistry` als wiederverwendbare Objekt-Schicht eingefuehrt
+- `SceneRenderer` richtet Objektkoordinaten am tatsaechlich sichtbaren Environment-Bild aus
+- erste acht physische Objektarten als echte Overlays vorbereitet
+- Pixel-Outline + Tooltip fuer Hover und Keyboard-Fokus
+- generische Inspect-Aktion statt eigener Handler pro Reinigungsgeraet
+- ObjectRegistry in Mod API v1 aufgenommen
+- Runtime-Validator prueft jetzt Catalog -> Asset, Object -> Asset und Scene -> Object
+- ungenutztes `scenes.js` sowie nicht mehr referenzierte Flat-PNG/WebP-Prototypen entfernt
+- vorhandenes `state.js` wiederverwendet statt State-/Zeitlogik in `app.js` zu duplizieren
+
 ## v0.5.2
-- Environment-Rendering auf einen stabilen Background-Container umgestellt
-- bestaetigte Base-Assets fuer Desk, Storage und Map als sichtbare Runtime-Szenen verwendet
-- Ressourceninitialisierung liest jetzt die vorhandenen `initial`-Werte korrekt
-- kaputte Bild-Fallbacktexte in Hotspots entfernt und Atlas-Skalierung vervollstaendigt
-- prozedurale Regen-Platzhalteranimation bis zur echten Layer-Komposition deaktiviert
-- GitHub Actions prueft nun die grossen Runtime-Basisbilder und den Icon-Atlas auf Auslieferung und Mindestgroesse
+- bestaetigte Base-Assets direkt als Runtime-Environment verwendet
+- Ressourceninitialisierung akzeptiert `initial` aus dem Datenschema
+- prozeduralen Regen-Platzhalter fuer den ersten sichtbaren Meilenstein deaktiviert
+- Asset-URLs/Atlas-Darstellung robuster gemacht
+- Actions-Smoke-Test prueft die sichtbaren Base-Assets
 
 ## v0.5.1
 - DOM-Vertrag zwischen HTML, CSS und Rendering-Code wieder vereinheitlicht

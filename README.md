@@ -2,50 +2,52 @@
 
 Realistischer, modularer Browsergame-Unternehmensgruendungssimulator.
 
-Aktueller Stand: **v0.5 - erster visueller Humble-Beginnings-Prototyp**.
+Aktueller Stand: **v0.6 - erster objektbasierter Humble-Beginnings-Prototyp**.
 
-## Start
+## Direkt spielen
+https://wasserwolke.github.io/founder-sim/
+
+## Lokal starten
 ```bash
 ./scripts/start.sh
 ```
 Dann `http://localhost:8080`.
 
 ## Jetzt testbar
-- Starter-Schreibtisch bei Nacht/Regen
-- klickbare Kaffee-, Telefon-, Schluessel-, Notizbuch- und Supplies-Hotspots
+- Starter-Schreibtisch, Lager und Stadtkarte
+- Objekt-Overlay-System statt frei schwebender Hotspots
+- acht erste physische Objektarten: Kaffee, Telefon, Schluessel, Notizbuch, Reinigungskiste, Staubsauger, Putzeimer, Wischmopp
+- Hover/Keyboard-Fokus hebt Objektpixel hervor und zeigt Name + Aktion
+- Objektpositionen bleiben an der sichtbaren Environment-Grafik verankert, auch bei anderem Browserformat
 - Kaffee veraendert Zeit/Energie/Fokus/Gesundheit
-- Wechsel Desk -> Storage Room
-- Wechsel Desk -> City Map
+- Wechsel Desk -> Storage -> Map
 - Kartenmarker fuer Zuhause, Fahrzeug, Lager, Kunde und Baumarkt
-- erster Starter-Transporter als Asset
 - HUD fuer Geld, Einnahmen, Ausgaben, Zeit, Energie, Fokus und Gesundheit
 - Deutsch ueber `app/web/locales/de.json`
-- Mod API v1
-- datengetriebene Scenes, Ressourcen, Items und Assets
+- Mod API v1 inkl. ObjectRegistry
+
+## Wichtige Datenwege
+```text
+app/web/data/objects.json       Was ist ein Objekt?
+app/web/data/scenes.json        Wo steht es in einer Szene?
+app/web/assets/manifest.json    Welches Bild gehoert zur asset_id?
+app/web/data/catalog/items.json Preis / Effekte / Itemdaten
+app/web/locales/de.json         Sichtbare Texte
+```
+
+Damit muss ein spaeteres WORLD-PNG nur im Asset-System ausgetauscht werden; die Scene-Position und Interaktion bleiben erhalten.
 
 ## Projektstruktur
-Siehe `docs/PROJECT_STRUCTURE.md`.
-
-Die wichtigsten Bereiche:
-```text
-app/core/        spaeterer Shared Kernel
-app/modules/     Person, Founder, Company, CRM, Orders, Procurement,
-                 Logistics, Finance, Invoices, Bureaucracy, HR
-app/rules/       versionierte Deutschland-/Branchenregeln
-app/web/         Browsergame
-asset_sources/   Bildproduktion und Sheet-Metadaten
-data/            spaetere persistente Daten/Migrationen
-docs/            Architektur/Asset-/Modding-Dokumentation
-scripts/         Entwicklungs- und Assetwerkzeuge
-```
+Siehe `docs/PROJECT_STRUCTURE.md` und `ARCHITECTURE.md`.
 
 ## Feature-first Regel
 ```text
 Feature
- -> stabile item_id / asset_id
+ -> stabile item_id / asset_id / object_id
  -> Preis + Effekte im Catalog
+ -> Objektdefinition
+ -> Scene-Platzierung
  -> Translation Keys
- -> Scene/Mod-Schnittstelle
  -> Asset-Anforderung
  -> Bildgenerierung
  -> Runtime-Asset
@@ -53,25 +55,13 @@ Feature
 Der Preis liegt nie im Bild.
 
 ## Asset-System
-Der Spielcode referenziert stabile Asset-IDs ueber `app/web/assets/manifest.json`.
-
-Runtime: `app/web/assets/`
-
-Sheet-Zuordnung: `asset_sources/sheets/<category>/*.json`
-
-Batch-Herkunft/Hashes: `asset_sources/incoming/batch_001/batch_001.json`
-
-Der erste reale Bildbatch war 1254x1254 statt 2048x2048. Die tatsaechlichen Zellgrenzen sind in den Sidecars hinterlegt; der Importer kann deshalb trotzdem korrekt ausschneiden und zentrieren.
+Runtime-Assets liegen unter `app/web/assets/`. Produktions-Sheets und ihre eindeutigen Zuordnungen liegen unter `asset_sources/sheets/`. `scripts/import_asset_sheet.py` kann daraus spaeter eigenstaendige WORLD/SPOT/ICON-Dateien erzeugen.
 
 ## Mehrsprachigkeit
 Alle sichtbaren Texte liegen unter `app/web/locales/`. Deutsch ist aktuell die Standardsprache.
 
 ## Mods
-Siehe `docs/MODDING.md`. `window.FounderSimModAPI` stellt Ressourcen, Catalog, Assets, Uebersetzungen und Events bereit.
+Siehe `docs/MODDING.md`. `window.FounderSimModAPI` stellt Ressourcen, Catalog, Objects, Assets, Uebersetzungen und Events bereit.
 
-## Dokumentation
-- `ARCHITECTURE.md`
-- `DESIGN.md`
-- `docs/PROJECT_STRUCTURE.md`
-- `docs/MODDING.md`
-- `docs/assets/BATCH_001.md`
+## Entwicklung
+GitHub Actions validiert Python, JSON, JavaScript, DOM-Vertrag, Asset-/Catalog-/Object-/Scene-Verknuepfungen und die wichtigsten Runtime-Dateien. Nur ein erfolgreicher Build wird auf GitHub Pages deployed.

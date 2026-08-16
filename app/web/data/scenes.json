@@ -1,23 +1,42 @@
 {
-  "schema_version":1,
-  "scenes":{
-    "desk":{"environment_asset":"desk_room_starter_night","hotspots":[
-      {"id":"coffee","action":"coffee","label_key":"actions.coffee","hint_key":"actions.coffee_hint","asset_id":"coffee_starter_white","variant":"icon","x":65,"y":57,"w":4.8},
-      {"id":"phone","action":"phone","label_key":"actions.phone","hint_key":"actions.phone_hint","asset_id":"phone_basic_black","variant":"icon","x":74,"y":66,"w":4.4},
-      {"id":"keys","action":"map","label_key":"actions.keys","hint_key":"actions.keys_hint","asset_id":"keys_starter","variant":"icon","x":69.5,"y":71,"w":4.8},
-      {"id":"notebook","action":"notebook","label_key":"actions.notebook","hint_key":"actions.notebook_hint","asset_id":"notebook_starter_dark","variant":"icon","x":23,"y":67,"w":5.5},
-      {"id":"supplies","action":"storage","label_key":"actions.supplies","hint_key":"actions.supplies_hint","asset_id":"cleaning_caddy_starter","variant":"icon","x":89,"y":65,"w":5.5}
-    ]},
-    "storage":{"environment_asset":"storage_room_starter","hotspots":[
-      {"id":"vacuum","action":"inspect_vacuum","label_key":"storage.vacuum","hint_key":"storage.inspect","asset_id":"vacuum_starter_basic","variant":"icon","x":33,"y":72,"w":5},
-      {"id":"caddy","action":"inspect_caddy","label_key":"storage.caddy","hint_key":"storage.inspect","asset_id":"cleaning_caddy_starter","variant":"icon","x":59,"y":45,"w":5}
-    ]},
-    "map":{"environment_asset":"city_map_starter","hotspots":[
-      {"id":"home","action":"desk","label_key":"map.home","asset_id":"map_home","variant":"icon","x":22,"y":26,"w":5},
-      {"id":"vehicle","action":"vehicle","label_key":"map.vehicle","hint_key":"map.vehicle_hint","asset_id":"van_starter_white","variant":"icon","x":28,"y":32,"w":5},
-      {"id":"storage","action":"storage","label_key":"map.storage","asset_id":"map_storage","variant":"icon","x":66,"y":72,"w":5},
-      {"id":"client","action":"client","label_key":"map.client","asset_id":"map_client","variant":"icon","x":57,"y":31,"w":5},
-      {"id":"hardware","action":"hardware","label_key":"map.hardware_store","asset_id":"map_hardware_store","variant":"icon","x":48,"y":70,"w":5}
-    ]}
+  "schema_version": 2,
+  "scenes": {
+    "desk": {
+      "environment_asset": "desk_room_starter_night",
+      "objects": [
+        {"object_id": "coffee_starter_white", "x": 65, "y": 57, "w": 4.8},
+        {"object_id": "phone_basic_black", "x": 74, "y": 66, "w": 4.4},
+        {"object_id": "keys_starter", "x": 69.5, "y": 71, "w": 4.8},
+        {"object_id": "notebook_starter_dark", "x": 23, "y": 67, "w": 5.5},
+        {
+          "object_id": "cleaning_caddy_starter",
+          "action": "storage",
+          "label_key": "actions.supplies",
+          "hint_key": "actions.supplies_hint",
+          "x": 89,
+          "y": 65,
+          "w": 5.5
+        }
+      ]
+    },
+    "storage": {
+      "environment_asset": "storage_room_starter",
+      "objects": [
+        {"object_id": "vacuum_starter_basic", "x": 33, "y": 72, "w": 5.5},
+        {"object_id": "cleaning_caddy_starter", "x": 59, "y": 45, "w": 5.5},
+        {"object_id": "bucket_blue_basic", "x": 70, "y": 68, "w": 4.8},
+        {"object_id": "mop_basic_01", "x": 80, "y": 58, "w": 4.2}
+      ]
+    },
+    "map": {
+      "environment_asset": "city_map_starter",
+      "objects": [
+        {"object_id": "map_home", "x": 22, "y": 26, "w": 5},
+        {"object_id": "van_starter_white", "x": 28, "y": 32, "w": 5},
+        {"object_id": "map_storage", "x": 66, "y": 72, "w": 5},
+        {"object_id": "map_client", "x": 57, "y": 31, "w": 5},
+        {"object_id": "map_hardware_store", "x": 48, "y": 70, "w": 5}
+      ]
+    }
   }
 }

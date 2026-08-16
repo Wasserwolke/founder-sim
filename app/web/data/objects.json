@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "objects": {
+    "coffee_starter_white": {
+      "kind": "desk_object",
+      "asset_id": "coffee_starter_white",
+      "variant": "icon",
+      "label_key": "actions.coffee",
+      "hint_key": "actions.coffee_hint",
+      "default_action": "coffee",
+      "highlight": "pixel_outline"
+    },
+    "phone_basic_black": {
+      "kind": "desk_object",
+      "asset_id": "phone_basic_black",
+      "variant": "icon",
+      "label_key": "actions.phone",
+      "hint_key": "actions.phone_hint",
+      "default_action": "phone",
+      "highlight": "pixel_outline"
+    },
+    "keys_starter": {
+      "kind": "desk_object",
+      "asset_id": "keys_starter",
+      "variant": "icon",
+      "label_key": "actions.keys",
+      "hint_key": "actions.keys_hint",
+      "default_action": "map",
+      "highlight": "pixel_outline"
+    },
+    "notebook_starter_dark": {
+      "kind": "desk_object",
+      "asset_id": "notebook_starter_dark",
+      "variant": "icon",
+      "label_key": "actions.notebook",
+      "hint_key": "actions.notebook_hint",
+      "default_action": "notebook",
+      "highlight": "pixel_outline"
+    },
+    "cleaning_caddy_starter": {
+      "kind": "equipment",
+      "asset_id": "cleaning_caddy_starter",
+      "variant": "icon",
+      "label_key": "storage.caddy",
+      "hint_key": "storage.inspect",
+      "default_action": "inspect",
+      "highlight": "pixel_outline"
+    },
+    "vacuum_starter_basic": {
+      "kind": "equipment",
+      "asset_id": "vacuum_starter_basic",
+      "variant": "icon",
+      "label_key": "storage.vacuum",
+      "hint_key": "storage.inspect",
+      "default_action": "inspect",
+      "highlight": "pixel_outline"
+    },
+    "bucket_blue_basic": {
+      "kind": "equipment",
+      "asset_id": "bucket_blue_basic",
+      "variant": "icon",
+      "label_key": "storage.bucket",
+      "hint_key": "storage.inspect",
+      "default_action": "inspect",
+      "highlight": "pixel_outline"
+    },
+    "mop_basic_01": {
+      "kind": "equipment",
+      "asset_id": "mop_basic_01",
+      "variant": "icon",
+      "label_key": "storage.mop",
+      "hint_key": "storage.inspect",
+      "default_action": "inspect",
+      "highlight": "pixel_outline"
+    },
+    "map_home": {
+      "kind": "map_marker",
+      "asset_id": "map_home",
+      "variant": "icon",
+      "label_key": "map.home",
+      "default_action": "desk",
+      "highlight": "pixel_outline"
+    },
+    "van_starter_white": {
+      "kind": "vehicle",
+      "asset_id": "van_starter_white",
+      "variant": "icon",
+      "label_key": "map.vehicle",
+      "hint_key": "map.vehicle_hint",
+      "default_action": "vehicle",
+      "highlight": "pixel_outline"
+    },
+    "map_storage": {
+      "kind": "map_marker",
+      "asset_id": "map_storage",
+      "variant": "icon",
+      "label_key": "map.storage",
+      "default_action": "storage",
+      "highlight": "pixel_outline"
+    },
+    "map_client": {
+      "kind": "map_marker",
+      "asset_id": "map_client",
+      "variant": "icon",
+      "label_key": "map.client",
+      "default_action": "client",
+      "highlight": "pixel_outline"
+    },
+    "map_hardware_store": {
+      "kind": "map_marker",
+      "asset_id": "map_hardware_store",
+      "variant": "icon",
+      "label_key": "map.hardware_store",
+      "default_action": "hardware",
+      "highlight": "pixel_outline"
+    }
+  }
+}

@@ -1,10 +1,12 @@
-export function createModAPI({resources, assets, catalog, i18n}) {
+export function createModAPI({resources, assets, catalog, objects, i18n}) {
   const events = new EventTarget();
+
   return Object.freeze({
     apiVersion: 1,
     resources,
     assets,
     catalog,
+    objects,
     i18n,
     events: {
       on(name, handler) {

@@ -1,5 +1,5 @@
 {
-  "version": "0.5.2",
+  "version": "0.6.0",
   "environments": {
     "desk_room_starter_night": {
       "world": "assets/environments/desk_room_starter/desk_room_starter_night_base.png"
@@ -29,7 +29,7 @@
   "runtime_notes": {
     "environment_format": "png",
     "icon_atlas": "prototype_atlas_001.png",
-    "source_batch": "legacy-cleanup-2026-08-16",
-    "composition_mode": "single-base-image-until-layer-splitting"
+    "composition_mode": "environment-plus-object-overlays",
+    "object_visual_stage": "prototype-atlas-until-standalone-world-assets"
   }
 }
