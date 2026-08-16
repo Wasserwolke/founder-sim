@@ -79,6 +79,7 @@ export class SceneRenderer {
     this.dom.cameraStage.style.setProperty("--camera-x", `${x}%`);
     this.dom.cameraStage.style.setProperty("--camera-y", `${y}%`);
     this.dom.cameraStage.style.setProperty("--camera-duration", `${Math.max(0, duration)}ms`);
+    this.dom.cameraStage.style.setProperty("--camera-ui-scale", String(1 / scale));
   }
 
   /** Match the object layer exactly to the visible source-image rectangle. */
@@ -125,12 +126,13 @@ export class SceneRenderer {
 
     const label = this.translate(object.label_key, object.type_id);
     const hint = object.hint_key ? this.translate(object.hint_key, "") : "";
+    const highlight = object.highlight || "pixel_outline";
     const button = document.createElement("button");
     const visual = document.createElement("span");
     const tooltip = document.createElement("span");
 
     button.type = "button";
-    button.className = `scene-object scene-object--${object.kind || "generic"}`;
+    button.className = `scene-object scene-object--${object.kind || "generic"} scene-object--highlight-${highlight}`;
     button.dataset.objectId = object.type_id;
     button.dataset.instanceId = object.instance_id || "";
     button.dataset.action = action;
@@ -142,15 +144,25 @@ export class SceneRenderer {
     button.setAttribute("aria-label", hint ? `${label}: ${hint}` : label);
 
     visual.className = "object-visual";
-    const reference = object.placeholder ? null : this.assets.resolve(object.asset_id, object.variant || "world");
-    if (reference) this.addAssetVisual(visual, reference);
-    else this.addPlaceholderVisual(visual, label, object);
+    if (object.visual_mode === "background_surface") {
+      this.addBackgroundSurfaceVisual(visual);
+    } else {
+      const reference = object.placeholder ? null : this.assets.resolve(object.asset_id, object.variant || "world");
+      if (reference) this.addAssetVisual(visual, reference);
+      else this.addPlaceholderVisual(visual, label, object);
+    }
 
     tooltip.className = "object-tooltip";
     tooltip.textContent = hint ? `${label} · ${hint}` : label;
 
     button.append(visual, tooltip);
     return button;
+  }
+
+  /** Keep an already visible background object interactive without drawing a duplicate sprite. */
+  addBackgroundSurfaceVisual(host) {
+    host.classList.add("object-visual--surface");
+    host.setAttribute("aria-hidden", "true");
   }
 
   /** Show a visible functional placeholder until a suitable standalone visual exists. */

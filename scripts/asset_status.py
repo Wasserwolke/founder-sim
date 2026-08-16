@@ -35,6 +35,69 @@ def validate_placement(scene_id: str, placement: dict, errors: list[str]):
             errors.append(f"{scene_id}/{instance_id}: h must be numeric, greater than 0 and at most 100")
 
 
+def validate_desk_focus(scenes_data: dict, object_definitions: dict, errors: list[str]):
+    office = (scenes_data.get("scenes") or {}).get("office") or {}
+    cameras = office.get("cameras") or {}
+    overview = cameras.get("overview") or {}
+    desk = cameras.get("desk") or {}
+
+    if desk and overview and desk.get("scale", 1) <= overview.get("scale", 1):
+        errors.append("Scene office/desk: desk camera must zoom closer than overview")
+
+    required_types = {
+        "foundersim:monitor_left_starter",
+        "foundersim:monitor_right_starter",
+        "foundersim:notebook_starter_dark",
+        "foundersim:keys_starter",
+        "foundersim:phone_basic_black",
+        "foundersim:coffee_starter_white",
+        "foundersim:keyboard_starter_01",
+        "foundersim:mouse_starter_black",
+    }
+    desk_instances = [
+        placement
+        for placement in office.get("instances") or []
+        if "desk" in (placement.get("cameras") or [])
+    ]
+    desk_types = {placement.get("type_id") for placement in desk_instances}
+
+    for type_id in sorted(required_types - desk_types):
+        errors.append(f"Scene office/desk: required desk object missing: {type_id}")
+
+    for placement in desk_instances:
+        definition = object_definitions.get(placement.get("type_id")) or {}
+        if definition.get("visual_mode") == "background_surface" and "h" not in placement:
+            errors.append(
+                f"Scene office/{placement.get('instance_id', '<missing>')}: "
+                "background_surface requires an explicit height"
+            )
+
+    for type_id in sorted(required_types):
+        definition = object_definitions.get(type_id) or {}
+        if not definition.get("hint_key"):
+            errors.append(f"Object {type_id}: desk objects require a hint_key")
+        if definition.get("highlight") not in {"pixel_outline", "box_outline"}:
+            errors.append(f"Object {type_id}: desk object highlight must be pixel_outline or box_outline")
+
+    keyboard = object_definitions.get("foundersim:keyboard_starter_01") or {}
+    if keyboard.get("asset_id") != "keyboard_starter_01" or keyboard.get("placeholder"):
+        errors.append("Object foundersim:keyboard_starter_01: existing keyboard WORLD asset must be used")
+
+    mouse = object_definitions.get("foundersim:mouse_starter_black") or {}
+    if mouse.get("placeholder") is not True:
+        errors.append("Object foundersim:mouse_starter_black: mouse remains a visible placeholder until a WORLD asset exists")
+
+    left = object_definitions.get("foundersim:monitor_left_starter") or {}
+    right = object_definitions.get("foundersim:monitor_right_starter") or {}
+    if left.get("default_action") == right.get("default_action"):
+        errors.append("Desk monitors must keep distinct operations and management actions")
+    for type_id, definition in (("left", left), ("right", right)):
+        if definition.get("visual_mode") != "background_surface":
+            errors.append(f"Desk monitor {type_id}: use the visible environment screen as background_surface")
+        if definition.get("asset_id") != "monitor_starter_dual":
+            errors.append(f"Desk monitor {type_id}: keep monitor_starter_dual as the registered source asset")
+
+
 def main():
     manifest = load_json(WEB / "assets" / "manifest.json")
     catalog = load_json(WEB / "data" / "catalog" / "items.json")
@@ -85,6 +148,9 @@ def main():
 
         asset_id = definition.get("asset_id")
         is_placeholder = bool(definition.get("placeholder"))
+        visual_mode = definition.get("visual_mode", "asset")
+        if visual_mode not in {"asset", "background_surface"}:
+            graph_errors.append(f"Object {type_id}: unsupported visual_mode {visual_mode!r}")
         if asset_id and asset_id not in known_assets:
             broken_objects.append((type_id, asset_id))
         if not asset_id and not is_placeholder:
@@ -138,6 +204,8 @@ def main():
                     graph_errors.append(f"Scene {scene_id}/{instance_id}: unknown camera {camera_id}")
 
             validate_placement(scene_id, placement, graph_errors)
+
+    validate_desk_focus(scenes_data, object_definitions, graph_errors)
 
     print("=== Founder Sim Runtime Status ===")
     print(f"Manifest assets:  {len(known_assets)}")

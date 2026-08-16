@@ -1,4 +1,4 @@
-# Asset Manifest v0.7 - Humble Beginnings
+# Asset Manifest v0.8 - Humble Beginnings
 
 Die maschinenlesbare Quelle ist `app/web/assets/manifest.json`.
 
@@ -38,8 +38,15 @@ Prototype-Atlas/Fallback:
 - `map_client`
 - `map_hardware_store`
 
+## Desk-Focus v0.8
+Die Tastatur verwendet direkt `keyboard_starter_01_world.png`.
+
+Das vorhandene `monitor_starter_dual` bleibt als registriertes Monitor-Quellasset erhalten. Im aktuellen Starter-Environment sind die beiden Monitore jedoch bereits sichtbar eingebaut. Linker und rechter Monitor werden deshalb als getrennte `background_surface`-Objekte exakt auf den sichtbaren Bildschirmflaechen positioniert. So entstehen zwei getrennte Interaktionen, ohne das kombinierte Dual-Monitor-PNG zweimal ueber das Environment zu legen.
+
+Fuer die Maus gibt es noch kein geeignetes isoliertes WORLD-Asset. Sie bleibt bis dahin ein sichtbarer funktionaler Placeholder mit stabiler `type_id` und `instance_id`.
+
 ## Gewuenschte spaetere WORLD-Dateien
-Diese Dateien sind fuer die neue Objektlogik nicht blockierend. Bis sie existieren, wird der Atlas oder ein sichtbarer Placeholder verwendet.
+Diese Dateien sind fuer die Objektlogik nicht blockierend. Bis sie existieren, wird der Atlas, die sichtbare Background-Surface oder ein funktionaler Placeholder verwendet.
 
 ```text
 assets/objects/common/coffee_starter_white_world.png
@@ -49,6 +56,7 @@ assets/objects/common/notebook_starter_dark_world.png
 
 assets/objects/office/monitor_left_starter_world.png
 assets/objects/office/monitor_right_starter_world.png
+assets/objects/office/mouse_starter_black_world.png
 
 assets/objects/equipment/cleaning_caddy_starter_world.png
 assets/objects/equipment/vacuum_starter_basic_world.png

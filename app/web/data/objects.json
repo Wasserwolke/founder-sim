@@ -46,6 +46,24 @@
       "highlight": "pixel_outline",
       "expected_asset_path": "assets/objects/common/notebook_starter_dark_world.png"
     },
+    "foundersim:keyboard_starter_01": {
+      "kind": "desk_object",
+      "asset_id": "keyboard_starter_01",
+      "variant": "world",
+      "label_key": "actions.keyboard",
+      "hint_key": "actions.keyboard_hint",
+      "default_action": "workspace:operations",
+      "highlight": "pixel_outline"
+    },
+    "foundersim:mouse_starter_black": {
+      "kind": "desk_object",
+      "placeholder": true,
+      "label_key": "actions.mouse",
+      "hint_key": "actions.mouse_hint",
+      "default_action": "workspace:operations",
+      "highlight": "box_outline",
+      "expected_asset_path": "assets/objects/office/mouse_starter_black_world.png"
+    },
     "foundersim:workstation_focus": {
       "kind": "interaction_zone",
       "placeholder": true,
@@ -55,21 +73,25 @@
       "highlight": "box_outline"
     },
     "foundersim:monitor_left_starter": {
-      "kind": "interaction_zone",
-      "placeholder": true,
+      "kind": "monitor_surface",
+      "asset_id": "monitor_starter_dual",
+      "variant": "world",
+      "visual_mode": "background_surface",
       "expected_asset_path": "assets/objects/office/monitor_left_starter_world.png",
       "label_key": "actions.monitor_left",
-      "hint_key": "actions.monitor_hint",
-      "default_action": "computer",
+      "hint_key": "actions.monitor_left_hint",
+      "default_action": "workspace:operations",
       "highlight": "box_outline"
     },
     "foundersim:monitor_right_starter": {
-      "kind": "interaction_zone",
-      "placeholder": true,
+      "kind": "monitor_surface",
+      "asset_id": "monitor_starter_dual",
+      "variant": "world",
+      "visual_mode": "background_surface",
       "expected_asset_path": "assets/objects/office/monitor_right_starter_world.png",
       "label_key": "actions.monitor_right",
-      "hint_key": "actions.monitor_hint",
-      "default_action": "computer",
+      "hint_key": "actions.monitor_right_hint",
+      "default_action": "workspace:management",
       "highlight": "box_outline"
     },
     "foundersim:storage_access": {

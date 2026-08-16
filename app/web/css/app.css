@@ -68,6 +68,7 @@ body { overflow: hidden; }
   --camera-x: 0%;
   --camera-y: 0%;
   --camera-duration: 550ms;
+  --camera-ui-scale: 1;
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -137,12 +138,22 @@ body { overflow: hidden; }
 }
 
 .object-visual {
-  transition: transform 0.13s ease, filter 0.13s ease, background 0.13s ease, border-color 0.13s ease;
+  transition: transform 0.13s ease, filter 0.13s ease, background 0.13s ease, border-color 0.13s ease, box-shadow 0.13s ease;
   filter: drop-shadow(0 4px 5px #0009);
 }
 
 .atlas-clip { position: relative; overflow: hidden; }
 .atlas-clip img { position: absolute; max-width: none; image-rendering: pixelated; }
+
+/* A background surface uses the already visible environment pixels and only adds hover feedback. */
+.object-visual--surface {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  filter: none;
+}
 
 /* Functional placeholders make coordinates inspectable before final transparent artwork exists. */
 .object-visual--placeholder {
@@ -173,21 +184,29 @@ body { overflow: hidden; }
   white-space: nowrap;
 }
 
-.scene-object:hover .object-visual,
-.scene-object:focus-visible .object-visual {
-  transform: scale(1.06);
+.scene-object--highlight-pixel_outline:hover .object-visual,
+.scene-object--highlight-pixel_outline:focus-visible .object-visual {
+  transform: scale(1.04);
   filter:
     drop-shadow(1px 0 0 var(--object-outline))
     drop-shadow(-1px 0 0 var(--object-outline))
     drop-shadow(0 1px 0 var(--object-outline))
     drop-shadow(0 -1px 0 var(--object-outline))
-    drop-shadow(0 0 7px var(--accent));
+    drop-shadow(0 0 5px #8db9ffb8);
 }
 
-.scene-object:hover .object-visual--placeholder,
-.scene-object:focus-visible .object-visual--placeholder {
+.scene-object--highlight-box_outline:hover .object-visual--surface,
+.scene-object--highlight-box_outline:focus-visible .object-visual--surface {
+  background: #8db9ff12;
+  border-color: #eef6ffdc;
+  box-shadow: inset 0 0 0 1px #8db9ff99, 0 0 6px #8db9ff70;
+}
+
+.scene-object--highlight-box_outline:hover .object-visual--placeholder,
+.scene-object--highlight-box_outline:focus-visible .object-visual--placeholder {
   background: #1d3556b8;
   border-color: #eaf3ff;
+  box-shadow: inset 0 0 0 1px #8db9ff99, 0 0 5px #8db9ff66;
 }
 
 .scene-object:focus-visible { outline: none; }
@@ -197,7 +216,8 @@ body { overflow: hidden; }
   left: 50%;
   bottom: calc(100% + 8px);
   z-index: 20;
-  transform: translate(-50%, 4px);
+  transform-origin: 50% 100%;
+  transform: translate(-50%, 4px) scale(var(--camera-ui-scale));
   padding: 6px 8px;
   white-space: nowrap;
   color: var(--text);
@@ -215,7 +235,7 @@ body { overflow: hidden; }
 .scene-object:hover .object-tooltip,
 .scene-object:focus-visible .object-tooltip {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, 0) scale(var(--camera-ui-scale));
 }
 
 #backButton {

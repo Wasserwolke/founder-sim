@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "environments": {
     "desk_room_starter_night": {"world": "assets/environments/desk_room_starter/desk_room_starter_night_base.png"},
     "storage_room_starter": {"world": "assets/environments/storage_room_starter/storage_room_starter_base.png"},

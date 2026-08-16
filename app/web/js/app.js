@@ -176,6 +176,12 @@ async function startRuntime() {
       case "notebook":
         showToast(t("toast.notebook_placeholder"));
         break;
+      case "workspace:operations":
+        showToast(t("toast.operations_placeholder"));
+        break;
+      case "workspace:management":
+        showToast(t("toast.management_placeholder"));
+        break;
       case "computer":
         showToast(t("toast.computer_placeholder"));
         break;

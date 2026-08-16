@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.8
+- Desk-Focus von 1.62x auf 1.90x vergroessert und fuer eine engere, weiterhin weiche Kamerafahrt neu zentriert
+- Desk-Focus auf acht klar benannte Interaktionsobjekte erweitert: zwei Monitore, Notizbuch, Schluessel, Telefon, Kaffeetasse, Tastatur und Maus
+- vorhandenes `keyboard_starter_01` WORLD-Asset als Tastatur-Overlay eingebunden
+- linke und rechte Monitorflaeche als getrennte Background-Surface-Objekte vorbereitet, ohne die im Environment sichtbaren Monitore zu ueberdecken
+- linker Monitor fuehrt in den spaeteren Operativbereich, rechter Monitor in den spaeteren Managementbereich
+- Maus als sichtbarer funktionaler Placeholder angelegt, bis ein passendes WORLD-Asset existiert
+- Hover-Feedback zwischen Pixel-Outline und Box-Outline getrennt und Glow bewusst subtil gehalten
+- Tooltips kompensieren den Kamera-Zoom, damit ihre Schriftgroesse im Desk-Focus stabil bleibt
+- Runtime-Validator um verbindliche Desk-Focus-Vertraege fuer acht Objekte, Monitorrollen, Keyboard-Asset und Maus-Placeholder erweitert
+- Build- und Manifest-Version auf 0.8.0 erhoeht
+
 ## v0.7.1
 - Desk-Objektkoordinaten anhand des real gerenderten Zoom-Screenshots neu kalibriert
 - beide Monitor-Trefferflaechen nach oben und horizontal auf die sichtbaren Monitorflaechen ausgerichtet

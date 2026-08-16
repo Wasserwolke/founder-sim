@@ -6,17 +6,19 @@
       "initial_camera": "overview",
       "cameras": {
         "overview": {"scale": 1.0, "x": 0, "y": 0, "duration_ms": 650},
-        "desk": {"scale": 1.62, "x": 0, "y": 7, "duration_ms": 650}
+        "desk": {"scale": 1.9, "x": 0, "y": 9.5, "duration_ms": 700}
       },
       "instances": [
         {"instance_id": "foundersim:office.workstation_focus", "type_id": "foundersim:workstation_focus", "x": 50, "y": 43, "w": 35, "h": 25, "cameras": ["overview"]},
         {"instance_id": "foundersim:office.storage_access", "type_id": "foundersim:storage_access", "x": 8.2, "y": 34, "w": 13, "h": 47, "cameras": ["overview"]},
-        {"instance_id": "foundersim:office.coffee.01", "type_id": "foundersim:coffee_starter_white", "x": 65, "y": 48.9, "w": 4.5, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.phone.01", "type_id": "foundersim:phone_basic_black", "x": 73, "y": 49.4, "w": 4.3, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.keys.01", "type_id": "foundersim:keys_starter", "x": 77.5, "y": 52.4, "w": 4.4, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.notebook.01", "type_id": "foundersim:notebook_starter_dark", "x": 31, "y": 50.4, "w": 5.2, "cameras": ["desk"]},
         {"instance_id": "foundersim:office.monitor_left.01", "type_id": "foundersim:monitor_left_starter", "x": 42.4, "y": 34.5, "w": 14.5, "h": 15.8, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.monitor_right.01", "type_id": "foundersim:monitor_right_starter", "x": 57.4, "y": 34.5, "w": 14.5, "h": 15.8, "cameras": ["desk"]}
+        {"instance_id": "foundersim:office.monitor_right.01", "type_id": "foundersim:monitor_right_starter", "x": 57.4, "y": 34.5, "w": 14.5, "h": 15.8, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.notebook.01", "type_id": "foundersim:notebook_starter_dark", "x": 34.5, "y": 53.5, "w": 5.4, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.keyboard.01", "type_id": "foundersim:keyboard_starter_01", "x": 48.4, "y": 51.0, "w": 13.2, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.mouse.01", "type_id": "foundersim:mouse_starter_black", "x": 59.2, "y": 51.2, "w": 3.5, "h": 5.0, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.coffee.01", "type_id": "foundersim:coffee_starter_white", "x": 64.0, "y": 50.5, "w": 4.6, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.phone.01", "type_id": "foundersim:phone_basic_black", "x": 71.0, "y": 52.3, "w": 4.3, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.keys.01", "type_id": "foundersim:keys_starter", "x": 66.8, "y": 56.2, "w": 4.5, "cameras": ["desk"]}
       ]
     },
     "storage": {

@@ -2,7 +2,7 @@
 
 Realistischer, modularer Browsergame-Unternehmensgruendungssimulator.
 
-Aktueller Stand: **v0.6 - erster objektbasierter Humble-Beginnings-Prototyp**.
+Aktueller Stand: **v0.8 - enger Desk-Focus mit acht interaktiven Schreibtischobjekten**.
 
 ## Direkt spielen
 https://wasserwolke.github.io/founder-sim/
@@ -15,9 +15,13 @@ Dann `http://localhost:8080`.
 
 ## Jetzt testbar
 - Starter-Schreibtisch, Lager und Stadtkarte
-- Objekt-Overlay-System statt frei schwebender Hotspots
-- acht erste physische Objektarten: Kaffee, Telefon, Schluessel, Notizbuch, Reinigungskiste, Staubsauger, Putzeimer, Wischmopp
-- Hover/Keyboard-Fokus hebt Objektpixel hervor und zeigt Name + Aktion
+- `overview` und enger `desk`-Kamerazustand auf demselben Buero-Environment
+- acht Desk-Focus-Objekte: linker/rechter Monitor, Notizbuch, Schluessel, Telefon, Kaffeetasse, Tastatur und Maus
+- linker Monitor als spaeterer Operativbereich, rechter Monitor als spaeterer Managementbereich
+- vorhandenes Keyboard-WORLD-Asset, Atlas-Fallbacks fuer Kaffee/Telefon/Schluessel/Notizbuch und sichtbarer Maus-Placeholder
+- objektgebundene Hover-Highlights und Tooltips statt frei schwebender Hotspots
+- Tooltip-Groesse bleibt beim Kamera-Zoom stabil lesbar
+- vier erste Lagerobjekte: Reinigungskiste, Staubsauger, Putzeimer und Wischmopp
 - Objektpositionen bleiben an der sichtbaren Environment-Grafik verankert, auch bei anderem Browserformat
 - Kaffee veraendert Zeit/Energie/Fokus/Gesundheit
 - Wechsel Desk -> Storage -> Map
