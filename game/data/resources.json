@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "resources": {
+    "money": {"initial": 620.0, "min": 0.0, "unit": "EUR"},
+    "income": {"initial": 0.0, "min": 0.0, "unit": "EUR"},
+    "expenses": {"initial": 0.0, "min": 0.0, "unit": "EUR"},
+    "energy": {"initial": 63.0, "min": 0.0, "max": 100.0},
+    "focus": {"initial": 52.0, "min": 0.0, "max": 100.0},
+    "health": {"initial": 86.0, "min": 0.0, "max": 100.0}
+  }
+}

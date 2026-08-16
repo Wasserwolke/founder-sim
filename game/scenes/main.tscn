@@ -1,0 +1,273 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://game/scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://game/scripts/room/room_shell.gd" id="3_room"]
+[ext_resource type="Script" path="res://game/scripts/room/hotspot.gd" id="4_hotspot"]
+[ext_resource type="PackedScene" path="res://game/scenes/ui/stat_card.tscn" id="5_stat"]
+[ext_resource type="PackedScene" path="res://game/scenes/ui/time_card.tscn" id="6_time"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_hotspot"]
+bg_color = Color(0.17, 0.46, 0.78, 0.12)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.64, 0.82, 1, 0.88)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_hotspot_pressed"]
+bg_color = Color(0.22, 0.54, 0.88, 0.22)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.84, 0.93, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_topbar"]
+bg_color = Color(0.018, 0.029, 0.045, 0.97)
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_toast"]
+bg_color = Color(0.018, 0.029, 0.045, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.28, 0.38, 0.5, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 9.0
+content_margin_right = 14.0
+content_margin_bottom = 9.0
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="RoomShell" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_room")
+
+[node name="FallbackBackground" type="ColorRect" parent="RoomShell"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.23, 0.23, 0.22, 1)
+
+[node name="Background" type="TextureRect" parent="RoomShell"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Darkness" type="ColorRect" parent="RoomShell"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.025, 0.05, 0.09, 0.0)
+
+[node name="Hotspots" type="Control" parent="RoomShell"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Door" type="Button" parent="RoomShell/Hotspots"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 45.0
+offset_right = 205.0
+offset_bottom = 622.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBox_hotspot")
+theme_override_styles/hover = SubResource("StyleBox_hotspot")
+theme_override_styles/pressed = SubResource("StyleBox_hotspot_pressed")
+text = ""
+script = ExtResource("4_hotspot")
+action_id = &"room.door"
+display_name = "Tuer"
+hint = "Wohnung verlassen / spaeter zur Stadtkarte"
+
+[node name="LeftShelves" type="Button" parent="RoomShell/Hotspots"]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 105.0
+offset_right = 410.0
+offset_bottom = 365.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBox_hotspot")
+theme_override_styles/hover = SubResource("StyleBox_hotspot")
+theme_override_styles/pressed = SubResource("StyleBox_hotspot_pressed")
+text = ""
+script = ExtResource("4_hotspot")
+action_id = &"room.left_shelves"
+display_name = "Wandregale"
+hint = "Ablage fuer kleine Gegenstaende"
+
+[node name="Window" type="Button" parent="RoomShell/Hotspots"]
+layout_mode = 0
+offset_left = 485.0
+offset_top = 30.0
+offset_right = 1145.0
+offset_bottom = 470.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBox_hotspot")
+theme_override_styles/hover = SubResource("StyleBox_hotspot")
+theme_override_styles/pressed = SubResource("StyleBox_hotspot_pressed")
+text = ""
+script = ExtResource("4_hotspot")
+action_id = &"room.window"
+display_name = "Fenster"
+hint = "Tageslicht, Wetter und Stadtzustand"
+
+[node name="Bookcase" type="Button" parent="RoomShell/Hotspots"]
+layout_mode = 0
+offset_left = 1400.0
+offset_top = 405.0
+offset_right = 1670.0
+offset_bottom = 855.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBox_hotspot")
+theme_override_styles/hover = SubResource("StyleBox_hotspot")
+theme_override_styles/pressed = SubResource("StyleBox_hotspot_pressed")
+text = ""
+script = ExtResource("4_hotspot")
+action_id = &"room.bookcase"
+display_name = "Buecherregal"
+hint = "Spaeter Dokumente, Wissen und Firmenunterlagen"
+
+[node name="Floor" type="Button" parent="RoomShell/Hotspots"]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 610.0
+offset_right = 1400.0
+offset_bottom = 925.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBox_hotspot")
+theme_override_styles/hover = SubResource("StyleBox_hotspot")
+theme_override_styles/pressed = SubResource("StyleBox_hotspot_pressed")
+text = ""
+script = ExtResource("4_hotspot")
+action_id = &"room.floor"
+display_name = "Freie Stellflaeche"
+hint = "Modulare Moebel und Firmenausstattung werden hier als eigene Nodes platziert"
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="TopBar" type="PanelContainer" parent="HUD"]
+offset_right = 1672.0
+offset_bottom = 92.0
+theme_override_styles/panel = SubResource("StyleBox_topbar")
+
+[node name="Margin" type="MarginContainer" parent="HUD/TopBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 2
+
+[node name="Stats" type="HBoxContainer" parent="HUD/TopBar/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Money" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("5_stat")]
+layout_mode = 2
+resource_id = &"money"
+title = "GELD"
+
+[node name="Income" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("5_stat")]
+layout_mode = 2
+resource_id = &"income"
+title = "EINNAHMEN"
+
+[node name="Expenses" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("5_stat")]
+layout_mode = 2
+resource_id = &"expenses"
+title = "AUSGABEN"
+
+[node name="Time" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("6_time")]
+layout_mode = 2
+
+[node name="Energy" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("5_stat")]
+custom_minimum_size = Vector2(225, 76)
+layout_mode = 2
+resource_id = &"energy"
+title = "ENERGIE"
+show_progress = true
+
+[node name="Focus" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("5_stat")]
+custom_minimum_size = Vector2(225, 76)
+layout_mode = 2
+resource_id = &"focus"
+title = "FOKUS"
+show_progress = true
+
+[node name="Health" parent="HUD/TopBar/Margin/Stats" instance=ExtResource("5_stat")]
+custom_minimum_size = Vector2(225, 76)
+layout_mode = 2
+resource_id = &"health"
+title = "GESUNDHEIT"
+show_progress = true
+
+[node name="ToastPanel" type="PanelContainer" parent="HUD"]
+offset_left = 470.0
+offset_top = 850.0
+offset_right = 1202.0
+offset_bottom = 914.0
+theme_override_styles/panel = SubResource("StyleBox_toast")
+
+[node name="Toast" type="Label" parent="HUD/ToastPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+text = "Founder Sim"

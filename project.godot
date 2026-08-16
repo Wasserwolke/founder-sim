@@ -1,0 +1,29 @@
+; Founder Sim - Godot 4 project
+; Generated for Godot 4.7.x. Keep gameplay code and scenes at repository root so a clone can be imported directly.
+config_version=5
+
+[application]
+config/name="Founder Sim"
+config/version="0.9.0"
+run/main_scene="res://game/scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.035, 0.047, 0.067, 1)
+boot_splash/show_image=false
+
+[autoload]
+GameState="*res://game/scripts/core/game_state.gd"
+
+[display]
+window/size/viewport_width=1672
+window/size/viewport_height=941
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+
+[gui]
+theme/default_font_multichannel_signed_distance_field=true
