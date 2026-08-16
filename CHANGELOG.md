@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.9
+- aktive Entwicklung von der Browser-Runtime auf Godot 4 umgestellt
+- `project.godot` im Repository-Root eingefuehrt, damit ein Clone direkt als Godot-Projekt geoeffnet werden kann
+- neue Godot-Runtime unter `game/` mit Szenen, GDScript, Daten und Environment-Struktur angelegt
+- bisherige Kernressourcen Geld, Einnahmen, Ausgaben, Energie, Fokus und Gesundheit in einen Godot-Autoload `GameState` uebertragen
+- simulierte Uhrzeit und einfache tageszeitabhaengige Abdunklung Godot-nativ umgesetzt
+- HUD als echte Godot-Control-Nodes umgesetzt
+- neutrale 1672x941-Raum-Shell als neue modulare Environment-Basis vorgesehen
+- robuste Fallback-Darstellung eingebaut, falls die externe Room-Shell-Grafik in einem Clone noch fehlt
+- erste Raum-Hotspots fuer Tuer, Fenster, Wandregale, Buecherregal und freie Moebelflaeche angelegt
+- Linux-Skripte fuer lokalen Godot-4.7.1-Setup ohne sudo und direkten Projektstart hinzugefuegt
+- GitHub-Actions-Validierung um echten Godot-4.7.1-Headless-Import und Runtime-Smoke-Test erweitert
+- Legacy-Web-Prototyp bleibt waehrend der Migration als Referenz und GitHub-Pages-Preview bestehen
+- Legacy-Unterordner werden ueber `.gdignore` aus dem Godot-FileSystem-Dock ausgeblendet
+
 ## v0.8
 - Desk-Focus von 1.62x auf 1.90x vergroessert und fuer eine engere, weiterhin weiche Kamerafahrt neu zentriert
 - Desk-Focus auf acht klar benannte Interaktionsobjekte erweitert: zwei Monitore, Notizbuch, Schluessel, Telefon, Kaffeetasse, Tastatur und Maus
