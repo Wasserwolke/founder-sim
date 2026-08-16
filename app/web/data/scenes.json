@@ -11,12 +11,12 @@
       "instances": [
         {"instance_id": "foundersim:office.workstation_focus", "type_id": "foundersim:workstation_focus", "x": 50, "y": 43, "w": 35, "h": 25, "cameras": ["overview"]},
         {"instance_id": "foundersim:office.storage_access", "type_id": "foundersim:storage_access", "x": 8.2, "y": 34, "w": 13, "h": 47, "cameras": ["overview"]},
-        {"instance_id": "foundersim:office.coffee.01", "type_id": "foundersim:coffee_starter_white", "x": 65, "y": 55, "w": 4.5, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.phone.01", "type_id": "foundersim:phone_basic_black", "x": 73, "y": 55.5, "w": 4.3, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.keys.01", "type_id": "foundersim:keys_starter", "x": 77.5, "y": 58.5, "w": 4.4, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.notebook.01", "type_id": "foundersim:notebook_starter_dark", "x": 31, "y": 56.5, "w": 5.2, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.monitor_left.01", "type_id": "foundersim:monitor_left_starter", "x": 43.3, "y": 40.5, "w": 14.5, "h": 15, "cameras": ["desk"]},
-        {"instance_id": "foundersim:office.monitor_right.01", "type_id": "foundersim:monitor_right_starter", "x": 57.8, "y": 40.5, "w": 14.5, "h": 15, "cameras": ["desk"]}
+        {"instance_id": "foundersim:office.coffee.01", "type_id": "foundersim:coffee_starter_white", "x": 65, "y": 48.9, "w": 4.5, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.phone.01", "type_id": "foundersim:phone_basic_black", "x": 73, "y": 49.4, "w": 4.3, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.keys.01", "type_id": "foundersim:keys_starter", "x": 77.5, "y": 52.4, "w": 4.4, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.notebook.01", "type_id": "foundersim:notebook_starter_dark", "x": 31, "y": 50.4, "w": 5.2, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.monitor_left.01", "type_id": "foundersim:monitor_left_starter", "x": 42.4, "y": 34.5, "w": 14.5, "h": 15.8, "cameras": ["desk"]},
+        {"instance_id": "foundersim:office.monitor_right.01", "type_id": "foundersim:monitor_right_starter", "x": 57.4, "y": 34.5, "w": 14.5, "h": 15.8, "cameras": ["desk"]}
       ]
     },
     "storage": {

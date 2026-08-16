@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7.1
+- Desk-Objektkoordinaten anhand des real gerenderten Zoom-Screenshots neu kalibriert
+- beide Monitor-Trefferflaechen nach oben und horizontal auf die sichtbaren Monitorflaechen ausgerichtet
+- Kaffee, Telefon, Schluessel und Notizbuch auf die Tischflaeche angehoben
+- Build-Token erhoeht, damit GitHub Pages die korrigierten Scene-Daten ohne alten Browser-Cache laedt
+
 ## v0.7
 - `overview` und `desk` als animierte Kamera-Presets desselben Buero-Environments eingefuehrt
 - Hintergrund und Objekt-Layer in einen gemeinsamen `cameraStage` verschoben
