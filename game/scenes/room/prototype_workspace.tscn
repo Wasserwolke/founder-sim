@@ -12,7 +12,7 @@ light_mode = 1
 
 [sub_resource type="Gradient" id="Gradient_lamp"]
 offsets = PackedFloat32Array(0, 0.22, 0.58, 1)
-colors = PackedColorArray(Color(1.5, 1.1, 0.55, 1), Color(1.25, 0.82, 0.32, 0.72), Color(0.7, 0.35, 0.1, 0.18), Color(0, 0, 0, 0))
+colors = PackedColorArray(1.5, 1.1, 0.55, 1, 1.25, 0.82, 0.32, 0.72, 0.7, 0.35, 0.1, 0.18, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_lamp"]
 gradient = SubResource("Gradient_lamp")
@@ -25,7 +25,7 @@ use_hdr = true
 
 [sub_resource type="Gradient" id="Gradient_monitor"]
 offsets = PackedFloat32Array(0, 0.30, 0.70, 1)
-colors = PackedColorArray(Color(0.42, 0.78, 1.4, 1), Color(0.22, 0.56, 1.1, 0.62), Color(0.08, 0.25, 0.7, 0.13), Color(0, 0, 0, 0))
+colors = PackedColorArray(0.42, 0.78, 1.4, 1, 0.22, 0.56, 1.1, 0.62, 0.08, 0.25, 0.7, 0.13, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_monitor"]
 gradient = SubResource("Gradient_monitor")

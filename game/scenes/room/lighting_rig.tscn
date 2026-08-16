@@ -58,7 +58,7 @@ shader_parameter/strength = 0.1
 
 [sub_resource type="Gradient" id="Gradient_window_key"]
 offsets = PackedFloat32Array(0, 0.35, 0.72, 1)
-colors = PackedColorArray(Color(1.35, 1.18, 0.88, 1), Color(1.0, 0.92, 0.72, 0.72), Color(0.65, 0.78, 1.0, 0.20), Color(0, 0, 0, 0))
+colors = PackedColorArray(1.35, 1.18, 0.88, 1, 1.0, 0.92, 0.72, 0.72, 0.65, 0.78, 1.0, 0.20, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_window_key"]
 gradient = SubResource("Gradient_window_key")
