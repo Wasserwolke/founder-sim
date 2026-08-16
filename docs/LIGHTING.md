@@ -1,50 +1,41 @@
 # Founder Sim — Lighting / Atmosphere
 
-## Ziel
+## Visuelle Referenzen
 
-Der Referenzraum soll Licht sichtbar und raeumlich glaubwuerdig vermitteln. Farbe und Helligkeit allein reichen nicht: Fenster, direkte Sonnenbahnen, lokale Lampen, Monitorlicht und spaetere Schatten muessen als getrennte Systeme reagieren.
+Die Zielrichtung ist bewusst bildgetrieben, nicht effektgetrieben:
 
-## V3: Hybrid aus Godot-2D-Licht und art-directed Atmosphaere
+- `docs/reference/atmosphere_target_start.jpg` — Ziel fuer einen glaubwuerdigen, spielbaren Arbeitsplatz in der fruehen Firmenphase.
+- `docs/reference/atmosphere_target_late.jpg` — Ziel fuer spaetere Nacht-/Premium-Atmosphaere, besonders Monitorlicht, lokale Lampe und Stadtwirkung.
+- `docs/reference/sunlight_target.jpg` — Ziel fuer direktes Sonnenlicht im leeren Raum: breite, weiche, helle Fensterprojektion auf Wand/Boden statt weisser Neonlinien.
 
-V3 verwendet erstmals Godots echte 2D-Lichtbausteine als Fundament und behaelt Shader nur dort, wo die frontale 2D-Illustration eine bewusst gestaltete Projektion braucht.
+Die Referenzen sind **keine Runtime-Assets**. Sie liegen nur unter `docs/reference/`.
 
-### Echte Godot-Lichtbausteine
+## V4: Clean light rebuild
 
-- `CanvasModulate`: Grundbelichtung und Farbtemperatur des gesamten Raum-Canvas.
-- `DirectionalLight2D`: Sonnenrichtung und allgemeines direktes Sonnenlicht; bereits shadow-ready fuer spaetere Occluder.
-- `PointLight2D` am Fenster: lokales Fenster-/Key-Light, das echte `Light2D`-Empfaenger beeinflusst.
-- `PointLight2D` an Objekten: Tischlampe, Monitore und spaetere emissive Gegenstaende.
-- `LightOccluder2D`: Schattenvertrag fuer Moebel und Architektur.
+V4 entfernt den misslungenen V3-Test-Workspace und alle sichtbaren Fake-Sun-Beam-Linien. Der leere Referenzraum ist wieder die einzige sichtbare Environment-Basis.
 
-### Art-directed Fensterprojektion
+### Lichtsystem
 
-Die aktuelle Room-Shell ist eine frontale Einzelgrafik. Ein rein physikalisches 2D-Licht kann deshalb die Perspektive eines durch ein Wandfenster fallenden Sonnenstrahls nicht vollstaendig ableiten. `SunBeams` bleibt deshalb vorerst ein Shader-Layer, ist ab V3 aber strikt am unteren Fensteraustritt verankert:
+- `CanvasModulate`: globale Tages-/Nachtbelichtung.
+- `PointLight2D` `WindowBounceLight`: weiches Licht direkt um das Fenster und auf die angrenzende Wand.
+- `PointLight2D` `SunProjectionLight`: breite zweigeteilte Fensterprojektion, deren Textur **zur Laufzeit erzeugt** wird. Es gibt dafuer kein dekoratives Sonnenstrahl-PNG und keinen weissen Linien-Shader.
+- `PointLight2D` `RoomFillLight`: nur ein optionaler Developer-Fill zum Testen; standardmaessig aus.
+- `ExteriorResponse`: nur eine fensterbegrenzte Abdunklung, weil die City-View noch im Room-PNG eingebrannt ist.
+- `DynamicLights` / `DynamicOccluders`: Hooks fuer spaetere echte Objektlichter und Schatten.
 
-- drei schmale helle Kerne mit weichem Halo,
-- ca. wenige Pixel sichtbarer Kern bei Referenzaufloesung,
-- keine Lichtbahnen oberhalb bzw. links/rechts frei durch Waende,
-- Strahlen bewegen sich mit dem Sonnenstand,
-- ein deutlicher Boden-Hotspot folgt derselben Richtung,
-- Clear/Cloudy/Rain beeinflusst die Intensitaet.
+Der Sonnenlicht-Node sitzt am Fenster. Seine Light2D-Textur wird mit `offset` nach unten auf Wand/Boden projiziert. Der Licht-Node selbst bleibt am Fenster, damit spaetere `LightOccluder2D`-Schatten von der richtigen Quelle berechnet werden koennen.
 
-Der Shader ist damit eine Projektion des echten Sonnenzustands, kein unabhaengiger Fake-Filter.
+## Keine automatischen Moebel
 
-## Referenz-Workspace
+Verbindliche Regel ab V4:
 
-V3 fuegt einen ersten Atmosphaeren-Workspace in den Raum ein. Er dient noch nicht als Gameplay-Objektsystem, sondern als Licht-Testbett:
+> Das Atmosphaeren-/Lighting-System fuegt niemals selbst Moebel, Geraete oder dekorative WORLD-Assets in einen Raum ein.
 
-- bestehendes Starter-Desk-WORLD-Asset,
-- Dual-Monitor-WORLD-Asset,
-- Keyboard und Chair,
-- eingeschaltete Monitor-Glow-Emitter,
-- provisorische Tischlampe mit echtem `PointLight2D`,
-- erster `LightOccluder2D` fuer die Schreibtischzone.
-
-Damit kann Licht ab jetzt an realen Gegenstaenden beurteilt werden statt nur in einem leeren Raum.
+Neue sichtbare Objektassets werden erst nach expliziter Freigabe des konkreten Assets in die Szene gesetzt. Lighting darf dagegen bereits generische Schnittstellen fuer spaetere Emitter/Occluder vorbereiten.
 
 ## Objekt-Lichtvertrag
 
-Jedes spaetere Placeable Object kann unabhaengig diese Faehigkeiten besitzen:
+Spaetere Placeable Objects koennen unabhaengig deklarieren:
 
 ```text
 receives_light: true/false
@@ -57,44 +48,22 @@ Technisch:
 
 - normale Sprite-/Control-Visuals empfangen `Light2D`, sofern ihre Light-Mask passt,
 - Schattenwerfer erhalten `LightOccluder2D` + `OccluderPolygon2D`,
-- selbstleuchtende Objekte verwenden `RoomLightEmitter2D` mit einem `Light2D`-Kind,
-- Emitter registrieren sich automatisch beim `RoomLightingRig`,
-- Kategorien koennen zentral aktiviert und in der Staerke skaliert werden.
-
-Damit kann spaeter ein Mod-Objekt dieselbe Lichtlogik nutzen, ohne das LightingRig umzuschreiben.
+- selbstleuchtende Objekte verwenden `RoomLightEmitter2D` oder einen kompatiblen `Light2D`-Emitter,
+- `DynamicLights` und `DynamicOccluders` sind dafuer bereits im RoomLightingRig vorhanden.
 
 ## Developer Atmosphere Controller
 
-`F10` blendet das Panel ein oder aus. V3 kann live testen:
+`F10` blendet das Panel ein oder aus. V4 testet nur noch Werte, die im leeren Raum sinnvoll beurteilbar sind:
 
 - Tageszeit,
 - Wetter,
-- globalen Room Fill,
-- Sun Beams bis 300%,
-- City Lights,
-- Tischlampe an/aus + Staerke,
-- Monitor Glow an/aus + Staerke,
-- beschleunigten 24h-Zyklus.
+- optionaler Room Fill (Dev),
+- Sonnenlichtstaerke,
+- Fenster-Bounce,
+- beschleunigter 24h-Zyklus.
 
-Empfohlene Referenzpunkte:
+Keine Lampen-/Monitor-Regler, solange solche Objekte nicht freigegeben und tatsaechlich im Raum vorhanden sind.
 
-- 07:00 Clear: harte Morgenstrahlen und warmer Boden-Hotspot,
-- 12:30 Clear: helles Fenster, deutlich weniger dramatische Beams,
-- 18:00 Clear: flache warme Abendstrahlen,
-- 22:30 Clear: Stadtlichter, Monitorlicht und Tischlampe dominieren,
-- Rain: direkte Sonne stark reduziert, lokale Lichtquellen gewinnen an Bedeutung.
+## Naechster Atmosphaeren-Meilenstein
 
-## Naechste Atmosphaerenstufe
-
-Die aktuelle City-View steckt noch fest in `room_shell_neutral.png`. Der naechste grosse Atmosphaeren-Meilenstein ist deshalb die Trennung in:
-
-```text
-Room Interior
-├─ Window opening / mask
-├─ Exterior / City View
-├─ Weather layer
-├─ Placeable Objects
-└─ LightingRig
-```
-
-Danach koennen Himmel, Wolken, Regen und Stadtlichter unabhaengig vom Innenraum animiert werden.
+Die City-View steckt weiterhin in `room_shell_neutral.png`. Fuer echte Nachtfenster, Himmel, Regen und Stadtlicht muss die Environment spaeter in Interior und Exterior getrennt werden. Bis dahin werden keine zufaelligen prozeduralen Stadtfenster ueber das bestehende Bild gelegt.

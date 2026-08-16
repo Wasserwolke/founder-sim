@@ -1,9 +1,6 @@
 extends PanelContainer
 class_name DeveloperAtmosphereController
 
-const LAMP_CATEGORY := &"desk_lamp"
-const MONITOR_CATEGORY := &"monitor"
-
 @export var lighting_rig_path: NodePath
 
 @onready var time_slider: HSlider = %TimeSlider
@@ -12,16 +9,10 @@ const MONITOR_CATEGORY := &"monitor"
 @onready var room_light_toggle: CheckButton = %RoomLightToggle
 @onready var room_light_strength_slider: HSlider = %RoomLightStrength
 @onready var room_light_strength_value: Label = %RoomLightStrengthValue
-@onready var sun_ray_strength_slider: HSlider = %SunRayStrength
-@onready var sun_ray_strength_value: Label = %SunRayStrengthValue
-@onready var city_light_strength_slider: HSlider = %CityLightStrength
-@onready var city_light_strength_value: Label = %CityLightStrengthValue
-@onready var desk_lamp_toggle: CheckButton = %DeskLampToggle
-@onready var desk_lamp_strength_slider: HSlider = %DeskLampStrength
-@onready var desk_lamp_strength_value: Label = %DeskLampStrengthValue
-@onready var monitor_glow_toggle: CheckButton = %MonitorGlowToggle
-@onready var monitor_glow_strength_slider: HSlider = %MonitorGlowStrength
-@onready var monitor_glow_strength_value: Label = %MonitorGlowStrengthValue
+@onready var sunlight_strength_slider: HSlider = %SunlightStrength
+@onready var sunlight_strength_value: Label = %SunlightStrengthValue
+@onready var window_bounce_strength_slider: HSlider = %WindowBounceStrength
+@onready var window_bounce_strength_value: Label = %WindowBounceStrengthValue
 @onready var animate_day_toggle: CheckButton = %AnimateDayToggle
 @onready var cycle_seconds_slider: HSlider = %CycleSeconds
 @onready var cycle_seconds_value: Label = %CycleSecondsValue
@@ -54,12 +45,8 @@ func _ready() -> void:
     weather_select.item_selected.connect(_on_weather_selected)
     room_light_toggle.toggled.connect(_on_room_light_toggled)
     room_light_strength_slider.value_changed.connect(_on_room_light_strength_changed)
-    sun_ray_strength_slider.value_changed.connect(_on_sun_ray_strength_changed)
-    city_light_strength_slider.value_changed.connect(_on_city_light_strength_changed)
-    desk_lamp_toggle.toggled.connect(_on_desk_lamp_toggled)
-    desk_lamp_strength_slider.value_changed.connect(_on_desk_lamp_strength_changed)
-    monitor_glow_toggle.toggled.connect(_on_monitor_glow_toggled)
-    monitor_glow_strength_slider.value_changed.connect(_on_monitor_glow_strength_changed)
+    sunlight_strength_slider.value_changed.connect(_on_sunlight_strength_changed)
+    window_bounce_strength_slider.value_changed.connect(_on_window_bounce_strength_changed)
     animate_day_toggle.toggled.connect(_on_animate_day_toggled)
     cycle_seconds_slider.value_changed.connect(_on_cycle_seconds_changed)
     follow_game_button.pressed.connect(_on_follow_game_pressed)
@@ -81,11 +68,9 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
     if lighting_rig == null or not animate_day_toggle.button_pressed:
         return
-
     var seconds_per_day := maxf(float(cycle_seconds_slider.value), 4.0)
     var hour_step := delta * 24.0 / seconds_per_day
     var next_hour := fposmod(lighting_rig.current_hour() + hour_step, 24.0)
-
     _syncing_ui = true
     time_slider.value = next_hour
     _syncing_ui = false
@@ -117,40 +102,16 @@ func _on_room_light_strength_changed(value: float) -> void:
         _apply_debug_state(true)
 
 
-func _on_sun_ray_strength_changed(value: float) -> void:
-    sun_ray_strength_value.text = "%.0f%%" % (value * 100.0)
+func _on_sunlight_strength_changed(value: float) -> void:
+    sunlight_strength_value.text = "%.0f%%" % (value * 100.0)
     if not _syncing_ui:
         _apply_debug_state(true)
 
 
-func _on_city_light_strength_changed(value: float) -> void:
-    city_light_strength_value.text = "%.0f%%" % (value * 100.0)
+func _on_window_bounce_strength_changed(value: float) -> void:
+    window_bounce_strength_value.text = "%.0f%%" % (value * 100.0)
     if not _syncing_ui:
         _apply_debug_state(true)
-
-
-func _on_desk_lamp_toggled(enabled: bool) -> void:
-    desk_lamp_strength_slider.editable = enabled
-    if not _syncing_ui:
-        _apply_emitter_controls()
-
-
-func _on_desk_lamp_strength_changed(value: float) -> void:
-    desk_lamp_strength_value.text = "%.0f%%" % (value * 100.0)
-    if not _syncing_ui:
-        _apply_emitter_controls()
-
-
-func _on_monitor_glow_toggled(enabled: bool) -> void:
-    monitor_glow_strength_slider.editable = enabled
-    if not _syncing_ui:
-        _apply_emitter_controls()
-
-
-func _on_monitor_glow_strength_changed(value: float) -> void:
-    monitor_glow_strength_value.text = "%.0f%%" % (value * 100.0)
-    if not _syncing_ui:
-        _apply_emitter_controls()
 
 
 func _on_animate_day_toggled(enabled: bool) -> void:
@@ -171,62 +132,36 @@ func _on_follow_game_pressed() -> void:
 func _apply_debug_state(animated: bool) -> void:
     if lighting_rig == null:
         return
-    var weather_id := weather_select.get_selected_id()
     lighting_rig.set_debug_detail_multipliers(
-        float(sun_ray_strength_slider.value),
-        float(city_light_strength_slider.value)
+        float(sunlight_strength_slider.value),
+        float(window_bounce_strength_slider.value)
     )
     lighting_rig.set_debug_state(
         float(time_slider.value),
-        weather_id,
+        weather_select.get_selected_id(),
         room_light_toggle.button_pressed,
         float(room_light_strength_slider.value),
         animated
-    )
-    _apply_emitter_controls()
-
-
-func _apply_emitter_controls() -> void:
-    if lighting_rig == null:
-        return
-    lighting_rig.set_emitter_category_state(
-        LAMP_CATEGORY,
-        desk_lamp_toggle.button_pressed,
-        float(desk_lamp_strength_slider.value)
-    )
-    lighting_rig.set_emitter_category_state(
-        MONITOR_CATEGORY,
-        monitor_glow_toggle.button_pressed,
-        float(monitor_glow_strength_slider.value)
     )
 
 
 func _sync_from_rig() -> void:
     if lighting_rig == null:
         return
-
     _syncing_ui = true
     time_slider.value = lighting_rig.current_hour()
     weather_select.select(maxi(lighting_rig.current_weather(), 0))
     room_light_toggle.button_pressed = lighting_rig.room_light_is_on()
     room_light_strength_slider.value = lighting_rig.room_light_strength()
     room_light_strength_slider.editable = room_light_toggle.button_pressed
-    sun_ray_strength_slider.value = lighting_rig.sun_ray_multiplier()
-    city_light_strength_slider.value = lighting_rig.city_light_multiplier()
-    desk_lamp_toggle.button_pressed = lighting_rig.emitter_category_enabled(LAMP_CATEGORY)
-    desk_lamp_strength_slider.value = lighting_rig.emitter_category_multiplier(LAMP_CATEGORY)
-    desk_lamp_strength_slider.editable = desk_lamp_toggle.button_pressed
-    monitor_glow_toggle.button_pressed = lighting_rig.emitter_category_enabled(MONITOR_CATEGORY)
-    monitor_glow_strength_slider.value = lighting_rig.emitter_category_multiplier(MONITOR_CATEGORY)
-    monitor_glow_strength_slider.editable = monitor_glow_toggle.button_pressed
+    sunlight_strength_slider.value = lighting_rig.sunlight_multiplier()
+    window_bounce_strength_slider.value = lighting_rig.window_bounce_multiplier()
     _syncing_ui = false
 
     _update_time_label(float(time_slider.value))
     room_light_strength_value.text = "%.0f%%" % (float(room_light_strength_slider.value) * 100.0)
-    sun_ray_strength_value.text = "%.0f%%" % (float(sun_ray_strength_slider.value) * 100.0)
-    city_light_strength_value.text = "%.0f%%" % (float(city_light_strength_slider.value) * 100.0)
-    desk_lamp_strength_value.text = "%.0f%%" % (float(desk_lamp_strength_slider.value) * 100.0)
-    monitor_glow_strength_value.text = "%.0f%%" % (float(monitor_glow_strength_slider.value) * 100.0)
+    sunlight_strength_value.text = "%.0f%%" % (float(sunlight_strength_slider.value) * 100.0)
+    window_bounce_strength_value.text = "%.0f%%" % (float(window_bounce_strength_slider.value) * 100.0)
     cycle_seconds_value.text = "%.0fs / day" % float(cycle_seconds_slider.value)
 
 
