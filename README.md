@@ -1,71 +1,63 @@
 # Founder Sim
 
-Realistischer, modularer Browsergame-Unternehmensgruendungssimulator.
+Realistischer, modularer Unternehmensgruendungssimulator.
 
-Aktueller Stand: **v0.8 - enger Desk-Focus mit acht interaktiven Schreibtischobjekten**.
+Aktueller Entwicklungsstand: **v0.9 - Godot-Migration gestartet**. Die aktive Runtime wird ab jetzt Godot-nativ aufgebaut. Der bisherige Browser-Prototyp bleibt waehrend der Migration als Legacy-/Referenzstand erhalten.
 
-## Direkt spielen
+## Godot auf Linux - ein Befehl
+
+```bash
+git clone https://github.com/Wasserwolke/founder-sim.git
+cd founder-sim
+./scripts/linux/setup_and_open.sh
+```
+
+`setup_and_open.sh` installiert bei Bedarf die gepinnte Godot-Standardversion lokal unter `.tools/godot/` ohne sudo und oeffnet direkt das Projekt im Repository-Root. Danach reicht normalerweise:
+
+```bash
+./scripts/linux/open_godot.sh
+```
+
+Founder Sim verwendet GDScript; eine .NET-/C#-Installation ist fuer diesen Stand nicht erforderlich.
+
+## Neue Godot-Runtime
+
+- `project.godot` direkt im Repository-Root
+- `game/` als neue aktive Runtime
+- neutrale Raum-Shell als wiederverwendbares Environment
+- Licht, HUD, Interaktionen und spaetere Moebel als getrennte Godot-Nodes
+- Autoload `GameState` fuer Geld, Einnahmen, Ausgaben, Energie, Fokus, Gesundheit und simulierte Zeit
+- dynamische Dunkelheit anhand der Tageszeit
+- erste Raum-Hotspots fuer Tuer, Fenster, Regale und freie Stellflaeche
+- CI startet und prueft die Godot-Runtime headless mit Godot 4.7.1
+
+Die vollstaendige neutrale 1672x941-Raumgrafik wird als `game/assets/environments/room_shell_neutral.png` verwendet. Das separate Godot-Projektpaket enthaelt sie bereits. Ohne diese Datei startet die Runtime bewusst mit einem neutralen Fallback und deaktivierten Raum-Hotspots.
+
+Weitere Details: `README_GODOT.md` und `docs/GODOT_WORKFLOW.md`.
+
+## Git direkt in Godot
+
+Das offizielle Godot Git Plugin kann im Editor als VCS-Backend verbunden werden. Damit sind Diffs, Stage/Unstage und Commits direkt im Godot-Workflow moeglich; Pull/Push/Fetch werden ebenfalls unterstuetzt. Das normale Terminal-Git bleibt fuer grosse Netzwerkoperationen als Fallback sinnvoll.
+
+## Legacy-Web-Prototyp
+
+Der bisherige Stand unter `app/web/` bleibt vorerst unveraendert als Referenz bestehen und wird weiterhin unter
+
 https://wasserwolke.github.io/founder-sim/
 
-## Lokal starten
-```bash
-./scripts/start.sh
-```
-Dann `http://localhost:8080`.
+bereitgestellt. Godot blendet die Legacy-Verzeichnisse ueber `.gdignore` aus, damit der FileSystem-Dock auf die neue Runtime fokussiert bleibt.
 
-## Jetzt testbar
-- Starter-Schreibtisch, Lager und Stadtkarte
-- `overview` und enger `desk`-Kamerazustand auf demselben Buero-Environment
-- acht Desk-Focus-Objekte: linker/rechter Monitor, Notizbuch, Schluessel, Telefon, Kaffeetasse, Tastatur und Maus
-- linker Monitor als spaeterer Operativbereich, rechter Monitor als spaeterer Managementbereich
-- vorhandenes Keyboard-WORLD-Asset, Atlas-Fallbacks fuer Kaffee/Telefon/Schluessel/Notizbuch und sichtbarer Maus-Placeholder
-- objektgebundene Hover-Highlights und Tooltips statt frei schwebender Hotspots
-- Tooltip-Groesse bleibt beim Kamera-Zoom stabil lesbar
-- vier erste Lagerobjekte: Reinigungskiste, Staubsauger, Putzeimer und Wischmopp
-- Objektpositionen bleiben an der sichtbaren Environment-Grafik verankert, auch bei anderem Browserformat
-- Kaffee veraendert Zeit/Energie/Fokus/Gesundheit
-- Wechsel Desk -> Storage -> Map
-- Kartenmarker fuer Zuhause, Fahrzeug, Lager, Kunde und Baumarkt
-- HUD fuer Geld, Einnahmen, Ausgaben, Zeit, Energie, Fokus und Gesundheit
-- Deutsch ueber `app/web/locales/de.json`
-- Mod API v1 inkl. ObjectRegistry
+Der Legacy-Stand v0.8 enthaelt unter anderem den Desk-Focus mit acht Interaktionsobjekten, Lager, Karte, HUD, datengetriebene ObjectRegistry und Mod API v1. Diese Systeme werden schrittweise Godot-nativ uebernommen und danach nicht mehr parallel weiterentwickelt.
 
-## Wichtige Datenwege
+## Architekturregel ab v0.9
+
 ```text
-app/web/data/objects.json       Was ist ein Objekt?
-app/web/data/scenes.json        Wo steht es in einer Szene?
-app/web/assets/manifest.json    Welches Bild gehoert zur asset_id?
-app/web/data/catalog/items.json Preis / Effekte / Itemdaten
-app/web/locales/de.json         Sichtbare Texte
+Environment-Shell
+  + Godot Scene/Nodes
+  + stabile foundersim:-IDs
+  + Gameplay-State / Events
+  + UI / Licht / Kamera
+  + austauschbare Assets
 ```
 
-Damit muss ein spaeteres WORLD-PNG nur im Asset-System ausgetauscht werden; die Scene-Position und Interaktion bleiben erhalten.
-
-## Projektstruktur
-Siehe `docs/PROJECT_STRUCTURE.md` und `ARCHITECTURE.md`.
-
-## Feature-first Regel
-```text
-Feature
- -> stabile item_id / asset_id / object_id
- -> Preis + Effekte im Catalog
- -> Objektdefinition
- -> Scene-Platzierung
- -> Translation Keys
- -> Asset-Anforderung
- -> Bildgenerierung
- -> Runtime-Asset
-```
-Der Preis liegt nie im Bild.
-
-## Asset-System
-Runtime-Assets liegen unter `app/web/assets/`. Produktions-Sheets und ihre eindeutigen Zuordnungen liegen unter `asset_sources/sheets/`. `scripts/import_asset_sheet.py` kann daraus spaeter eigenstaendige WORLD/SPOT/ICON-Dateien erzeugen.
-
-## Mehrsprachigkeit
-Alle sichtbaren Texte liegen unter `app/web/locales/`. Deutsch ist aktuell die Standardsprache.
-
-## Mods
-Siehe `docs/MODDING.md`. `window.FounderSimModAPI` stellt Ressourcen, Catalog, Objects, Assets, Uebersetzungen und Events bereit.
-
-## Entwicklung
-GitHub Actions validiert Python, JSON, JavaScript, DOM-Vertrag, Asset-/Catalog-/Object-/Scene-Verknuepfungen und die wichtigsten Runtime-Dateien. Nur ein erfolgreicher Build wird auf GitHub Pages deployed.
+Spielregeln, Preise, Besitz, Zustand und Effekte gehoeren in Daten/Code. Grafiken bleiben Darstellung und werden nicht zur Quelle fuer Gameplay-Zustand.
