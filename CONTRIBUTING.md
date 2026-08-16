@@ -4,17 +4,21 @@ Diese Regeln gelten fuer alle kuenftigen Aenderungen am Projekt.
 
 ## 1. Sauberkeit vor Patchwork
 - Vor einer Erweiterung pruefen, ob sie in die bestehende Struktur passt.
-- Wenn ein Feature nur durch mehrere Sonderfaelle oder parallele Hilfsfunktionen passt, zuerst Refactoring erwägen.
+- Wenn ein Feature nur durch mehrere Sonderfaelle oder parallele Hilfsfunktionen passt, zuerst Refactoring erwaegen.
 - Veralteten, duplizierten oder ersetzten Code entfernen statt dauerhaft mitzuschleppen.
 - Bugfixes sollen die Ursache beheben, nicht nur Symptome ueberdecken.
 - Kleine, klar abgegrenzte Module und stabile Schnittstellen bevorzugen.
 - Keine Abstraktion nur um der Abstraktion willen; der Code soll so klein wie sinnvoll bleiben.
+- Keine Sammlung aus Einmal-Fix-Skripten fuer einzelne Symptome. Wiederkehrende Wartung gehoert in wenige allgemeine, idempotente Werkzeuge; einmalige Reparaturen werden nach Gebrauch entfernt oder in die eigentliche Codebasis ueberfuehrt.
+- Bevor ein neues Hilfsskript entsteht, pruefen, ob ein vorhandenes Werkzeug sinnvoll erweitert oder das Problem direkt im verantwortlichen Modul geloest werden kann.
 
 ## 2. Verstaendlicher Code
 - Funktionen erhalten eine kurze Docstring-/Kommentar-Erklaerung, wenn Zweck oder Seiteneffekte nicht unmittelbar offensichtlich sind.
 - Groessere logische Abschnitte werden knapp kommentiert.
 - Kommentare erklaeren WARUM etwas geschieht; der Code selbst soll das WAS moeglichst klar ausdruecken.
 - Beim Anfassen alter Funktionen veraltete Kommentare aktualisieren oder entfernen.
+- Fachlogik soll dort liegen, wo man sie anhand ihres Namens erwartet. Beispiel: ELSTER-/Steuerlogik gehoert in ein eindeutig benanntes Steuer-/Buerokratie-Modul statt verteilt in UI-, Fix- und Hilfsskripten.
+- Ordner und Dateien nach Fachbereich statt nach kurzfristigem Implementierungsgrund benennen. Ziel: Ein neuer Entwickler soll mit wenigen Klicks zur verantwortlichen Logik gelangen.
 
 ## 3. Architektur pruefen
 Vor groesseren Features kurz entscheiden:
@@ -22,6 +26,7 @@ Vor groesseren Features kurz entscheiden:
 2. Braucht es eine neue Schnittstelle statt direkter Abhaengigkeiten?
 3. Werden alte Funktionen/Strukturen dadurch ueberfluessig?
 4. Ist ein Refactoring jetzt guenstiger als weitere Sonderfaelle spaeter?
+5. Macht die Aenderung die Codebasis fuer einen Menschen leichter oder schwerer auffindbar?
 
 ## 4. Feature-first bei Assets
 Gameplay-/Feature-ID, Daten, Regeln und Uebersetzungskeys werden zuerst definiert. Danach folgen Asset-Anforderungen. Bilder enthalten keine Gameplay-Werte wie Preis oder Effekte.
