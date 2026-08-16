@@ -56,10 +56,29 @@ body { overflow: hidden; }
 
 /* The background uses contain; SceneRenderer sizes objectLayer to the exact visible image rectangle. */
 #scene { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #080c12; isolation: isolate; }
-#environment { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: contain; object-position: center; user-select: none; }
+#environment { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; user-select: none; }
 #rainFx { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 #darknessFx { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: #02050b; opacity: 0; transition: opacity 0.3s ease; }
 #objectLayer { position: absolute; z-index: 10; visibility: hidden; pointer-events: none; }
+
+/* A visible bootstrap status prevents silent black screens when the module graph or image load fails. */
+.startup-status {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 60;
+  max-width: min(720px, calc(100% - 40px));
+  transform: translate(-50%, -50%);
+  padding: 10px 14px;
+  color: var(--text);
+  background: #090f19e8;
+  border: 1px solid #50627c;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px #0009;
+  text-align: center;
+  font-size: 12px;
+}
+.startup-status--error { border-color: #b76565; background: #1b0d12f2; }
 
 /* Scene objects carry both their visual and their interaction. There are no free-floating hotspot boxes anymore. */
 .scene-object {

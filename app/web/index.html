@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-build="0.6.1" data-runtime="loading">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Founder Sim - Humble Beginnings</title>
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/app.css?v=0.6.1">
 </head>
 <body>
 <div id="game">
@@ -43,18 +43,38 @@
     </div>
   </header>
 
-  <main id="scene" class="scene" data-scene="desk">
+  <main id="scene" class="scene" data-scene="desk" data-environment-ready="loading">
     <!-- Image and object layer deliberately share one source-image coordinate system. -->
     <img id="environment" class="environment" alt="" draggable="false">
     <div id="rainFx" class="rain-fx" aria-hidden="true" hidden></div>
     <div id="darknessFx" class="darkness-fx" aria-hidden="true"></div>
     <section id="objectLayer" class="object-layer" aria-label="Interaktive Objekte"></section>
 
+    <div id="startupStatus" class="startup-status" role="status" aria-live="polite" data-i18n="status.loading">Spielwelt wird geladen ...</div>
     <button id="backButton" class="back" type="button" data-action="desk" data-i18n="actions.back" hidden>Zurueck</button>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 </div>
 
-<script type="module" src="js/app.js"></script>
+<!--
+  The entry module is loaded with the single build token from <html>.
+  If a browser still holds an older app.js, changing data-build forces a new URL
+  and prevents HTML/JavaScript versions from drifting apart after a Pages deploy.
+-->
+<script type="module">
+  const root = document.documentElement;
+  const status = document.getElementById("startupStatus");
+  const build = encodeURIComponent(root.dataset.build || "dev");
+
+  import(`./js/app.js?v=${build}`).catch(error => {
+    console.error(error);
+    root.dataset.runtime = "error";
+    if (status) {
+      status.hidden = false;
+      status.classList.add("startup-status--error");
+      status.textContent = `Startfehler: ${error?.message || error}`;
+    }
+  });
+</script>
 </body>
 </html>

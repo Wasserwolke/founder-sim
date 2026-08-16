@@ -1,6 +1,7 @@
 {
   "meta": {"language": "Deutsch", "code": "de"},
   "app": {"title": "Founder Sim - Humble Beginnings"},
+  "status": {"loading": "Spielwelt wird geladen ..."},
   "hud": {
     "money": "Geld",
     "income": "Einnahmen",

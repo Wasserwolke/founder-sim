@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.1
+- buildweiten Cache-Token eingefuehrt, damit GitHub-Pages-HTML und JavaScript-Module nicht aus unterschiedlichen Versionen gemischt werden
+- sichtbaren Startup-/Runtime-Status fuer Lade- und Fehlerfaelle hinzugefuegt
+- Environment-Ladezustand explizit als Runtime-Status markiert
+- Browser-Smoke-Test in GitHub Actions ergaenzt: echte JavaScript-Ausfuehrung, Environment-Decoding und erstes Objekt-Overlay muessen vor dem Deploy erfolgreich sein
+- Daten-/Locale-Aufrufe fuer den aktuellen Build cache-sicher gemacht
+
 ## v0.6
 - frei schwebende Hotspots durch datengetriebene Objektinstanzen ersetzt
 - `objects.json` + `ObjectRegistry` als wiederverwendbare Objekt-Schicht eingefuehrt
@@ -39,6 +46,3 @@
 - Mehrsprachigkeits-Grundlage
 - Resource/Catalog/Asset Registries
 - Mod API v1
-
-## v0.3
-- erster UI-Skeleton

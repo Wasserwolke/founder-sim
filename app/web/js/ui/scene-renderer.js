@@ -7,7 +7,15 @@ export class SceneRenderer {
 
     // Scene coordinates are tied to the rendered image, not to the browser viewport.
     // This keeps object placements stable when the window aspect ratio changes.
-    this.dom.environment.addEventListener("load", () => this.syncObjectLayer());
+    this.dom.environment.addEventListener("load", () => {
+      this.dom.scene.dataset.environmentReady = "true";
+      this.syncObjectLayer();
+    });
+    this.dom.environment.addEventListener("error", () => {
+      this.dom.scene.dataset.environmentReady = "false";
+      this.dom.objectLayer.style.visibility = "hidden";
+    });
+
     if (typeof ResizeObserver === "function") {
       this.resizeObserver = new ResizeObserver(() => this.syncObjectLayer());
       this.resizeObserver.observe(this.dom.scene);
@@ -22,6 +30,7 @@ export class SceneRenderer {
     if (!environment) throw new Error(`Missing environment asset: ${sceneDefinition.environment_asset}`);
 
     this.dom.scene.dataset.scene = sceneId;
+    this.dom.scene.dataset.environmentReady = "loading";
     this.dom.objectLayer.style.visibility = "hidden";
     this.dom.environment.src = new URL(environment, document.baseURI).href;
     this.dom.environment.alt = "";
@@ -31,8 +40,12 @@ export class SceneRenderer {
     // Generated weather/light layers will be composed here in a later asset pass.
     this.dom.rainFx.hidden = true;
 
-    if (this.dom.environment.complete) {
-      requestAnimationFrame(() => this.syncObjectLayer());
+    // Reusing an already decoded image may not emit another load event in every browser.
+    if (this.dom.environment.complete && this.dom.environment.naturalWidth) {
+      requestAnimationFrame(() => {
+        this.dom.scene.dataset.environmentReady = "true";
+        this.syncObjectLayer();
+      });
     }
   }
 

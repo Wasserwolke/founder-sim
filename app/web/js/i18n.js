@@ -13,8 +13,9 @@ function mergeDeep(target, source) {
   return target;
 }
 
-export async function loadLocale(code = "de") {
-  const response = await fetch(`locales/${code}.json`);
+export async function loadLocale(code = "de", cacheToken = "") {
+  const suffix = cacheToken ? `?v=${encodeURIComponent(cacheToken)}` : "";
+  const response = await fetch(`locales/${code}.json${suffix}`, {cache: "no-store"});
   if (!response.ok) throw new Error(`Locale ${code} konnte nicht geladen werden`);
   dict = await response.json();
   return dict;
