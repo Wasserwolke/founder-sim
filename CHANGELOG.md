@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.5.2
+- Environment-Rendering auf einen stabilen Background-Container umgestellt
+- bestaetigte Base-Assets fuer Desk, Storage und Map als sichtbare Runtime-Szenen verwendet
+- Ressourceninitialisierung liest jetzt die vorhandenen `initial`-Werte korrekt
+- kaputte Bild-Fallbacktexte in Hotspots entfernt und Atlas-Skalierung vervollstaendigt
+- prozedurale Regen-Platzhalteranimation bis zur echten Layer-Komposition deaktiviert
+- GitHub Actions prueft nun die grossen Runtime-Basisbilder und den Icon-Atlas auf Auslieferung und Mindestgroesse
+
 ## v0.5.1
 - DOM-Vertrag zwischen HTML, CSS und Rendering-Code wieder vereinheitlicht
 - Startfehler durch fehlendes `hotspotLayer` beseitigt und alte statische Hotspot-Struktur entfernt

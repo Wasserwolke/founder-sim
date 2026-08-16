@@ -9,43 +9,19 @@
 <body>
 <div id="game">
   <header id="hud" aria-label="Status">
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.money">Geld</span>
-      <strong id="money">620 EUR</strong>
-    </div>
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.income">Einnahmen</span>
-      <strong id="income">0 EUR</strong>
-    </div>
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.expenses">Ausgaben</span>
-      <strong id="expenses">0 EUR</strong>
-    </div>
-    <div class="hud-stat">
-      <span class="label" data-i18n="hud.time">Zeit</span>
-      <strong id="clock">19:30</strong>
-      <small id="date">15.08.2026</small>
-    </div>
-    <div class="meter">
-      <span data-i18n="hud.energy">Energie</span>
-      <i><b id="energyBar"></b></i>
-      <em id="energy">63</em>
-    </div>
-    <div class="meter">
-      <span data-i18n="hud.focus">Fokus</span>
-      <i><b id="focusBar"></b></i>
-      <em id="focus">52</em>
-    </div>
-    <div class="meter">
-      <span data-i18n="hud.health">Gesundheit</span>
-      <i><b id="healthBar"></b></i>
-      <em id="health">86</em>
-    </div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.money">Geld</span><strong id="money">620 EUR</strong></div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.income">Einnahmen</span><strong id="income">0 EUR</strong></div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.expenses">Ausgaben</span><strong id="expenses">0 EUR</strong></div>
+    <div class="hud-stat"><span class="label" data-i18n="hud.time">Zeit</span><strong id="clock">19:30</strong><small id="date">15.08.2026</small></div>
+    <div class="meter"><span data-i18n="hud.energy">Energie</span><i><b id="energyBar"></b></i><em id="energy">63</em></div>
+    <div class="meter"><span data-i18n="hud.focus">Fokus</span><i><b id="focusBar"></b></i><em id="focus">52</em></div>
+    <div class="meter"><span data-i18n="hud.health">Gesundheit</span><i><b id="healthBar"></b></i><em id="health">86</em></div>
   </header>
 
   <main id="scene" class="scene" data-scene="desk">
-    <img id="environment" class="environment" alt="" draggable="false">
-    <div id="rainFx" class="rain-fx" aria-hidden="true"></div>
+    <!-- Environment is a background container so later versions can add real composited layers inside it. -->
+    <div id="environment" class="environment" aria-hidden="true"></div>
+    <div id="rainFx" class="rain-fx" aria-hidden="true" hidden></div>
     <div id="darknessFx" class="darkness-fx" aria-hidden="true"></div>
     <section id="hotspotLayer" class="hotspot-layer" aria-label="Interaktive Objekte"></section>
 

@@ -1,14 +1,14 @@
 {
-  "version": "0.5.1",
+  "version": "0.5.2",
   "environments": {
     "desk_room_starter_night": {
-      "world": "assets/environments/desk_room_starter_night_world.png"
+      "world": "assets/environments/desk_room_starter/desk_room_starter_night_base.png"
     },
     "storage_room_starter": {
-      "world": "assets/environments/storage_room_starter_night_world.png"
+      "world": "assets/environments/storage_room_starter/storage_room_starter_base.png"
     },
     "city_map_starter": {
-      "world": "assets/map/city_map_starter_world.png"
+      "world": "assets/map/city_map_starter/city_map_starter_base.png"
     }
   },
   "prototype_icons": {
@@ -29,6 +29,7 @@
   "runtime_notes": {
     "environment_format": "png",
     "icon_atlas": "prototype_atlas_001.png",
-    "source_batch": "legacy-cleanup-2026-08-16"
+    "source_batch": "legacy-cleanup-2026-08-16",
+    "composition_mode": "single-base-image-until-layer-splitting"
   }
 }

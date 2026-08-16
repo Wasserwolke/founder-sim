@@ -71,8 +71,8 @@ jobs:
               exit 1
             }
           done
-          grep -q '<img id="environment"' "$html" || {
-            echo "::error::#environment must be an img element"
+          grep -q '<div id="environment"' "$html" || {
+            echo "::error::#environment must be the scene background container"
             exit 1
           }
           grep -q 'class="hud-stat"' "$html" || {
@@ -89,7 +89,7 @@ jobs:
       - name: Validate asset and catalog links
         run: python scripts/asset_status.py
 
-      - name: Smoke test web app
+      - name: Smoke test web app and visible base assets
         shell: bash
         run: |
           set -euo pipefail
@@ -97,10 +97,26 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
           sleep 2
+
           curl --fail --silent --show-error http://127.0.0.1:8080/ >/dev/null
           curl --fail --silent --show-error http://127.0.0.1:8080/assets/manifest.json >/dev/null
           curl --fail --silent --show-error http://127.0.0.1:8080/locales/de.json >/dev/null
           curl --fail --silent --show-error http://127.0.0.1:8080/data/scenes.json >/dev/null
+
+          for asset in \
+            assets/environments/desk_room_starter/desk_room_starter_night_base.png \
+            assets/environments/storage_room_starter/storage_room_starter_base.png \
+            assets/map/city_map_starter/city_map_starter_base.png \
+            assets/atlases/prototype_atlas_001.png; do
+            out="/tmp/$(basename "$asset")"
+            curl --fail --silent --show-error "http://127.0.0.1:8080/$asset" -o "$out"
+            bytes=$(wc -c < "$out")
+            if [ "$bytes" -lt 50000 ]; then
+              echo "::error::Runtime asset looks empty or truncated: $asset ($bytes bytes)"
+              exit 1
+            fi
+            echo "Runtime asset OK: $asset ($bytes bytes)"
+          done
 
   deploy:
     name: Deploy GitHub Pages

@@ -12,7 +12,7 @@ let catalog;
 let sceneData;
 let modAPI;
 
-/** Return a required DOM node and fail early with a useful startup error if markup and code drift apart. */
+/** Return a required DOM node and fail early when markup and renderer drift apart. */
 function requiredElement(id) {
   const element = document.getElementById(id);
   if (!element) throw new Error(`DOM contract violation: #${id} fehlt.`);
@@ -56,7 +56,7 @@ function renderHUD() {
 
   const lateNight = Math.max(0, (state.minutes - 21 * 60) / 240);
   const tiredness = (100 - resources.get("energy")) / 100;
-  dom.darknessFx.style.opacity = String(Math.min(0.5, lateNight * 0.18 + tiredness * 0.12));
+  dom.darknessFx.style.opacity = String(Math.min(0.32, lateNight * 0.12 + tiredness * 0.08));
 }
 
 /** Show a short non-blocking status message at the bottom of the scene. */
@@ -68,28 +68,29 @@ function showToast(text) {
 }
 
 /** Add either a normal image or a cropped atlas image to a hotspot button. */
-function addAssetVisual(host, reference, label) {
+function addAssetVisual(host, reference) {
   if (!reference) return;
 
   if (typeof reference === "string") {
     const image = document.createElement("img");
-    image.src = reference;
-    image.alt = label;
+    image.src = new URL(reference, document.baseURI).href;
+    image.alt = "";
     host.appendChild(image);
     return;
   }
 
-  if (reference.atlas && reference.crop) {
+  if (reference.atlas && reference.crop && reference.atlas_size) {
     const [x, y, width, height] = reference.crop;
-    const [atlasWidth] = reference.atlas_size;
+    const [atlasWidth, atlasHeight] = reference.atlas_size;
     const clip = document.createElement("span");
     const image = document.createElement("img");
 
     clip.className = "atlas-clip";
     clip.style.aspectRatio = `${width}/${height}`;
-    image.src = reference.atlas;
-    image.alt = label;
+    image.src = new URL(reference.atlas, document.baseURI).href;
+    image.alt = "";
     image.style.width = `${atlasWidth / width * 100}%`;
+    image.style.height = `${atlasHeight / height * 100}%`;
     image.style.left = `${-x / width * 100}%`;
     image.style.top = `${-y / height * 100}%`;
 
@@ -111,7 +112,7 @@ function createHotspot(hotspot) {
   button.style.width = `${hotspot.w}%`;
   button.setAttribute("aria-label", label);
 
-  addAssetVisual(button, assets.resolve(hotspot.asset_id, hotspot.variant || "icon"), label);
+  addAssetVisual(button, assets.resolve(hotspot.asset_id, hotspot.variant || "icon"));
 
   const tip = document.createElement("span");
   tip.className = "tip";
@@ -120,7 +121,7 @@ function createHotspot(hotspot) {
   return button;
 }
 
-/** Render the selected scene from data: environment, hotspots and scene-specific effects. */
+/** Render one scene using one stable base image; composited visual layers come later. */
 function renderScene() {
   const scene = sceneData.scenes[state.scene];
   if (!scene) throw new Error(`Unknown scene: ${state.scene}`);
@@ -128,12 +129,14 @@ function renderScene() {
   const environment = assets.resolve(scene.environment_asset, "world");
   if (!environment) throw new Error(`Missing environment asset: ${scene.environment_asset}`);
 
+  const environmentUrl = new URL(environment, document.baseURI).href;
   dom.scene.dataset.scene = state.scene;
-  dom.environment.src = environment;
-  dom.environment.alt = state.scene;
+  dom.environment.style.backgroundImage = `url("${environmentUrl}")`;
   dom.hotspotLayer.replaceChildren(...(scene.hotspots || []).map(createHotspot));
   dom.backButton.hidden = state.scene === "desk";
-  dom.rainFx.hidden = state.scene !== "desk";
+
+  // The old procedural rain was only a placeholder and obscured the first visual milestone.
+  dom.rainFx.hidden = true;
 
   renderHUD();
   modAPI?.events.emit("scene:changed", {scene: state.scene});
@@ -154,45 +157,21 @@ function useItem(id) {
   }
 }
 
-/** Route UI actions to their current prototype behavior and render the resulting state. */
+/** Route prototype actions and rerender only the resulting scene state. */
 function action(name) {
   switch (name) {
-    case "coffee":
-      useItem("coffee_starter_white");
-      showToast(t("toast.coffee"));
-      break;
-    case "phone":
-      showToast(t("toast.phone_placeholder"));
-      break;
-    case "notebook":
-      showToast(t("toast.notebook_placeholder"));
-      break;
-    case "map":
-      state.scene = "map";
-      break;
-    case "storage":
-      state.scene = "storage";
-      break;
-    case "desk":
-      state.scene = "desk";
-      break;
-    case "vehicle":
-      showToast(t("toast.vehicle"));
-      break;
-    case "client":
-      showToast(t("toast.client_placeholder"));
-      break;
-    case "hardware":
-      showToast(t("toast.hardware_placeholder"));
-      break;
-    case "inspect_vacuum":
-      showToast(t("toast.vacuum"));
-      break;
-    case "inspect_caddy":
-      showToast(t("toast.caddy"));
-      break;
-    default:
-      return;
+    case "coffee": useItem("coffee_starter_white"); showToast(t("toast.coffee")); break;
+    case "phone": showToast(t("toast.phone_placeholder")); break;
+    case "notebook": showToast(t("toast.notebook_placeholder")); break;
+    case "map": state.scene = "map"; break;
+    case "storage": state.scene = "storage"; break;
+    case "desk": state.scene = "desk"; break;
+    case "vehicle": showToast(t("toast.vehicle")); break;
+    case "client": showToast(t("toast.client_placeholder")); break;
+    case "hardware": showToast(t("toast.hardware_placeholder")); break;
+    case "inspect_vacuum": showToast(t("toast.vacuum")); break;
+    case "inspect_caddy": showToast(t("toast.caddy")); break;
+    default: return;
   }
 
   modAPI?.events.emit("action", {name, scene: state.scene});

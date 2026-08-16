@@ -13,10 +13,15 @@ export class ResourceRegistry {
     return new ResourceRegistry(data.resources || {});
   }
 
+  /** Register a resource and initialize its runtime value from the data schema. */
   define(id, definition) {
     const normalized = {min: Number.NEGATIVE_INFINITY, max: Number.POSITIVE_INFINITY, modifiable: true, ...definition};
     this.definitions.set(id, normalized);
-    if (!this.values.has(id)) this.values.set(id, this.clamp(id, normalized.default ?? 0));
+
+    if (!this.values.has(id)) {
+      const initialValue = normalized.initial ?? normalized.default ?? 0;
+      this.values.set(id, this.clamp(id, initialValue));
+    }
   }
 
   patchDefinition(id, patch) {
