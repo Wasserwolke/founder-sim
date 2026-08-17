@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://game/scripts/room/lighting_rig.gd" id="1_lighting"]
+[ext_resource type="Script" path="res://game/scripts/room/sunlight_projection.gd" id="2_sun_projection"]
 
 [sub_resource type="Shader" id="Shader_exterior"]
 code = "shader_type canvas_item;\n\nuniform vec4 tint : source_color = vec4(0.02, 0.05, 0.12, 1.0);\nuniform float darkness : hint_range(0.0, 1.0) = 0.0;\n\nfloat window_mask(vec2 uv) {\n    vec2 min_p = vec2(0.292, 0.050);\n    vec2 max_p = vec2(0.685, 0.497);\n    vec2 local = (uv - min_p) / (max_p - min_p);\n    float inside = step(0.0, local.x) * step(local.x, 1.0) * step(0.0, local.y) * step(local.y, 1.0);\n    float feather_x = smoothstep(0.0, 0.025, local.x) * (1.0 - smoothstep(0.975, 1.0, local.x));\n    float feather_y = smoothstep(0.0, 0.018, local.y) * (1.0 - smoothstep(0.982, 1.0, local.y));\n    return inside * feather_x * feather_y;\n}\n\nvoid fragment() {\n    float mask = window_mask(UV);\n    COLOR = vec4(tint.rgb, darkness * mask);\n}\n"
@@ -31,6 +32,9 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 use_hdr = true
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sun_projection"]
+blend_mode = 1
 
 [node name="LightingRig" type="Control" groups=["room_lighting_rig"]]
 unique_name_in_owner = true
@@ -70,6 +74,22 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 1)
 
+[node name="SunlightProjection" type="Node2D" parent="."]
+unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_sun_projection")
+script = ExtResource("2_sun_projection")
+
+# Compatibility placeholder for the existing LightingRig script. It receives
+# a zero item-cull mask, so the old radial PointLight2D path can no longer
+# affect visible canvas items while the new parallel aperture projection runs.
+[node name="SunProjectionLight" type="PointLight2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(815, 462)
+enabled = false
+energy = 0.0
+range_item_cull_mask = 0
+shadow_enabled = false
+
 [node name="WindowBounceLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(815, 350)
@@ -80,19 +100,6 @@ texture = SubResource("GradientTexture2D_soft_light")
 texture_scale = 2.75
 height = 0.16
 shadow_enabled = false
-
-[node name="SunProjectionLight" type="PointLight2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(815, 458)
-offset = Vector2(0, 0)
-enabled = false
-energy = 0.0
-color = Color(1, 0.80, 0.50, 1)
-texture_scale = 1.55
-height = 0.08
-shadow_enabled = true
-shadow_filter = 1
-shadow_filter_smooth = 1.5
 
 [node name="RoomFillLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true

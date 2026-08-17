@@ -14,38 +14,48 @@ Die Referenzen sind **keine Runtime-Assets**. Sie liegen nur unter `docs/referen
 
 V4 entfernt den misslungenen V3-Test-Workspace und alle sichtbaren Fake-Sun-Beam-Linien. Der leere Referenzraum ist wieder die einzige sichtbare Environment-Basis.
 
-### Lichtsystem
+### Grundsystem
 
 - `CanvasModulate`: globale Tages-/Nachtbelichtung.
-- `PointLight2D` `WindowBounceLight`: weiches Licht direkt um das Fenster und auf die angrenzende Wand.
-- `PointLight2D` `SunProjectionLight`: breite zweigeteilte Fensterprojektion, deren Textur **zur Laufzeit erzeugt** wird. Es gibt dafuer kein dekoratives Sonnenstrahl-PNG und keinen weissen Linien-Shader.
-- `PointLight2D` `RoomFillLight`: nur ein optionaler Developer-Fill zum Testen; standardmaessig aus.
-- `ExteriorResponse`: nur eine fensterbegrenzte Abdunklung, weil die City-View noch im Room-PNG eingebrannt ist.
-- `DynamicLights` / `DynamicOccluders`: Hooks fuer spaetere echte Objektlichter und Schatten.
+- `PointLight2D` `WindowBounceLight`: weiches indirektes Licht direkt um das Fenster.
+- `SunlightProjection2D`: direkte Sonnenprojektion durch die reale Fensterapertur.
+- `PointLight2D` `RoomFillLight`: optionales Developer-Fill; standardmaessig aus.
+- `ExteriorResponse`: fensterbegrenzte Abdunklung, solange die City-View noch im Room-PNG eingebrannt ist.
+- `DynamicLights` / `DynamicOccluders`: Hooks fuer spaetere freigegebene Objektlichter und Schatten.
 
-## V4.1: Sichtbares Fenster ist die feste Lichtquelle
+## V4.2: Zwei feste Glas-Aperturen, paralleler Sonneneinfall
 
-Die Sonnenprojektion ist ab V4.1 geometrisch am **unteren Mittelpunkt des sichtbaren Fensters** verankert. Der Light2D-Node bewegt sich mit der Tageszeit nicht mehr quer durch den Raum.
+Direkte Sonne wird nicht mehr als radiale `PointLight2D`-Quelle behandelt. Das war geometrisch falsch fuer Sonnenlicht und erzeugte den Eindruck einer Lichtquelle aus der Kamerarichtung.
 
-Stattdessen:
+Ab V4.2 gelten vier feste Punkte an der unteren sichtbaren Glaskante:
 
-- der Ursprung bleibt am Fenstersims,
-- nur die Projektion rotiert mit dem Sonnenstand,
-- dadurch bewegt sich der entfernte Lichtfleck auf dem Boden deutlich staerker als der Bereich direkt am Fenster,
-- die Projektion beginnt erst unterhalb des Fensters und kann daher nicht mehr als direkte Sonne durch die Wand oberhalb oder neben der Oeffnung laufen,
-- die Runtime-Textur bildet zwei helle Fensterfelder mit einer deutlich dunkleren Mittelsteg-Luecke ab,
-- die Aussenkanten der Projektion lesen sich als Schatten des Fensterrahmens,
-- Standardenergie wurde angehoben, damit 100% bereits sichtbar ist und 200% nur noch bewusst ueberzeichnetes Tuning darstellt.
+- linke Scheibe: `left_glass_start` -> `left_glass_end`
+- rechte Scheibe: `right_glass_start` -> `right_glass_end`
 
-Das Window-Bounce-Licht bleibt davon getrennt. Es darf die Wand um das Fenster weich aufhellen, stellt aber **kein direktes Sonnenlicht** dar.
+Diese vier Punkte bleiben ueber den gesamten Tag unveraendert. Nur die Projektion hinter der Apertur veraendert sich.
+
+Regeln:
+
+- Licht beginnt ausschliesslich an der unteren Glaskante, nicht am Holz-/Aussenrahmen.
+- Jede Scheibe erzeugt ihre eigene parallele Projektion.
+- Der Mittelsteg ist die echte Luecke zwischen den beiden Projektionen und bleibt dadurch deutlich als Schatten lesbar.
+- Die Aussenkanten bleiben an den Glasgrenzen fest; es gibt keinen radialen Faecher vom Fenstermittelpunkt.
+- Niedrige Sonne -> lange Projektion weit in den Raum.
+- Hohe Sonne -> kurze Projektion nah am Fenster.
+- Die seitliche Tagesbewegung ist bewusst klein; Hauptanimation ist die Projektionslaenge durch die Sonnenhoehe.
+- Dawn/Dusk werden waermer, Cloudy/Rain reduzieren die direkte Sonne.
+
+`SunlightProjection2D` zeichnet die beiden Projektionen additiv mit einem hellen Kern und weicher werdenden Kanten erst **nach** der Fensterapertur. Die Startkante selbst wird nicht verbreitert; dadurch kann direktes Sonnenlicht optisch nicht neben dem Glas durch die Wand treten.
+
+Das Window-Bounce-Licht bleibt davon getrennt. Es darf die Wand um das Fenster weich aufhellen, stellt aber kein direktes Sonnenlicht dar.
 
 ## Keine automatischen Moebel
 
-Verbindliche Regel ab V4:
+Verbindliche Regel:
 
 > Das Atmosphaeren-/Lighting-System fuegt niemals selbst Moebel, Geraete oder dekorative WORLD-Assets in einen Raum ein.
 
-Neue sichtbare Objektassets werden erst nach expliziter Freigabe des konkreten Assets in die Szene gesetzt. Lighting darf dagegen bereits generische Schnittstellen fuer spaetere Emitter/Occluder vorbereiten.
+Neue sichtbare Objektassets werden erst nach expliziter Freigabe des konkreten Assets in die Szene gesetzt. Lighting darf generische Schnittstellen fuer spaetere Emitter/Occluder vorbereiten.
 
 ## Objekt-Lichtvertrag
 
@@ -60,14 +70,15 @@ emitter_category: monitor / desk_lamp / phone / ambient / ...
 
 Technisch:
 
-- normale Sprite-/Control-Visuals empfangen `Light2D`, sofern ihre Light-Mask passt,
+- normale Sprite-/Control-Visuals koennen Licht empfangen,
 - Schattenwerfer erhalten `LightOccluder2D` + `OccluderPolygon2D`,
 - selbstleuchtende Objekte verwenden `RoomLightEmitter2D` oder einen kompatiblen `Light2D`-Emitter,
-- `DynamicLights` und `DynamicOccluders` sind dafuer bereits im RoomLightingRig vorhanden.
+- `DynamicLights` und `DynamicOccluders` sind dafuer bereits im RoomLightingRig vorhanden,
+- direkte Sonnenprojektion bleibt eine separate Fensterprojektion; bevor freigegebene Objekte hinzukommen, wird deren Occlusion gegen diese Projektion als eigener Schritt integriert.
 
 ## Developer Atmosphere Controller
 
-`F10` blendet das Panel ein oder aus. V4 testet nur noch Werte, die im leeren Raum sinnvoll beurteilbar sind:
+`F10` blendet das Panel ein oder aus. Im leeren Raum relevant:
 
 - Tageszeit,
 - Wetter,
@@ -76,8 +87,6 @@ Technisch:
 - Fenster-Bounce,
 - beschleunigter 24h-Zyklus.
 
-Keine Lampen-/Monitor-Regler, solange solche Objekte nicht freigegeben und tatsaechlich im Raum vorhanden sind.
-
 ## Naechster Atmosphaeren-Meilenstein
 
-Die City-View steckt weiterhin in `room_shell_neutral.png`. Fuer echte Nachtfenster, Himmel, Regen und Stadtlicht muss die Environment spaeter in Interior und Exterior getrennt werden. Bis dahin werden keine zufaelligen prozeduralen Stadtfenster ueber das bestehende Bild gelegt.
+Die City-View steckt weiterhin in `room_shell_neutral.png`. Fuer echte Nachtfenster, Himmel, Regen und Stadtlicht muss die Environment spaeter in Interior und Exterior getrennt werden.
