@@ -151,14 +151,17 @@ jobs:
           set -euo pipefail
           EDITOR_LOG=/tmp/founder-sim-godot-editor.log
           RUNTIME_LOG=/tmp/founder-sim-godot-runtime.log
+          PROTOTYPE_LOG=/tmp/founder-sim-godot-25d-runtime.log
 
           "$GODOT_BIN" --headless --editor --path "$GITHUB_WORKSPACE" --quit >"$EDITOR_LOG" 2>&1
           "$GODOT_BIN" --headless --path "$GITHUB_WORKSPACE" --quit-after 3 >"$RUNTIME_LOG" 2>&1
+          "$GODOT_BIN" --headless --path "$GITHUB_WORKSPACE" res://game/scenes/prototypes/room_25d_prototype.tscn --quit-after 3 >"$PROTOTYPE_LOG" 2>&1
 
           cat "$EDITOR_LOG"
           cat "$RUNTIME_LOG"
+          cat "$PROTOTYPE_LOG"
 
-          if grep -E 'ERROR: res://|SCRIPT ERROR:|Failed loading resource:|Node not found:|Invalid access|Invalid assignment' "$EDITOR_LOG" "$RUNTIME_LOG"; then
+          if grep -E 'ERROR: res://|SCRIPT ERROR:|Failed loading resource:|Node not found:|Invalid access|Invalid assignment' "$EDITOR_LOG" "$RUNTIME_LOG" "$PROTOTYPE_LOG"; then
             echo "::error::Godot reported project/runtime errors even though the process returned zero."
             exit 1
           fi
