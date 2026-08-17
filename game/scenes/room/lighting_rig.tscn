@@ -74,21 +74,15 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 1)
 
-[node name="SunlightProjection" type="Node2D" parent="."]
-unique_name_in_owner = true
-material = SubResource("CanvasItemMaterial_sun_projection")
-script = ExtResource("2_sun_projection")
-
-# Compatibility placeholder for the existing LightingRig script. It receives
-# a zero item-cull mask, so the old radial PointLight2D path can no longer
-# affect visible canvas items while the new parallel aperture projection runs.
 [node name="SunProjectionLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(815, 462)
+material = SubResource("CanvasItemMaterial_sun_projection")
+position = Vector2(0, 0)
 enabled = false
 energy = 0.0
 range_item_cull_mask = 0
 shadow_enabled = false
+script = ExtResource("2_sun_projection")
 
 [node name="WindowBounceLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true

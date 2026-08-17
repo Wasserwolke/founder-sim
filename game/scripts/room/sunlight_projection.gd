@@ -1,5 +1,5 @@
 @tool
-extends Node2D
+extends PointLight2D
 class_name SunlightProjection2D
 
 @export_group("Visible window aperture")
@@ -49,11 +49,24 @@ var _target_color := Color(1.0, 0.88, 0.63, 1.0)
 
 
 func _ready() -> void:
+    # Keep compatibility with the parent LightingRig, which still addresses
+    # this node as its historical PointLight2D. The real radial light is
+    # completely culled; only this script's custom aperture drawing is visible.
+    range_item_cull_mask = 0
+    shadow_enabled = false
+    position = Vector2.ZERO
+    rotation = 0.0
     set_process(true)
     _sync_from_parent(true)
 
 
 func _process(delta: float) -> void:
+    # The legacy LightingRig may write rotation/texture values to this node.
+    # Neutralize those radial-light transforms every frame so the glass
+    # aperture itself remains fixed and horizontal.
+    position = Vector2.ZERO
+    rotation = 0.0
+    range_item_cull_mask = 0
     _sync_from_parent(false)
     var response := 1.0 - exp(-delta * 8.0)
     _direction = _direction.lerp(_target_direction, clampf(response, 0.0, 1.0)).normalized()
