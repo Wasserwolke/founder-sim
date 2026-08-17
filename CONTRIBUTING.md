@@ -44,5 +44,6 @@ Nach jedem relevanten Commit werden genannt:
 ## 6. GitHub-Schreibzugriff im gemeinsamen Workflow
 - Fuer `Wasserwolke/founder-sim` wird vorhandener GitHub-Schreibzugriff als normale Projektvoraussetzung behandelt.
 - Wenn eine angeforderte Aenderung ins Repository gehoert, zuerst den konkreten Schreibvorgang versuchen statt fehlenden Schreibzugriff anzunehmen.
+- Bei direkten Umsetzungsauftraegen wie `Go`, `setz es um`, `aendere das` oder vergleichbaren Formulierungen fuehrt der Assistent die Repository-Aenderung selbst aus. Solange der GitHub-Schreibvorgang funktioniert, werden dem Nutzer keine manuellen Copy/Paste-Codeaenderungen als Ersatzarbeit uebertragen.
 - Nur wenn der reale GitHub-Schreibvorgang mit einem Berechtigungs-/Verbindungsfehler scheitert, diesen Fehler melden und auf einen alternativen Workflow ausweichen.
 - Erfolgreiche Schreibvorgaenge werden anschliessend durch die vorhandene CI validiert; ein CI-Codefehler ist von einem Schreibzugriffsfehler zu unterscheiden.
