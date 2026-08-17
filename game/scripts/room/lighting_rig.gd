@@ -111,9 +111,9 @@ func set_debug_state(hour: float, weather: int, room_fill_on: bool, room_fill_st
     _set_runtime_state(hour, weather, room_fill_on, room_fill_strength, animated)
 
 
-func set_debug_detail_multipliers(sunlight_multiplier: float, window_bounce_multiplier: float) -> void:
-    _runtime_sunlight_multiplier = clampf(sunlight_multiplier, 0.0, 2.5)
-    _runtime_window_bounce_multiplier = clampf(window_bounce_multiplier, 0.0, 2.0)
+func set_debug_detail_multipliers(sunlight_multiplier_value: float, window_bounce_multiplier_value: float) -> void:
+    _runtime_sunlight_multiplier = clampf(sunlight_multiplier_value, 0.0, 2.5)
+    _runtime_window_bounce_multiplier = clampf(window_bounce_multiplier_value, 0.0, 2.0)
     _set_runtime_state(_runtime_hour, _runtime_weather, _runtime_room_fill_on, _runtime_room_fill_strength, true)
 
 
@@ -287,27 +287,29 @@ func _calculate_visual_state() -> Dictionary:
 
     var direct_sun := daylight * (1.0 - cloudiness * 0.96)
     var sun_progress := clampf((h - 6.0) / 13.0, 0.0, 1.0)
-    var sun_color := Color(1.0, 0.90, 0.70, 1.0).lerp(
-        Color(1.0, 0.62, 0.28, 1.0),
-        clampf(golden * 1.12, 0.0, 1.0)
+    var sun_color := Color(1.0, 0.93, 0.76, 1.0).lerp(
+        Color(1.0, 0.64, 0.29, 1.0),
+        clampf(golden * 1.08, 0.0, 1.0)
     )
 
+    # The aperture stays fixed at the visible window. Only the projected
+    # direction rotates. This makes the distant floor footprint move much
+    # farther than the light at the sill, matching a real window projection.
     var sun_energy := clampf(
-        direct_sun * (0.58 + golden * 0.85) * _runtime_sunlight_multiplier,
+        direct_sun * (1.18 + golden * 1.28) * _runtime_sunlight_multiplier,
         0.0,
-        2.2
+        4.2
     )
-    var sun_rotation := lerpf(deg_to_rad(15.0), deg_to_rad(-15.0), sun_progress)
-    var sun_origin_x := lerpf(1050.0, 590.0, sun_progress)
-    var sun_offset_x := lerpf(-55.0, 55.0, sun_progress)
+    var sun_rotation := lerpf(deg_to_rad(-24.0), deg_to_rad(24.0), sun_progress)
+    var sun_scale := lerpf(1.62, 1.44, sin(sun_progress * PI))
 
     var window_bounce_energy := clampf(
-        daylight * (0.18 + golden * 0.36) * (1.0 - cloudiness * 0.72) * _runtime_window_bounce_multiplier,
+        daylight * (0.32 + golden * 0.46) * (1.0 - cloudiness * 0.72) * _runtime_window_bounce_multiplier,
         0.0,
-        0.92
+        1.45
     )
-    var window_bounce_color := Color(0.96, 0.97, 1.0, 1.0).lerp(
-        Color(1.0, 0.72, 0.39, 1.0),
+    var window_bounce_color := Color(0.97, 0.98, 1.0, 1.0).lerp(
+        Color(1.0, 0.73, 0.40, 1.0),
         clampf(golden * 1.08, 0.0, 1.0)
     )
 
@@ -324,8 +326,7 @@ func _calculate_visual_state() -> Dictionary:
         "sun_color": sun_color,
         "sun_energy": sun_energy,
         "sun_rotation": sun_rotation,
-        "sun_origin_x": sun_origin_x,
-        "sun_offset_x": sun_offset_x,
+        "sun_scale": sun_scale,
         "window_bounce_color": window_bounce_color,
         "window_bounce_energy": window_bounce_energy,
         "exterior_tint": exterior_tint,
@@ -353,8 +354,7 @@ func _blend_states(from_state: Dictionary, to_state: Dictionary, weight: float) 
         "sun_color": sun_from.lerp(sun_to, weight),
         "sun_energy": lerpf(float(from_state.get("sun_energy", 0.0)), float(to_state.get("sun_energy", 0.0)), weight),
         "sun_rotation": lerp_angle(float(from_state.get("sun_rotation", 0.0)), float(to_state.get("sun_rotation", 0.0)), weight),
-        "sun_origin_x": lerpf(float(from_state.get("sun_origin_x", 815.0)), float(to_state.get("sun_origin_x", 815.0)), weight),
-        "sun_offset_x": lerpf(float(from_state.get("sun_offset_x", 0.0)), float(to_state.get("sun_offset_x", 0.0)), weight),
+        "sun_scale": lerpf(float(from_state.get("sun_scale", 1.5)), float(to_state.get("sun_scale", 1.5)), weight),
         "window_bounce_color": bounce_from.lerp(bounce_to, weight),
         "window_bounce_energy": lerpf(float(from_state.get("window_bounce_energy", 0.0)), float(to_state.get("window_bounce_energy", 0.0)), weight),
         "exterior_tint": exterior_from.lerp(exterior_to, weight),
@@ -388,8 +388,7 @@ func _apply_visual_state(state: Dictionary) -> void:
         sun_projection_light.color = state.get("sun_color", Color.WHITE)
         sun_projection_light.energy = float(state.get("sun_energy", 0.0))
         sun_projection_light.rotation = float(state.get("sun_rotation", 0.0))
-        sun_projection_light.position.x = float(state.get("sun_origin_x", 815.0))
-        sun_projection_light.offset = Vector2(float(state.get("sun_offset_x", 0.0)), 450.0)
+        sun_projection_light.texture_scale = float(state.get("sun_scale", 1.5))
         sun_projection_light.enabled = sun_projection_light.energy > 0.004
 
     if is_instance_valid(room_fill_light):
@@ -404,29 +403,40 @@ func _apply_visual_state(state: Dictionary) -> void:
 func _ensure_sun_projection_texture() -> void:
     if _sun_projection_texture != null:
         return
-    var size := 256
+
+    # The texture is centered on the lower middle of the visible window.
+    # Everything above the sill is transparent. Below it, the two panes form
+    # one broad projection with a deliberately strong center-mullion shadow.
+    # Rotating the PointLight2D around the fixed sill makes the far end travel
+    # much farther than the near end without moving the light source itself.
+    var size := 768
+    var center := float(size) * 0.5
+    var start_y := center + 5.0
+    var end_y := float(size) - 4.0
     var image := Image.create_empty(size, size, false, Image.FORMAT_RGBA8)
+
     for y in range(size):
-        var v := float(y) / float(size - 1)
+        var fy := float(y)
+        if fy < start_y:
+            continue
+        var t := clampf((fy - start_y) / maxf(end_y - start_y, 1.0), 0.0, 1.0)
+        var vertical := smoothstep(0.0, 0.035, t) * (1.0 - smoothstep(0.90, 1.0, t))
+        var outer_half := lerpf(212.0, 184.0, t)
+        var outer_feather := lerpf(10.0, 24.0, t)
+        var mullion_half := lerpf(9.0, 18.0, t)
+        var mullion_feather := lerpf(3.0, 8.0, t)
+        var floor_gain := lerpf(0.82, 1.0, smoothstep(0.10, 0.82, t))
+
         for x in range(size):
-            var u := float(x) / float(size - 1)
-            var vertical_gate := smoothstep(0.20, 0.28, v) * (1.0 - smoothstep(0.94, 1.0, v))
-            var spread := 0.32 + v * 0.19
-            var envelope := 1.0 - smoothstep(spread, spread + 0.17, absf(u - 0.5))
-            var drift := (v - 0.20) * 0.11
-            var pane_a := _soft_band(u, 0.36 + drift, 0.105 + v * 0.045, 0.085)
-            var pane_b := _soft_band(u, 0.64 + drift, 0.105 + v * 0.045, 0.085)
-            var pane_light := maxf(pane_a, pane_b)
-            var broad_fill := (1.0 - smoothstep(0.22, 0.46, absf(u - (0.5 + drift)))) * 0.18
-            var floor_gain := lerpf(0.48, 1.0, smoothstep(0.36, 0.82, v))
-            var intensity := clampf(vertical_gate * envelope * (pane_light * 0.82 + broad_fill) * floor_gain, 0.0, 1.0)
+            var dx := absf(float(x) - center)
+            var outer := 1.0 - smoothstep(outer_half, outer_half + outer_feather, dx)
+            var mullion_shadow := smoothstep(mullion_half, mullion_half + mullion_feather, dx)
+            var intensity := clampf(vertical * outer * mullion_shadow * floor_gain, 0.0, 1.0)
+            if intensity <= 0.001:
+                continue
             image.set_pixel(x, y, Color(intensity, intensity, intensity, intensity))
+
     _sun_projection_texture = ImageTexture.create_from_image(image)
-
-
-func _soft_band(x: float, center: float, half_width: float, feather: float) -> float:
-    var distance := absf(x - center)
-    return 1.0 - smoothstep(half_width, half_width + feather, distance)
 
 
 func _resolve_layer_refs() -> void:

@@ -23,7 +23,21 @@ V4 entfernt den misslungenen V3-Test-Workspace und alle sichtbaren Fake-Sun-Beam
 - `ExteriorResponse`: nur eine fensterbegrenzte Abdunklung, weil die City-View noch im Room-PNG eingebrannt ist.
 - `DynamicLights` / `DynamicOccluders`: Hooks fuer spaetere echte Objektlichter und Schatten.
 
-Der Sonnenlicht-Node sitzt am Fenster. Seine Light2D-Textur wird mit `offset` nach unten auf Wand/Boden projiziert. Der Licht-Node selbst bleibt am Fenster, damit spaetere `LightOccluder2D`-Schatten von der richtigen Quelle berechnet werden koennen.
+## V4.1: Sichtbares Fenster ist die feste Lichtquelle
+
+Die Sonnenprojektion ist ab V4.1 geometrisch am **unteren Mittelpunkt des sichtbaren Fensters** verankert. Der Light2D-Node bewegt sich mit der Tageszeit nicht mehr quer durch den Raum.
+
+Stattdessen:
+
+- der Ursprung bleibt am Fenstersims,
+- nur die Projektion rotiert mit dem Sonnenstand,
+- dadurch bewegt sich der entfernte Lichtfleck auf dem Boden deutlich staerker als der Bereich direkt am Fenster,
+- die Projektion beginnt erst unterhalb des Fensters und kann daher nicht mehr als direkte Sonne durch die Wand oberhalb oder neben der Oeffnung laufen,
+- die Runtime-Textur bildet zwei helle Fensterfelder mit einer deutlich dunkleren Mittelsteg-Luecke ab,
+- die Aussenkanten der Projektion lesen sich als Schatten des Fensterrahmens,
+- Standardenergie wurde angehoben, damit 100% bereits sichtbar ist und 200% nur noch bewusst ueberzeichnetes Tuning darstellt.
+
+Das Window-Bounce-Licht bleibt davon getrennt. Es darf die Wand um das Fenster weich aufhellen, stellt aber **kein direktes Sonnenlicht** dar.
 
 ## Keine automatischen Moebel
 

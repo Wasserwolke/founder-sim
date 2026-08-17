@@ -20,8 +20,8 @@ shader = SubResource("Shader_vignette")
 shader_parameter/strength = 0.08
 
 [sub_resource type="Gradient" id="Gradient_soft_light"]
-offsets = PackedFloat32Array(0, 0.36, 0.72, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0.78, 0.78, 0.78, 0.66, 0.28, 0.28, 0.28, 0.18, 0, 0, 0, 0)
+offsets = PackedFloat32Array(0, 0.32, 0.70, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.84, 0.84, 0.84, 0.72, 0.30, 0.30, 0.30, 0.20, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_soft_light"]
 gradient = SubResource("Gradient_soft_light")
@@ -72,29 +72,27 @@ color = Color(1, 1, 1, 1)
 
 [node name="WindowBounceLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(815, 370)
+position = Vector2(815, 350)
 enabled = false
 energy = 0.0
 color = Color(1, 0.87, 0.64, 1)
 texture = SubResource("GradientTexture2D_soft_light")
-texture_scale = 3.0
-height = 0.18
-shadow_enabled = true
-shadow_filter = 1
-shadow_filter_smooth = 2.0
+texture_scale = 2.75
+height = 0.16
+shadow_enabled = false
 
 [node name="SunProjectionLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(815, 250)
-offset = Vector2(0, 450)
+position = Vector2(815, 458)
+offset = Vector2(0, 0)
 enabled = false
 energy = 0.0
-color = Color(1, 0.78, 0.46, 1)
-texture_scale = 3.6
-height = 0.12
+color = Color(1, 0.80, 0.50, 1)
+texture_scale = 1.55
+height = 0.08
 shadow_enabled = true
 shadow_filter = 1
-shadow_filter_smooth = 2.5
+shadow_filter_smooth = 1.5
 
 [node name="RoomFillLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true
