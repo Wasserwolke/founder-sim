@@ -84,21 +84,21 @@ range_item_cull_mask = 0
 shadow_enabled = false
 script = ExtResource("2_sun_projection")
 
-# Real local sunlight spill around the visible window. The custom projection
-# script drives its color/energy from the same solar state as the floor beams.
+# Direct sunlight spill around the visible window. This keeps the glass,
+# frame and nearby wall consistent with a bright direct-sun projection.
 [node name="WindowSunGlowLight" type="PointLight2D" parent="."]
-position = Vector2(815, 260)
+position = Vector2(826, 258)
 enabled = false
 energy = 0.0
 color = Color(1, 0.94, 0.78, 1)
 texture = SubResource("GradientTexture2D_soft_light")
-texture_scale = 3.05
-height = 0.12
+texture_scale = 3.25
+height = 0.10
 shadow_enabled = false
 
 [node name="WindowBounceLight" type="PointLight2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(815, 350)
+position = Vector2(826, 355)
 enabled = false
 energy = 0.0
 color = Color(1, 0.87, 0.64, 1)

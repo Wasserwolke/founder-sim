@@ -43,7 +43,6 @@ Regeln:
 - Die Aussenkanten bleiben an den Glasgrenzen fest; es gibt keinen radialen Faecher vom Fenstermittelpunkt.
 - Niedrige Sonne -> lange Projektion weit in den Raum.
 - Hohe Sonne -> kurze Projektion nah am Fenster.
-- Die seitliche Tagesbewegung ist bewusst klein; Hauptanimation ist die Projektionslaenge durch die Sonnenhoehe.
 - Dawn/Dusk werden waermer, Cloudy/Rain reduzieren die direkte Sonne.
 
 `SunlightProjection2D` zeichnet die beiden Projektionen additiv mit einem hellen Kern und weicher werdenden Kanten erst **nach** der Fensterapertur. Die Startkante selbst wird nicht verbreitert; dadurch kann direktes Sonnenlicht optisch nicht neben dem Glas durch die Wand treten.
@@ -54,9 +53,36 @@ Das Window-Bounce-Licht bleibt davon getrennt. Es darf die Wand um das Fenster w
 
 Die beschleunigte 24h-Animation darf die Sonnenprojektion nicht hinter der simulierten Uhrzeit herziehen. Deshalb werden Richtung und Projektionslaenge der direkten Sonne pro Frame exakt aus der aktuellen Uhrzeit berechnet und ohne zusaetzliche Geometrie-Easing-Stufe angewendet. So entspricht dieselbe Uhrzeit bei manueller Einstellung und bei laufender Animation derselben Lichtposition.
 
-Die untere Aperturkante wurde vom Fenstersims auf die tatsaechliche sichtbare Glaskante nach oben korrigiert (`y = 444`).
+Direkte Sonne wirkt ausserdem nicht mehr nur als Boden-/Wandprojektion. `WindowSunGlowLight` ist ein echtes `PointLight2D`, das mit derselben Sonnenstaerke, Wetterlage und Farbtemperatur arbeitet und dadurch Glas, Rahmen und den unmittelbaren Fensterbereich heller erscheinen laesst.
 
-Direkte Sonne wirkt ausserdem nicht mehr nur als Boden-/Wandprojektion. `WindowSunGlowLight` ist ein echtes `PointLight2D`, das mit derselben Sonnenstaerke, Wetterlage und Farbtemperatur arbeitet und dadurch Glas, Rahmen und den unmittelbaren Fensterbereich heller erscheinen laesst. Dadurch passt die wahrgenommene Helligkeit des Fensters besser zu einem starken direkten Lichteinfall im Raum.
+## V4.4: Pixelkalibrierte Apertur, Ost-West-Bewegung und Hoehen-Receiver
+
+Die Apertur wurde nicht mehr visuell geschaetzt, sondern direkt am exakten Runtime-Asset `room_shell_neutral.png` (1672 x 941) analysiert. Die Repository-Datei und die zur Analyse verwendete Originaldatei besitzen denselben Git-Blob-SHA.
+
+Pixelkalibrierung der unteren sichtbaren Glaskante:
+
+```text
+linke Scheibe:  (525, 431) -> (821, 431)
+rechte Scheibe: (839, 431) -> (1126, 431)
+```
+
+`y = 431` ist die letzte sichtbare Glaszeile; `y = 432` gehoert bereits zum dunklen unteren Rahmen. Direkte Sonne beginnt deshalb exakt an `y = 431`.
+
+Die horizontale Tagesbewegung ist jetzt bewusst umgedreht:
+
+- morgens / Osten: Projektion laeuft nach rechts in den Raum,
+- mittags: Projektion liegt nahezu zentral und wird kuerzer/steiler,
+- abends / Westen: Projektion laeuft nach links in den Raum.
+
+Bei niedriger Sonne wird die Projektion deutlich laenger und flacher als zuvor. Dadurch kann spaetes Licht bis in den Vordergrund und auf die bereits im Background vorhandenen Moebel reichen.
+
+### Baked receiver surfaces
+
+Da Sofa, Couchtisch, kleines Seitenmoebel und rechtes Buecherregal bereits fest in `room_shell_neutral.png` enthalten sind, koennen sie in 2D nicht automatisch eine echte Hoehe besitzen. V4.4 hinterlegt deshalb ausschliesslich fuer diese bereits vorhandenen Bildobjekte Receiver-Polygone. Es werden **keine neuen sichtbaren Assets** hinzugefuegt.
+
+Jede Receiver-Flaeche verwendet dieselbe Sonnenrichtung, aber eine eigene kuerzere Projektionsdistanz. Dadurch trifft derselbe Strahl eine erhoehte Moebelflaeche frueher als den Boden. Der Boden-Lichtkeil wird gleichzeitig in den entsprechenden Moebelbereichen ausgespart, damit die Hoehenprojektion nicht einfach ueber einer falschen Bodenprojektion liegt.
+
+Die Receiver sind im Inspector editierbar und koennen mit `Debug Draw Receivers` sichtbar gemacht werden. Das ist die bewusst letzte auf den aktuellen fest gerenderten 2D-Raum zugeschnittene Perspektivkorrektur; fuer frei platzierbare spaetere Objekte bleibt `DynamicLights` / `DynamicOccluders` die allgemeine Schnittstelle.
 
 ## Keine automatischen Moebel
 
@@ -98,4 +124,6 @@ Technisch:
 
 ## Naechster Atmosphaeren-Meilenstein
 
-Die City-View steckt weiterhin in `room_shell_neutral.png`. Fuer echte Nachtfenster, Himmel, Regen und Stadtlicht muss die Environment spaeter in Interior und Exterior getrennt werden.
+V4.4 ist der Abschlussversuch fuer die aktuell fest gerenderte 2D-Raumprojektion. Nach visueller Bewertung wird entschieden, ob die weitere Raumarchitektur 2D bleibt oder auf eine 3D-Szene mit weiterhin fixer/frontaler Kamera umgestellt wird. Eine 3D-Umstellung wuerde insbesondere Sonnenrichtung, Oberflaechenhoehen, Schattenwurf und neu platzierbare Moebel systemisch statt ueber gebackene Receiver loesen.
+
+Die City-View steckt weiterhin in `room_shell_neutral.png`. Fuer echte Nachtfenster, Himmel, Regen und Stadtlicht muss die Environment bei einem Verbleib in 2D spaeter in Interior und Exterior getrennt werden.
