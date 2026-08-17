@@ -3,19 +3,21 @@ extends PointLight2D
 class_name SunlightProjection2D
 
 @export_group("Visible window aperture")
-@export var left_glass_start := Vector2(503.0, 462.0):
+# Calibrated to the lower visible GLASS edge of room_shell_neutral.png.
+# Keep these anchors on the glass, never on the sill or surrounding masonry.
+@export var left_glass_start := Vector2(503.0, 444.0):
     set(value):
         left_glass_start = value
         queue_redraw()
-@export var left_glass_end := Vector2(792.0, 462.0):
+@export var left_glass_end := Vector2(792.0, 444.0):
     set(value):
         left_glass_end = value
         queue_redraw()
-@export var right_glass_start := Vector2(839.0, 462.0):
+@export var right_glass_start := Vector2(839.0, 444.0):
     set(value):
         right_glass_start = value
         queue_redraw()
-@export var right_glass_end := Vector2(1128.0, 462.0):
+@export var right_glass_end := Vector2(1128.0, 444.0):
     set(value):
         right_glass_end = value
         queue_redraw()
@@ -46,33 +48,43 @@ var _target_direction := Vector2.DOWN
 var _target_length := 420.0
 var _target_energy := 0.0
 var _target_color := Color(1.0, 0.88, 0.63, 1.0)
+var _window_sun_glow_light: PointLight2D
 
 
 func _ready() -> void:
     # Keep compatibility with the parent LightingRig, which still addresses
-    # this node as its historical PointLight2D. The real radial light is
-    # completely culled; only this script's custom aperture drawing is visible.
+    # this node as its historical PointLight2D. The radial light itself is
+    # culled; only the custom aperture projection is drawn by this node.
     range_item_cull_mask = 0
     shadow_enabled = false
     position = Vector2.ZERO
     rotation = 0.0
+    _resolve_window_sun_glow()
     set_process(true)
     _sync_from_parent(true)
+    _apply_window_sun_glow()
 
 
-func _process(delta: float) -> void:
-    # The legacy LightingRig may write rotation/texture values to this node.
-    # Neutralize those radial-light transforms every frame so the glass
-    # aperture itself remains fixed and horizontal.
+func _process(_delta: float) -> void:
+    # The legacy LightingRig may still write transforms to this node. Keep the
+    # glass aperture fixed in room coordinates every frame.
     position = Vector2.ZERO
     rotation = 0.0
     range_item_cull_mask = 0
+
     _sync_from_parent(false)
-    var response := 1.0 - exp(-delta * 8.0)
-    _direction = _direction.lerp(_target_direction, clampf(response, 0.0, 1.0)).normalized()
-    _projection_length = lerpf(_projection_length, _target_length, clampf(response, 0.0, 1.0))
-    _energy = lerpf(_energy, _target_energy, clampf(response, 0.0, 1.0))
-    _light_color = _light_color.lerp(_target_color, clampf(response, 0.0, 1.0))
+
+    # Important: solar GEOMETRY must never lag behind the simulated clock.
+    # The old easing made the accelerated 24h animation trail behind the time
+    # slider, so the footprint appeared to come from the wrong place. The
+    # controller already advances time smoothly frame-by-frame, therefore the
+    # physically relevant direction and projection length are applied exactly.
+    _direction = _target_direction
+    _projection_length = _target_length
+    _energy = _target_energy
+    _light_color = _target_color
+
+    _apply_window_sun_glow()
     queue_redraw()
 
 
@@ -136,7 +148,30 @@ func set_projection(direction: Vector2, projection_length: float, energy: float,
     _projection_length = maxf(projection_length, 0.0)
     _energy = maxf(energy, 0.0)
     _light_color = light_color
+    _apply_window_sun_glow()
     queue_redraw()
+
+
+func _resolve_window_sun_glow() -> void:
+    if is_instance_valid(_window_sun_glow_light):
+        return
+    var parent := get_parent()
+    if parent != null:
+        _window_sun_glow_light = parent.get_node_or_null("WindowSunGlowLight") as PointLight2D
+
+
+func _apply_window_sun_glow() -> void:
+    # Direct sun also lifts the exposure of the glass/frame itself. This is a
+    # real PointLight2D, not a decorative overlay, and follows the same weather,
+    # time and sunlight multiplier as the projected sunlight.
+    _resolve_window_sun_glow()
+    if not is_instance_valid(_window_sun_glow_light):
+        return
+
+    var glow_energy := clampf(_energy * 0.50, 0.0, 1.70)
+    _window_sun_glow_light.color = _light_color.lerp(Color(1.0, 0.985, 0.92, 1.0), 0.32)
+    _window_sun_glow_light.energy = glow_energy
+    _window_sun_glow_light.enabled = glow_energy > 0.003
 
 
 func _draw() -> void:

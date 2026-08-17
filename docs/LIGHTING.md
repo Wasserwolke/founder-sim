@@ -18,6 +18,7 @@ V4 entfernt den misslungenen V3-Test-Workspace und alle sichtbaren Fake-Sun-Beam
 
 - `CanvasModulate`: globale Tages-/Nachtbelichtung.
 - `PointLight2D` `WindowBounceLight`: weiches indirektes Licht direkt um das Fenster.
+- `PointLight2D` `WindowSunGlowLight`: direktes, sonnengekoppeltes Aufhellen von Glas, Rahmen und unmittelbarer Fensterumgebung.
 - `SunlightProjection2D`: direkte Sonnenprojektion durch die reale Fensterapertur.
 - `PointLight2D` `RoomFillLight`: optionales Developer-Fill; standardmaessig aus.
 - `ExteriorResponse`: fensterbegrenzte Abdunklung, solange die City-View noch im Room-PNG eingebrannt ist.
@@ -48,6 +49,14 @@ Regeln:
 `SunlightProjection2D` zeichnet die beiden Projektionen additiv mit einem hellen Kern und weicher werdenden Kanten erst **nach** der Fensterapertur. Die Startkante selbst wird nicht verbreitert; dadurch kann direktes Sonnenlicht optisch nicht neben dem Glas durch die Wand treten.
 
 Das Window-Bounce-Licht bleibt davon getrennt. Es darf die Wand um das Fenster weich aufhellen, stellt aber kein direktes Sonnenlicht dar.
+
+## V4.3: Animationsstabile Geometrie + Fensterbelichtung
+
+Die beschleunigte 24h-Animation darf die Sonnenprojektion nicht hinter der simulierten Uhrzeit herziehen. Deshalb werden Richtung und Projektionslaenge der direkten Sonne pro Frame exakt aus der aktuellen Uhrzeit berechnet und ohne zusaetzliche Geometrie-Easing-Stufe angewendet. So entspricht dieselbe Uhrzeit bei manueller Einstellung und bei laufender Animation derselben Lichtposition.
+
+Die untere Aperturkante wurde vom Fenstersims auf die tatsaechliche sichtbare Glaskante nach oben korrigiert (`y = 444`).
+
+Direkte Sonne wirkt ausserdem nicht mehr nur als Boden-/Wandprojektion. `WindowSunGlowLight` ist ein echtes `PointLight2D`, das mit derselben Sonnenstaerke, Wetterlage und Farbtemperatur arbeitet und dadurch Glas, Rahmen und den unmittelbaren Fensterbereich heller erscheinen laesst. Dadurch passt die wahrgenommene Helligkeit des Fensters besser zu einem starken direkten Lichteinfall im Raum.
 
 ## Keine automatischen Moebel
 
