@@ -40,3 +40,9 @@ Nach jedem relevanten Commit werden genannt:
 - direkter Link zur Datei-History auf GitHub.
 
 `scripts/change_report.py` erzeugt die technischen Dateistatistiken automatisch. GitHub Actions schreibt denselben Bericht in die Run Summary.
+
+## 6. GitHub-Schreibzugriff im gemeinsamen Workflow
+- Fuer `Wasserwolke/founder-sim` wird vorhandener GitHub-Schreibzugriff als normale Projektvoraussetzung behandelt.
+- Wenn eine angeforderte Aenderung ins Repository gehoert, zuerst den konkreten Schreibvorgang versuchen statt fehlenden Schreibzugriff anzunehmen.
+- Nur wenn der reale GitHub-Schreibvorgang mit einem Berechtigungs-/Verbindungsfehler scheitert, diesen Fehler melden und auf einen alternativen Workflow ausweichen.
+- Erfolgreiche Schreibvorgaenge werden anschliessend durch die vorhandene CI validiert; ein CI-Codefehler ist von einem Schreibzugriffsfehler zu unterscheiden.
