@@ -58,14 +58,18 @@ class_name SunlightProjection2D
 # Pixel-measured surfaces already baked into room_shell_neutral. These are not
 # new assets; they only tell the 2D sunlight where a higher visible surface is.
 # Coordinates are mirrored in docs/ROOM_GEOMETRY.md.
-@export_group("Baked furniture receivers")
-@export var side_cabinet_top := PackedVector2Array([
+#
+# Deliberately NOT exported: Godot's @tool editor can transiently restore
+# exported PackedVector2Array properties as NIL during script/workspace reloads.
+# These polygons are fixed shell geometry, so keeping them as script-owned data
+# avoids editor-state corruption and the redraw error flood it caused.
+var side_cabinet_top := PackedVector2Array([
     Vector2(205.0, 491.0), Vector2(350.0, 491.0),
     Vector2(384.0, 470.0), Vector2(239.0, 470.0),
 ])
 @export_range(0.25, 1.0, 0.01) var side_cabinet_travel_scale := 0.54
 
-@export var sofa_arm_surface := PackedVector2Array([
+var sofa_arm_surface := PackedVector2Array([
     Vector2(176.0, 636.0), Vector2(276.0, 636.0),
     Vector2(278.0, 804.0), Vector2(241.0, 820.0),
     Vector2(192.0, 844.0), Vector2(154.0, 865.0),
@@ -74,20 +78,20 @@ class_name SunlightProjection2D
 ])
 @export_range(0.25, 1.0, 0.01) var sofa_arm_travel_scale := 0.73
 
-@export var pillow_surface := PackedVector2Array([
+var pillow_surface := PackedVector2Array([
     Vector2(35.0, 632.0), Vector2(219.0, 615.0),
     Vector2(302.0, 691.0), Vector2(236.0, 756.0),
     Vector2(114.0, 780.0), Vector2(33.0, 716.0),
 ])
 @export_range(0.25, 1.0, 0.01) var pillow_travel_scale := 0.66
 
-@export var coffee_table_top := PackedVector2Array([
+var coffee_table_top := PackedVector2Array([
     Vector2(24.0, 817.0), Vector2(441.0, 817.0),
     Vector2(363.0, 941.0), Vector2(0.0, 941.0),
 ])
 @export_range(0.25, 1.0, 0.01) var coffee_table_travel_scale := 0.86
 
-@export var bookcase_top := PackedVector2Array([
+var bookcase_top := PackedVector2Array([
     Vector2(1405.0, 409.0), Vector2(1530.0, 409.0),
     Vector2(1672.0, 447.0), Vector2(1672.0, 491.0),
     Vector2(1520.0, 475.0), Vector2(1405.0, 432.0),
@@ -331,9 +335,17 @@ func _draw_window_response() -> void:
     draw_rect(Rect2(Vector2(498.0, 431.0), Vector2(646.0, 22.0)), sill_color)
 
 
-func _draw_both_panes_on_receiver(receiver: PackedVector2Array, travel_scale: float, strength: float) -> void:
-    _draw_pane_projection_on_receiver(left_glass_start, left_glass_end, receiver, travel_scale, strength)
-    _draw_pane_projection_on_receiver(right_glass_start, right_glass_end, receiver, travel_scale, strength)
+func _draw_both_panes_on_receiver(receiver: Variant, travel_scale: float, strength: float) -> void:
+    # @tool redraws can happen while the editor is reloading script properties
+    # (for example when switching 2D <-> 3D). Never let a transient NIL value
+    # turn into an error storm that blocks the editor UI.
+    if typeof(receiver) != TYPE_PACKED_VECTOR2_ARRAY:
+        return
+    var receiver_polygon: PackedVector2Array = receiver
+    if receiver_polygon.size() < 3:
+        return
+    _draw_pane_projection_on_receiver(left_glass_start, left_glass_end, receiver_polygon, travel_scale, strength)
+    _draw_pane_projection_on_receiver(right_glass_start, right_glass_end, receiver_polygon, travel_scale, strength)
 
 
 func _draw_pane_projection_on_receiver(
@@ -399,9 +411,12 @@ func _draw_intersection(projected: PackedVector2Array, receiver: PackedVector2Ar
             draw_colored_polygon(piece, color)
 
 
-func _debug_polygon(polygon: PackedVector2Array, color: Color) -> void:
-    if polygon.size() < 2:
+func _debug_polygon(polygon: Variant, color: Color) -> void:
+    if typeof(polygon) != TYPE_PACKED_VECTOR2_ARRAY:
         return
-    var points := polygon.duplicate()
-    points.append(polygon[0])
+    var receiver_polygon: PackedVector2Array = polygon
+    if receiver_polygon.size() < 2:
+        return
+    var points := receiver_polygon.duplicate()
+    points.append(receiver_polygon[0])
     draw_polyline(points, color, 1.0, false)
