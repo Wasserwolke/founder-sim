@@ -1,0 +1,83 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/scripts/prototypes/room_25d_visual.gd" id="1_visual"]
+
+[sub_resource type="Environment" id="Environment_visual"]
+background_mode = 1
+background_color = Color(0.03, 0.04, 0.06, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.55, 0.62, 0.72, 1)
+ambient_light_energy = 0.42
+
+[node name="Room25DVisual" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_visual")
+
+[node name="WorldView" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+stretch = true
+
+[node name="Viewport3D" type="SubViewport" parent="WorldView"]
+unique_name_in_owner = true
+size = Vector2i(836, 470)
+render_target_update_mode = 4
+
+[node name="World" type="Node3D" parent="WorldView/Viewport3D"]
+unique_name_in_owner = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="WorldView/Viewport3D/World"]
+unique_name_in_owner = true
+environment = SubResource("Environment_visual")
+
+[node name="Camera3D" type="Camera3D" parent="WorldView/Viewport3D/World"]
+unique_name_in_owner = true
+position = Vector3(0, 0, 12)
+projection = 1
+size = 9.0
+near = 0.1
+far = 60.0
+current = true
+
+[node name="Sun" type="DirectionalLight3D" parent="WorldView/Viewport3D/World"]
+unique_name_in_owner = true
+position = Vector3(0, 6, 6)
+light_color = Color(1, 0.9, 0.72, 1)
+light_energy = 1.5
+shadow_enabled = true
+shadow_blur = 1.2
+directional_shadow_max_distance = 40.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Info" type="PanelContainer" parent="HUD"]
+offset_left = 18.0
+offset_top = 112.0
+offset_right = 690.0
+offset_bottom = 178.0
+
+[node name="VBox" type="VBoxContainer" parent="HUD/Info"]
+layout_mode = 2
+
+[node name="TimeLabel" type="Label" parent="HUD/Info/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "07:12"
+theme_override_font_sizes/font_size = 20
+
+[node name="StateLabel" type="Label" parent="HUD/Info/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "AUTO"
+theme_override_font_sizes/font_size = 13
