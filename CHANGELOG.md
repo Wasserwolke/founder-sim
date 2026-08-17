@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.14
+- isolierten 2.5D-/3D-Lichtprototyp neben der bestehenden 2D-Runtime hinzugefuegt
+- Raum als echte 3D-Geometrie mit Boden, Rueckwand, Seitenwaenden und echtem Fensterausschnitt aufgebaut
+- orthografische `Camera3D` fuer eine moeglichst flache, 2D-aehnliche Komposition eingesetzt
+- `DirectionalLight3D` als echte Sonne mit parallelen Strahlen und realen Schatten durch Fensterrahmen/Mittelsteg eingefuehrt
+- grobe primitive Testgeometrie fuer Tisch, Sofa, Monitor und Lampe hinzugefuegt; keine finalen Founder-Sim-Assets
+- warme `SpotLight3D`-Tischlampe und kuehlen `OmniLight3D`-Monitor-Glow als lokale Lichtprobe eingebaut
+- 3D-Welt in einem 836x470-`SubViewport` mit Nearest-Scaling gerendert, um einen ersten Pixel-/2.5D-Presentation-Look zu testen
+- Debug-Steuerung fuer Tageszeit, Sonnenstaerke, lokale Lichter und 24h-Animation eingebaut
+- globales `F9`-Debug-Toggle zwischen bestehender Hauptszene und 2.5D-Prototyp hinzugefuegt
+- bestehende 2D-Runtime bleibt unveraendert und kann direkt mit dem Prototyp verglichen werden
+- Projektversion auf 0.14.0 erhoeht
+
 ## v0.13
 - misslungenen V3-Atmosphaeren-Workspace wieder vollstaendig aus der Godot-Runtime entfernt; der Referenzraum ist wieder leer
 - die vier nur fuer den V3-Test kopierten Desk-/Monitor-/Keyboard-/Chair-WORLD-Dateien und `prototype_workspace.tscn` wieder entfernt
@@ -43,7 +56,7 @@
 - LightingRig als eigene Godot-Szene mit Ambient-, Golden-Hour-, Fensterlicht-, Raumlicht- und Vignette-Layern aufgebaut
 - Lichtwechsel werden weich animiert statt hart umgeschaltet
 - Tageslicht reagiert auf simulierte Uhrzeit; erste Clear/Cloudy/Rain-Stimmungen vorbereitet
-- `DynamicLights`-Root und `register_emitter()` als Hook fuer spaetere itemgebundene `Light2D`-Emitter eingefuehrt
+- `DynamicLights`-Root und `register_emitter()` als Hook fuer spaetere itemgebundene `Light2D`-Emitter eingefuegt
 - Developer Atmosphere Controller mit Live-Slidern fuer Zeit, Wetter, Raumlicht, Lichtstaerke und animierten 24h-Zyklus hinzugefuegt
 - F10 blendet den Atmosphere Controller im Debug-Build ein/aus
 - `RoomLightingRig` als `@tool` ausgelegt, damit Lichtwerte auch direkt im Godot-Inspector vorab betrachtet werden koennen
@@ -116,7 +129,6 @@
 ## v0.5.1
 - DOM-Vertrag zwischen HTML, CSS und Rendering-Code wieder vereinheitlicht
 - Startfehler durch fehlendes `hotspotLayer` beseitigt
-- HUD-Layout gegen Ueberlagerungen abgesichert
 
 ## v0.5
 - erster visueller Desk/Storage/Map-Prototyp
